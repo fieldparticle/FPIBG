@@ -1,0 +1,131 @@
+Starting AppWorking Directory :J:\RCCDV11\vulkan\run\GenBenchData
+Cfg:name is:GenDataSets
+Cfg:version is:9
+Cfg:application.testfile is:J:/RCCDData/perfdataStatic/ParticleSelectionsCellVPart.csv
+Cfg:application.testdir is:J:/RCCDData/perfdataP
+Cfg:application.dt is:0.001
+Cfg:name is:GenDataSets
+Cfg:version is:9
+Cfg:application.testfile is:J:/RCCDData/perfdataStatic/ParticleSelectionsCellVPart.csv
+Cfg:application.testdir is:J:/RCCDData/perfdataP
+Cfg:application.dt is:0.001
+Cfg:application.startSideLength is:90
+Cfg:application.tempHigh is:250
+Cfg:application.tempLow is:100
+Cfg:application.substance is:he
+Cfg:application.pDensity is:1
+Cfg:application.cDensity is:0.5
+Cfg:application.popPerCell is:30
+Cfg:application.startRadius is:0.2
+Cfg:application.maxPopPerCell is:32
+Cfg:application.testType is:2
+Number of particles:5832000
+Total Collisions:2
+Total Particles in a cell:729000
+Side Length:91
+Total Collsion Density:0.5
+Collsion Density per cell:2
+For File:0000CollisionDataSet5832000X2916000X91 Done!
+Counted Particles:5832000
+Counted Collisions:2916000
+Counted Sidelength:90
+Number of particles:5832000
+Total Collisions:7
+Total Particles in a cell:216000
+Side Length:61
+Total Collsion Density:0.5
+Collsion Density per cell:7
+For File:0001CollisionDataSet5832000X3024000X61 Done!
+Counted Particles:5832000
+Counted Collisions:3024000
+Counted Sidelength:60
+Number of particles:5832000
+Total Collisions:16
+Total Particles in a cell:91125
+Side Length:46
+Total Collsion Density:0.5
+Collsion Density per cell:16
+For File:0002CollisionDataSet5832000X2916000X46 Done!
+Counted Particles:5832000
+Counted Collisions:2916000
+Counted Sidelength:45
+Number of particles:5832000
+Total Collisions:32
+Total Particles in a cell:46656
+Side Length:37
+Total Collsion Density:0.5
+Collsion Density per cell:32
+For File:0003CollisionDataSet5832000X2985984X37 Done!
+Counted Particles:5832000
+Counted Collisions:2985984
+Counted Sidelength:36
+Number of particles:5832000
+Total Collisions:54
+Total Particles in a cell:27000
+Side Length:31
+Total Collsion Density:0.5
+Collsion Density per cell:54
+For File:0004CollisionDataSet5832000X2916000X31 Done!
+Counted Particles:5832000
+Counted Collisions:2916000
+Counted Sidelength:30
+Number of particles:5832000
+Total Collisions:86
+Total Particles in a cell:17002
+Side Length:27
+Total Collsion Density:0.5
+Collsion Density per cell:86
+For File:0005CollisionDataSet5832000X2924344X27 Done!
+Counted Particles:5832001
+Counted Collisions:2924344
+Counted Sidelength:26
+Number of particles:5832000
+Total Collisions:183
+Total Particles in a cell:8000
+Side Length:21
+Total Collsion Density:0.5
+Collsion Density per cell:183
+For File:0006CollisionDataSet5832000X2928000X21 Done!
+Counted Particles:5832000
+Counted Collisions:2928000
+Counted Sidelength:20
+Number of particles:5832000
+Total Collisions:333
+Total Particles in a cell:4381
+Side Length:18
+Total Collsion Density:0.5
+Collsion Density per cell:333
+For File:0007CollisionDataSet5832000X2917746X18 Done!
+Counted Particles:5832001
+Counted Collisions:2917746
+Counted Sidelength:17
+Number of particles:5832000
+Total Collisions:844
+Total Particles in a cell:1728
+Side Length:13
+Total Collsion Density:0.5
+Collsion Density per cell:844
+For File:0008CollisionDataSet5832000X2916864X13 Done!
+Counted Particles:5832000
+Counted Collisions:2916864
+Counted Sidelength:12
+Number of particles:5832000
+Total Collisions:3042
+Total Particles in a cell:479
+Side Length:9
+Total Collsion Density:0.5
+Collsion Density per cell:3042
+For File:0009CollisionDataSet5832000X2914236X9 Done!
+Counted Particles:5832001
+Counted Collisions:2914236
+Counted Sidelength:8
+Number of particles:5832000
+Total Collisions:24334
+Total Particles in a cell:59
+Side Length:5
+Total Collsion Density:0.5
+Collsion Density per cell:24334
+For File:0010CollisionDataSet5832000X2871412X5 Done!
+Counted Particles:5832001
+Counted Collisions:2871412
+Counted Sidelength:4
