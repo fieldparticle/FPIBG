@@ -39,100 +39,27 @@ int main() try
 {
 	
 	mout.Init("particle.log", "Particle");
-	/*if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS))
-	{
-		dwError = GetLastError();
-		if (ERROR_PROCESS_MODE_ALREADY_BACKGROUND == dwError)
-
-			mout << "Failed to enter background mode:" << uint32_t(dwError) << ende;
-		
-	}*/
-
 	ConfigObj* config = new ConfigObj;
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
 	config->Create("mps.cfg");
-	
-	
-	
-#if 1
-	if (config->m_StudyName.compare("Particle.cfg") == 0)
+	if (config->m_DoAuto == true)
 	{
-		
-		if (config->m_DoAuto == true)
-		{
-			config->m_TstFileVersion = 2;
-			config->m_TstFileMinorVersion = 3;
-			if (DoStudy(config))
-				return 1;
-		}
-		else
-		{
-			config->m_TstFileVersion = 2;
-			config->m_TstFileMinorVersion = 3;
-			config->GetParticleSettingsV2();
-			if (ParticleOnly(config))
-				return 1;
-		}
+		config->m_TstFileVersion = 2;
+		config->m_TstFileMinorVersion = 3;
+		if (DoStudy(config))
+			return 1;
 	}
 	else
-		if (config->m_StudyName.compare("ParticleDynamics.cfg") == 0)
-		{
-			#ifdef PARTICLE_BOUNDARY
-			config->m_TstFileVersion = 2;
-			config->m_TstFileMinorVersion = 1;
-			config->GetParticleSettingsV2();
-
-			if (ParticleBoundary(config))
-				return 1;
-			#endif
-			#ifdef PARTICLE_ONLY
-			config->m_TstFileVersion = 2;
-			config->m_TstFileMinorVersion = 1;
-			config->GetParticleSettingsV2();
-
-			if (ParticleOnly(config))
-				return 1;
-			#endif
-
-
-		}
-	else
-		if (config->m_StudyName.compare("ParticleDynamicsPipe.cfg") == 0)
-		{
-			#ifdef PARTICLE_BOUNDARY
-				config->m_TstFileVersion = 2;
-				config->GetParticleSettingsV2();
-				if (ParticleBoundary(config))
-					return 1;
-			#endif
-
-		}
-	else
-		if (config->m_StudyName.compare("ParticleDynamicsCDNoz.cfg") == 0)
-		{
-
-			config->m_TstFileVersion = 2;
-			config->m_TstFileMinorVersion = 2;
-			config->GetParticleSettingsV2();
-			#ifdef PARTICLE_BOUNDARY
-			if (ParticleBoundary(config))
-					return 1;
-			#endif
-			#ifdef PARTICLE_ONLY
-				if (ParticleOnly(config))
-					return 1;
-			#endif
-		}
-	else
 	{
-		
-		std::string err = "Unable to open Configuration File from mps.cfg :" + config->m_StudyName;
-		throw std::runtime_error(err.c_str());
+		config->m_TstFileVersion = 2;
+		config->m_TstFileMinorVersion = 3;
+		config->GetParticleSettingsV2();
+		if (ParticleOnly(config))
+			return 1;
 	}
-	
-#endif
+	return 0;
 }
 #if 1
 catch (const std::exception& e)

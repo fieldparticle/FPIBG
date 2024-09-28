@@ -48,29 +48,23 @@ void GenData(ConfigObj* configObj)
 	resourceVertexParticle->m_App = vulkanObj;
 	vulkanObj->m_CFG = configObj;
 	resourceVertexParticle->Create(0);
-	if (configObj->m_TestType == 1)
-	{
-		if (resourceVertexParticle->GenBenchSet() == 1)
-		{
-			resourceVertexParticle->DoMotionStudy();
+	
+	configObj->m_TestName = configObj->m_PQBTestName;
+	configObj->m_TestDir = configObj->m_PQBTestDir;
+	resourceVertexParticle->GenBenchSet();
+	resourceVertexParticle->ProcessPQB();
+	
+	configObj->m_TestName = configObj->m_PCDTestName;
+	configObj->m_TestDir = configObj->m_PCDTestDir;
+	resourceVertexParticle->GenBenchSet();
+	resourceVertexParticle->ProcessPCD();
 
+	configObj->m_TestName = configObj->m_CFBTestName;
+	configObj->m_TestDir = configObj->m_CFBTestDir;
+	resourceVertexParticle->ProcessCFB();
 
-		}
-		else
-			resourceVertexParticle->ProcessSet();
-	}
-
-	if (configObj->m_TestType == 2)
-	{
-		resourceVertexParticle->OpenParticleDataA003();
-	}
-
-	//Boundary
-	if (configObj->m_TestType == 3)
-	{
-		resourceVertexParticle->DoCubeBoundary();
-	}
-
+	
+	
 }
 int main() try
 {

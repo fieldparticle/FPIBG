@@ -1,14 +1,20 @@
-Starting AppWorking Directory :J:\RCCDV11\vulkan\run\GenBenchData
+Starting AppWorking Directory :J:\FPIBG\vulkan\run\GenBenchData
 Cfg:name is:GenDataSets
 Cfg:version is:9
-Cfg:application.testfile is:J:/RCCDData/perfdataStatic/ParticleSelectionsCellVPart.csv
-Cfg:application.testdir is:J:/RCCDData/perfdataP
-Cfg:application.dt is:0.001
+Cfg:application.PQB.testfile is:../../../../FPIBGDATA/ParticleSelectionsVolumeNoThreads.csv
+Cfg:application.PQB.testdir is:../../../../FPIBGDATA/perfdataPQB
+Cfg:application.CFB.testfile is:../../../../FPIBGDATA/ParticleSelectionsCellVPart.csv
+Cfg:application.CFB.testdir is:../../../../FPIBGDATA/perfdataCFB
+Cfg:application.PCD.testfile is:../../../../FPIBGDATA/ParticleSelectionsDensity.csv
+Cfg:application.PCD.testdir is:../../../../FPIBGDATA/perfdataPCD
 Cfg:name is:GenDataSets
 Cfg:version is:9
-Cfg:application.testfile is:J:/RCCDData/perfdataStatic/ParticleSelectionsCellVPart.csv
-Cfg:application.testdir is:J:/RCCDData/perfdataP
-Cfg:application.dt is:0.001
+Cfg:application.PQB.testfile is:../../../../FPIBGDATA/ParticleSelectionsVolumeNoThreads.csv
+Cfg:application.PQB.testdir is:../../../../FPIBGDATA/perfdataPQB
+Cfg:application.CFB.testfile is:../../../../FPIBGDATA/ParticleSelectionsCellVPart.csv
+Cfg:application.CFB.testdir is:../../../../FPIBGDATA/perfdataCFB
+Cfg:application.PCD.testfile is:../../../../FPIBGDATA/ParticleSelectionsDensity.csv
+Cfg:application.PCD.testdir is:../../../../FPIBGDATA/perfdataPCD
 Cfg:application.startSideLength is:90
 Cfg:application.tempHigh is:250
 Cfg:application.tempLow is:100
@@ -18,7 +24,6 @@ Cfg:application.cDensity is:0.5
 Cfg:application.popPerCell is:30
 Cfg:application.startRadius is:0.2
 Cfg:application.maxPopPerCell is:32
-Cfg:application.testType is:2
 Number of particles:5832000
 Total Collisions:2
 Total Particles in a cell:729000

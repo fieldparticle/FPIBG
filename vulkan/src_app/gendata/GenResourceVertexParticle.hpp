@@ -98,6 +98,21 @@ class GenResourceVertexParticle : public Resource
 		void WriteTstFile(uint32_t index, benchSetItem* bsi);
 		uint32_t CalcSideLength();
 		int GenBenchSet();
+		void ProcessPQB()
+		{
+			m_BenchSet.clear();
+			ProcessSet();
+		};
+		void ProcessPCD()
+		{	m_BenchSet.clear();
+			ProcessSet();
+		};
+
+		void ProcessCFB()
+		{
+			m_BenchSet.clear();
+			OpenParticleDataA003();
+		};
 		void ProcessSet();
 		void ProcessTestA001(benchSetItem* bsi);
 		void ProcessTestA002(benchSetItem* bsi);

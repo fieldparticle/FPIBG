@@ -10,7 +10,10 @@ del /S /Q vulkan\run\mmrtriangle\*.pdb
 del /S /Q vulkan\run\mmrtriangle\*.exe
 del /S /Q vulkan\run\ParticleOnly\*.pdb
 del /S /Q vulkan\run\ParticleOnly\*.exe
-rmdir /S /Q vulkan\make\ParticleOnly\ParticleOnly\x64
-rmdir /S /Q vulkan\make\ParticleOnly\ParticleOnly
+del /S /Q vulkan\run\ParticleOnly\*.spv
+del /S /Q vulkan\run\ParticleOnly\*.exp
+del /S /Q vulkan\run\ParticleOnly\*.lib
+del /S /Q vulkan\run\ParticleOnly\*.log
+rmdir /S /Q vulkan\make\ParticleOnly\x64
 rmdir /S /Q vulkan\make\ParticleOnly\.vs
 pause

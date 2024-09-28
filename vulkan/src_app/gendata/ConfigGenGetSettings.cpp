@@ -8,16 +8,21 @@ void ConfigObj::GetSettings()
 	m_Version = GetString("version", true);
 
 	//m_TestType = GetUInt("application.testType", true);
-	m_TestName = GetString("application.testfile", true);
-	m_TestDir = GetString("application.testdir", true);
-	m_dt		= GetFloat("application.dt", true);
-	
 
-	//GetParticleSettings();
+	m_PQBTestName = GetString("application.PQB.testfile", true);;
+	m_PQBTestDir = GetString("application.PQB.testdir", true);;
+
+	m_CFBTestName = GetString("application.CFB.testfile", true);;
+	m_CFBTestDir = GetString("application.CFB.testdir", true);;
+
+	m_PCDTestName = GetString("application.PCD.testfile", true);;
+	m_PCDTestDir = GetString("application.PCD.testdir", true);;
+
 
 }
 void ConfigObj::GetParticleSettings()
 {
+
 	m_startSideLength = GetUInt("application.startSideLength", true);
 	m_TempHigh = GetFloat("application.tempHigh", true);
 	m_TempLow  = GetFloat("application.tempLow", true);
@@ -27,7 +32,7 @@ void ConfigObj::GetParticleSettings()
 	m_PopPerCell = GetInt("application.popPerCell", true);
 	m_Radius = GetFloat("application.startRadius", true);
 	m_MaxPopPerCell = GetInt("application.maxPopPerCell", true);
-	m_TestType = GetInt("application.testType", true);
+	
 
 #if 0
 	m_AprFile = GetString("aprFile", true);

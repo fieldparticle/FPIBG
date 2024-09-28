@@ -57,11 +57,28 @@ public:
 	std::string					m_compSPVParticle;
 	std::string					m_glslc_path;
 
-	std::string					m_StudyName;
+	std::string					m_PQBTestName;
+	std::string					m_PQBTestDir;
+
+	std::string					m_CFBStudyName;
+	std::string					m_CFBTestName;
+	std::string					m_CFBTestDir;
+
+	std::string					m_PCDStudyName;
+	std::string					m_PCDTestName;
+	std::string					m_PCDTestDir;
+
 	std::string					m_TestName;
+	std::string					m_TestDir;
+	std::string					m_TestCFG;
+	std::string					m_testPQBDir;
+	std::string					m_testCFBDir;
+	std::string					m_testPCDDir;
+
 	std::string					m_Name;
 	uint32_t					m_View;
 	std::string					m_AppName;
+	std::string					m_StudyName;
 	std::string					m_Version;
 	std::string					m_Boundary;
 	std::string					m_SphereFile;
@@ -69,6 +86,7 @@ public:
 	std::string					m_CapFlName;
 	std::string					m_AprFile;
 	std::string					m_DataFile;
+	
 	uint32_t					m_CapFrmNum = 0;
 	uint32_t					m_CfgSidelen = 0;
 	float						m_PipeCenter = 0.0;
@@ -89,7 +107,7 @@ public:
 	uint32_t					m_TstFileVersion = 0;
 	uint32_t					m_TstFileMinorVersion = 0;
 	std::string					m_Compiler;
-	std::string					m_TestDir;
+	
 	std::string					m_Substance;
 	std::vector<const char*>	m_DeviceExtensions;
 	std::vector<const char*>	m_InstanceExtensions;
@@ -102,7 +120,6 @@ public:
 	uint32_t					m_PopPerCell = 0;
 	bool						m_CompileShaders = true;
 	uint32_t					m_StartFrame = 0;
-	uint32_t					m_TestType = 0;
 	bool						m_WireFlag = false;
 	bool						m_DoAuto = false;
 	uint32_t					m_AutoTimeOut = 0;

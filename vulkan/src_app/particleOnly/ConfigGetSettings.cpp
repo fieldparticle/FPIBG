@@ -41,18 +41,11 @@ void ConfigObj::GetSettings()
 	m_RequestedWidth = GetInt("application.window.size.w", true);
 	m_RequestedHeight = GetInt("application.window.size.h", true);
 	m_PhysDevice = GetString("application.phys_device", true);
-	m_Boundary = GetString("application.boundary01", true);
-	m_SphereFile = GetString("application.sphere", true);
-	m_WireFlag = GetBool("application.wireframeS", true);
 	m_dt = GetFloat("application.dt", true);
 	// Boundary kernels
 	//m_fragShaderSphere = GetString("application.frag_kernSphere", true);
 	//m_vertShaderSphere = GetString("application.vert_kernSphere", true);
 
-	m_fragShaderBoundary = GetString("application.frag_kernBoundary", true);
-	m_vertShaderBoundary = GetString("application.vert_kernBoundary", true);
-	m_fragSPVBoundary = GetString("application.frag_kernBoundaryspv", true);
-	m_vertSPVBoundary = GetString("application.vert_kernBoundaryspv", true);
 	m_glslc_path =  GetString("application.glslc_path", true); 
 
 	m_fragShaderParticle = GetString("application.frag_kernParticle", true);
@@ -61,7 +54,6 @@ void ConfigObj::GetSettings()
 	m_fragSPVParticle = GetString("application.frag_kernParticlespv", true);
 	m_vertSPVParticle = GetString("application.vert_kernParticlespv", true);
 	m_compSPVParticle = GetString("application.comp_kernParticlespv", true);
-	m_View = GetUInt("application.view", true);
 	m_FramesBuffered = GetUInt("application.framesBuffered", true);
 	m_AppName = GetString("name", true);
 	m_Version = GetString("version", true);
@@ -70,22 +62,33 @@ void ConfigObj::GetSettings()
 	m_CapFrmNum = GetInt("application.cap_num", true);
 	m_CapFrms = GetInt("application.cap_frames", true);
 	m_EndFrame = GetUInt("application.end_frame", true);
-	m_BoundaryFlag = GetBool("application.boundaryOnly", true);
 	m_DebugVerbose = GetBool("application.verbose_rpt", true);
 	m_Width = GetInt("application.window.size.w", true);
 	m_Height = GetInt("application.window.size.h", true);
-	m_BoundarySideLength = GetInt("application.boundarySideLength", true);
 	m_Stopondata = GetBool("application.stopondata", true);
 	m_DoAuto = GetBool("application.doAuto", true);
 	m_AutoTimeOut = GetUInt("application.doAutoWait", true);
-	m_StudyType = GetUInt("application.study_type", true);
+	m_TestName = GetString("application.testfile", true);
+	m_TestCFG = GetString("application.perfTest", true);
+	m_testPQBDir= GetString("application.testdirPQB", true);
+	m_testCFBDir= GetString("application.testdirCFB", true);
+	m_testPCDDir= GetString("application.testdirPCD", true);
+
+	if(m_TestCFG.compare("testdirPQB"))
+	{
+		m_TestDir = m_testPQBDir;
+	}
+	if(m_TestCFG.compare("testdirCFB"))
+	{
+		m_TestDir = m_testCFBDir;
+	}
+	if(m_TestCFG.compare("testdirPCD"))
+	{
+		m_TestDir = m_testPCDDir;
+	}
 	//m_TestNumber = GetInt("application.testNum", true)-1;
 	m_Compiler = GetString("application.compiler", true);
-	m_TestName = m_rccdrv+"/" + GetString("application.testfile", true);
-	m_TestDir = m_rccdrv+"/" + GetString("application.testdir", true);
-	m_NSight = GetBool("application.nsight", true);
 	m_NoCompute = GetBool("application.noCompute", true);
-	m_DoMotion = GetUInt("application.doMotion", true);
 	m_FramesBuffered = GetUInt("application.framesInFlight", true);
 	m_CompileShaders = GetBool("application.compileShaders", true);
 	m_reportCompFramesLessThan = GetInt("application.reportCompFramesLessThan", true);

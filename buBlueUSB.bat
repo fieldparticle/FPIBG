@@ -24,9 +24,9 @@ xcopy %target%\*.* %Datefolder% > %Datefolder%\buRpt%dtnm%.txt /S /V /R /F /Y /C
 
 start "C:\Program Files (x86)\Notepad++\notepad++.exe" %Datefolder%\buRpt%dtnm%.txt
 
-git add --all
-git commit -am %input%
-git pull main origin
-git config --list --show-origin
+rem git add --all
+rem git commit -am %input%
+rem git pull main origin
+rem git config --list --show-origin
 
 pause

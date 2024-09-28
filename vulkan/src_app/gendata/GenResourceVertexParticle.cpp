@@ -36,6 +36,7 @@
 
 void GenResourceVertexParticle::DoMotionStudy()
 {
+#if 0
 	bool wflg=true;
 	ConfigObj* cfg = (ConfigObj*)m_App->m_CFG;
 	uint32_t num = 1;
@@ -91,9 +92,11 @@ void GenResourceVertexParticle::DoMotionStudy()
 	CloseParticleData();
 
 	WriteTstFile(0, &m_BenchSet[0]);
+#endif
 }
 void GenResourceVertexParticle::ProcessSet()
 {
+	
 	//m_BenchSet.size()
 	for (uint32_t ii = 0; ii < m_BenchSet.size(); ii++)
 	{
@@ -186,6 +189,7 @@ uint32_t GenResourceVertexParticle::CalcSideLength()
 
 void GenResourceVertexParticle::OpenParticleDataA003()
 {
+	m_SideLengths.clear();	
 	ConfigObj* cfg = (ConfigObj*)m_App->m_CFG;
 	m_Cdensity = cfg->m_CDensity;
 	m_Radius = cfg->m_Radius;

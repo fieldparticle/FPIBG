@@ -133,9 +133,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\run\mps\particleInCube.cfg">
-      <Filter>ConfigFiles</Filter>
-    </None>
     <None Include="..\..\run\ParticleOnly\shaders\atomicg.glsl">
       <Filter>shaders</Filter>
     </None>
@@ -191,6 +188,9 @@
   <ItemGroup>
     <Text Include="..\..\run\ParticleOnly\mps.log">
       <Filter>shaders</Filter>
+    </Text>
+    <Text Include="..\..\run\GenBenchData\GenDataSets.cfg">
+      <Filter>ConfigFiles</Filter>
     </Text>
   </ItemGroup>
 </Project>

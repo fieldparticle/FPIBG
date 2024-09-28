@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\..\..\..\RCCD3rdPty\shaderc-main\third_party\glslang;../../../../RCCD3rdPty/glfw-master/include/;..\..\..\..\RCCD3rdPty\glfw-master\include;..\..\..\..\RCCD3rdPty\VMA\include;..\..\..\..\RCCD3rdPty\tinyobjloader-release;..\..\src_app;..\..\src;..\..\..\..\RCCD3rdPty\stb-master;..\..\src_app\ParticleWBoundary;..\..\..\..\RCCD3rdPty\shaderc-main\libshaderc_util\include;..\..\..\..\RCCD3rdPty\shaderc-main\glslc\src;..\..\..\..\RCCD3rdPty\shaderc-main\libshaderc\include;..\..\..\..\RCCD3rdPty\shaderc-main\third_party\SPIRV-Tools\include;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc;..\..\..\..\RCCD3rdPty\shaderc-main;..\..\..\..\RCCD3rdPty\VulkanSDK\Include;..\..\..\..\RCCD3rdPty\glm-master;..\..\src\libconfig;$(VK_SDK_PATH)\include;$(IncludePath)</IncludePath>
-    <OutDir>..\..\run\GenBenchData</OutDir>
+    <OutDir>..\..\run\GenBenchData\</OutDir>
     <LibraryPath>..\..\..\..\Vulkan3rdpty\VulkanSDK\Lib;..\..\..\..\Vulkan3rdpty\glfw-3.3.8.bin.WIN64\lib-vc2022;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -218,9 +218,9 @@
     <ClCompile Include="..\..\src_app\gendata\GenResourceVertexParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\run\mps\particleInCube.cfg">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </None>
+    <Text Include="..\..\run\GenBenchData\GenDataSets.cfg">
+      <FileType>Document</FileType>
+    </Text>
     <None Include="..\..\run\ParticleOnly\ParticleOnly.cfg" />
     <None Include="..\..\run\ParticleOnly\shaders\atomicg.glsl" />
     <None Include="..\..\run\ParticleOnly\shaders\CalcParticleCollision.glsl" />

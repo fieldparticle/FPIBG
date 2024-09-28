@@ -19,6 +19,9 @@
     <Filter Include="glslang_custom">
       <UniqueIdentifier>{a26747ef-9ab1-4a1d-bea1-0f35d2a9a9d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ConfigFiles">
+      <UniqueIdentifier>{93b4bd20-702d-4db5-b64a-7002829a4699}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\libconfig\grammar.h">
@@ -419,6 +422,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\run\particle\Particle.cfg" />
+    <None Include="..\..\run\particleOnly\mps.cfg">
+      <Filter>ConfigFiles</Filter>
+    </None>
+    <None Include="..\..\run\particleOnly\Particle.cfg">
+      <Filter>ConfigFiles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\run\ParticleOnly\mps.log">

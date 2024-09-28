@@ -101,7 +101,8 @@ void VulkanObj::CleanAll()
 
 void VulkanObj::Cleanup() 
 {
-	if (!m_vmaAllocator->m_Pools.IsEmpty())
+#if 0
+	if (!m_vmaAllocator->)
 	{
 
 		std::ostringstream  objtxt;
@@ -109,7 +110,7 @@ void VulkanObj::Cleanup()
 			 std::ends;
 		throw std::runtime_error(objtxt.str());
 	}
-
+#endif
 	vmaDestroyAllocator(m_vmaAllocator);
 	
 	
