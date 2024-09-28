@@ -27,7 +27,7 @@ The stepwise process for using the software is as follows:
 	<rootdir>/FPIBG3rdPty
 
 	3rd Party Installation instructions can be found here:
-	[Install Third Party Dependencies](installREADME.md)
+	[Install Third Party Dependencies](InstallREADME.md)
 
 3. Follow the directions for dowloading 3rd party dependencies in the ReadMe.md located in 
 	<rootdir>/FPIBG/vulkan directory.
