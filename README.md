@@ -53,7 +53,8 @@ The stepwise process for using the software is as follows:
 8. Run PerformanceData.exe on the debug data which will verify the number of particles, threads, and collsions.
 	If there are problems the application will alert you and stop. Ascertian what went wrong and run until all data sets are verifgied.
 
-9. Run particleOnly.exe in release mode for the performance process. Three data sets will be created labelled as release.
+9. Run particleOnly.exe in release mode for the performance process. 
+Three data sets will be created labelled as release.
 
 [Run Performance](PerformanceAppREADME.md)
 
