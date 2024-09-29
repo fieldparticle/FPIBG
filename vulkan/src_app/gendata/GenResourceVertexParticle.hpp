@@ -100,17 +100,19 @@ class GenResourceVertexParticle : public Resource
 		int GenBenchSet();
 		void ProcessPQB()
 		{
-			m_BenchSet.clear();
+			
 			ProcessSet();
+			m_BenchSet.clear();
 		};
 		void ProcessPCD()
-		{	m_BenchSet.clear();
+		{
 			ProcessSet();
+			m_BenchSet.clear();
 		};
 
 		void ProcessCFB()
 		{
-			m_BenchSet.clear();
+		
 			OpenParticleDataA003();
 		};
 		void ProcessSet();

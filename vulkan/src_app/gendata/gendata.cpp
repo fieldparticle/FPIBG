@@ -30,7 +30,7 @@
 %*
 %******************************************************************/
 #include "VulkanObj/VulkanApp.hpp"
-#include "csv.hpp"
+#include "csv/csv.hpp"
 
 MsgStream			mout;
 #include "gendata/GenResourceVertexParticle.hpp"
@@ -50,17 +50,20 @@ void GenData(ConfigObj* configObj)
 	resourceVertexParticle->Create(0);
 	
 	configObj->m_TestName = configObj->m_PQBTestName;
+	std::cout << "Processing PQB Benchfile:" << configObj->m_TestName << std::endl;
 	configObj->m_TestDir = configObj->m_PQBTestDir;
 	resourceVertexParticle->GenBenchSet();
 	resourceVertexParticle->ProcessPQB();
 	
 	configObj->m_TestName = configObj->m_PCDTestName;
 	configObj->m_TestDir = configObj->m_PCDTestDir;
+	std::cout << "Processing PCD Benchfile:" << configObj->m_TestName << std::endl;
 	resourceVertexParticle->GenBenchSet();
 	resourceVertexParticle->ProcessPCD();
 
 	configObj->m_TestName = configObj->m_CFBTestName;
 	configObj->m_TestDir = configObj->m_CFBTestDir;
+	std::cout << "Processing CFB Benchfile:" << configObj->m_TestName << std::endl;
 	resourceVertexParticle->ProcessCFB();
 
 	

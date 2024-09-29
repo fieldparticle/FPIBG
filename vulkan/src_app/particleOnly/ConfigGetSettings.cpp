@@ -42,12 +42,6 @@ void ConfigObj::GetSettings()
 	m_RequestedHeight = GetInt("application.window.size.h", true);
 	m_PhysDevice = GetString("application.phys_device", true);
 	m_dt = GetFloat("application.dt", true);
-	// Boundary kernels
-	//m_fragShaderSphere = GetString("application.frag_kernSphere", true);
-	//m_vertShaderSphere = GetString("application.vert_kernSphere", true);
-
-	m_glslc_path =  GetString("application.glslc_path", true); 
-
 	m_fragShaderParticle = GetString("application.frag_kernParticle", true);
 	m_vertShaderParticle = GetString("application.vert_kernParticle", true);
 	m_compShaderParticle = GetString("application.comp_kernParticle", true);
@@ -74,20 +68,19 @@ void ConfigObj::GetSettings()
 	m_testCFBDir= GetString("application.testdirCFB", true);
 	m_testPCDDir= GetString("application.testdirPCD", true);
 
-	if(m_TestCFG.compare("testdirPQB"))
+	if(!m_TestCFG.compare("testdirPQB"))
 	{
 		m_TestDir = m_testPQBDir;
 	}
-	if(m_TestCFG.compare("testdirCFB"))
+	if(!m_TestCFG.compare("testdirCFB"))
 	{
 		m_TestDir = m_testCFBDir;
 	}
-	if(m_TestCFG.compare("testdirPCD"))
+	if(!m_TestCFG.compare("testdirPCD"))
 	{
 		m_TestDir = m_testPCDDir;
 	}
 	//m_TestNumber = GetInt("application.testNum", true)-1;
-	m_Compiler = GetString("application.compiler", true);
 	m_NoCompute = GetBool("application.noCompute", true);
 	m_FramesBuffered = GetUInt("application.framesInFlight", true);
 	m_CompileShaders = GetBool("application.compileShaders", true);

@@ -79,11 +79,11 @@
     <IncludePath>..\..\..\..\FPIBG3rdPty\shaderc\third_party\glslang;../../../../FPIBG3rdPty/glfw/include/;..\..\..\..\FPIBG3rdPty\VMA\include;..\..\..\..\FPIBG3rdPty\tinyobjloader-release;..\..\src_app;..\..\src;..\..\..\..\FPIBG3rdPty\stb;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc_util\include;..\..\..\..\FPIBG3rdPty\shaderc\glslc\src;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc\include;..\..\..\..\FPIBG3rdPty\shaderc\third_party\SPIRV-Tools\include;..\..\..\..\FPIBG3rdPty\shaderc\build_vcc;..\..\..\..\FPIBG3rdPty\shaderc;..\..\..\..\FPIBG3rdPty\VulkanSDK\Include;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc_util;..\..\..\..\FPIBG3rdPty\glm;..\..\src\libconfig;$(VK_SDK_PATH)\include;$(IncludePath)</IncludePath>
     <OutDir>..\..\run\ParticleOnly\</OutDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <TargetName>ParticleD.exe</TargetName>
+    <TargetName>ParticleD</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>..\..\..\..\RCCD3rdPty\shaderc-main\third_party\glslang;../../../../RCCD3rdPty/glfw-master/include/;..\..\..\..\RCCD3rdPty\glfw-master\include;..\..\..\..\RCCD3rdPty\VMA\include;..\..\..\..\RCCD3rdPty\tinyobjloader-release;..\..\src_app;..\..\src;..\..\..\..\RCCD3rdPty\stb-master;..\..\src_app\ParticleWBoundary;..\..\..\..\RCCD3rdPty\shaderc-main\libshaderc_util\include;..\..\..\..\RCCD3rdPty\shaderc-main\glslc\src;..\..\..\..\RCCD3rdPty\shaderc-main\libshaderc\include;..\..\..\..\RCCD3rdPty\shaderc-main\third_party\SPIRV-Tools\include;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc;..\..\..\..\RCCD3rdPty\shaderc-main;..\..\..\..\RCCD3rdPty\VulkanSDK\Include;..\..\..\..\RCCD3rdPty\glm-master;..\..\src\libconfig;$(VK_SDK_PATH)\include;$(IncludePath)</IncludePath>
-    <OutDir>..\..\run\Particle\</OutDir>
+    <OutDir>..\..\run\ParticleOnly\</OutDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <TargetName>ParticleR</TargetName>
   </PropertyGroup>

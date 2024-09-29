@@ -24,6 +24,76 @@ Cfg:application.cDensity is:0.5
 Cfg:application.popPerCell is:30
 Cfg:application.startRadius is:0.2
 Cfg:application.maxPopPerCell is:32
+Number of particles:32
+Total Collisions:2
+Total Particles in a cell:4
+Side Length:3
+Total Collsion Density:0.5
+Collsion Density per cell:2
+For File:0000CollisionDataSet32X16X3 Done!
+Counted Particles:32
+Counted Collisions:16
+Counted Sidelength:2
+Number of particles:82944
+Total Collisions:2
+Total Particles in a cell:10368
+Side Length:23
+Total Collsion Density:0.5
+Collsion Density per cell:2
+For File:0001CollisionDataSet82944X41472X23 Done!
+Counted Particles:82944
+Counted Collisions:41472
+Counted Sidelength:22
+Number of particles:115712
+Total Collisions:2
+Total Particles in a cell:14464
+Side Length:26
+Total Collsion Density:0.5
+Collsion Density per cell:2
+For File:0002CollisionDataSet115712X57856X26 Done!
+Counted Particles:115712
+Counted Collisions:57856
+Counted Sidelength:25
+Number of particles:443392
+Total Collisions:0
+Total Particles in a cell:6928
+Side Length:21
+Total Collsion Density:0
+Collsion Density per cell:0
+For File:0000CollisionDataSet443392X0X21 Done!
+Counted Particles:443392
+Counted Collisions:0
+Counted Sidelength:20
+Number of particles:443392
+Total Collisions:2
+Total Particles in a cell:6928
+Side Length:21
+Total Collsion Density:0.05
+Collsion Density per cell:2
+For File:0001CollisionDataSet443392X27712X21 Done!
+Counted Particles:443392
+Counted Collisions:27712
+Counted Sidelength:20
+Number of particles:443392
+Total Collisions:4
+Total Particles in a cell:6928
+Side Length:21
+Total Collsion Density:0.1
+Collsion Density per cell:4
+For File:0002CollisionDataSet443392X55424X21 Done!
+Counted Particles:443392
+Counted Collisions:55424
+Counted Sidelength:20
+Number of particles:443392
+Total Collisions:5
+Total Particles in a cell:6928
+Side Length:21
+Total Collsion Density:0.15
+Collsion Density per cell:5
+For File:0003CollisionDataSet443392X69280X21 Done!
+Counted Particles:443392
+Counted Collisions:69280
+Counted Sidelength:20
 Number of particles:5832000
 Total Collisions:2
 Total Particles in a cell:729000

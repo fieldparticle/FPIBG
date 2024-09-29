@@ -78,7 +78,7 @@ void Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContain
 					<< VulkanWin->m_SideLength << ","								// sidelen
 					<< cfg->m_density << ","										// density
 					<< partErr << ","
-					<< colErr << ","
+					<< colErr 
 					<< std::endl;
 #ifndef NDEBUG
 				if(VulkanWin->m_ReportBuffer[ii].NumParticlesComputeCount != VulkanWin->m_Numparticles-1)
@@ -102,9 +102,6 @@ void Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContain
 #endif
 
 		}
-		ostrm << "Total,"
-			<< totFps / 60.0 << ","
-			<< totTime / 60.0 << ", , , , , ," << std::endl;
 		ostrm.flush();
 		ostrm.close();
 
