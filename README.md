@@ -48,7 +48,7 @@ The stepwise process for using the software is as follows:
 
 	Verification and Performance Instruction can be found here:
 
-[Run Verification](VerifyAppREADME.md)
+[Run Verification](VerifyAppREADME.md) **Link does not work for some reason - open VerifyAppREADME.md**
 
 8. Run PerformanceData.exe on the debug data which will verify the number of particles, threads, and collsions.
 	If there are problems the application will alert you and stop. Ascertian what went wrong and run until all data sets are verifgied.
