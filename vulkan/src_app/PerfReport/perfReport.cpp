@@ -53,6 +53,22 @@ void GenData(ConfigObj* configObj)
 	po->ProcessFileList();
 	po->ProcessResultsData();
 
+	po->SetTest(1,2);
+	configObj->m_TestName = configObj->m_PCDTestName;
+	configObj->m_TestDir = configObj->m_PCDTestDir;
+	po->OpenPerfData();
+	po->ProcessFileList();
+	po->ProcessResultsData();
+
+	po->SetTest(1,3);
+	configObj->m_TestName = configObj->m_CFBTestName;
+	configObj->m_TestDir = configObj->m_CFBTestDir;
+	po->OpenPerfData();
+	po->ProcessFileList();
+	po->ProcessResultsData();
+	
+
+	// Run release 
 	po->SetTest(2,1);
 	configObj->m_TestName = configObj->m_PQBTestName;
 	configObj->m_TestDir = configObj->m_PQBTestDir;
@@ -60,19 +76,19 @@ void GenData(ConfigObj* configObj)
 	po->ProcessFileList();
 	po->ProcessResultsData();
 	
-#if 0
+	po->SetTest(2,2);
 	configObj->m_TestName = configObj->m_PCDTestName;
 	configObj->m_TestDir = configObj->m_PCDTestDir;
-	po->SetTest(1,2);
 	po->OpenPerfData();
-	//po->ProcessPCD();
-
+	po->ProcessFileList();
+	po->ProcessResultsData();
+		
+	po->SetTest(2,3);
 	configObj->m_TestName = configObj->m_CFBTestName;
 	configObj->m_TestDir = configObj->m_CFBTestDir;
-	po->SetTest(1,3);
 	po->OpenPerfData();
-#endif
-	
+	po->ProcessFileList();
+	po->ProcessResultsData();
 	
 }
 
@@ -147,10 +163,15 @@ void perfObj::ProcessFileList()
 		// The genrating file uses the whole directoy eith drive.
 		m_TestPair[ii].tstData.m_AprFile =  m_co->GetString("aprFile", true);
 		if(m_testType == 1)
+		{
 			m_TestPair[ii].tstData.m_AprFile = m_TestPair[ii].tstData.m_AprFile + "D.csv";
+			mout << "Verifying " << m_TestPair[ii].tstData.m_AprFile << ende;
+		}
 		if(m_testType == 2)
+		{
 			m_TestPair[ii].tstData.m_AprFile = m_TestPair[ii].tstData.m_AprFile + "R.csv";
-
+			mout << "Performance analysis on " << m_TestPair[ii].tstData.m_AprFile << ende;
+		}
 		m_TestPair[ii].tstData.m_AprFile = m_TestPair[ii].tstData.m_AprFile;
 		m_TestPair[ii].tstData.m_DataFile = m_co->GetString("dataFile", true);
 		//m_TestPair[ii].tstData.m_CfgSidelen = m_co->GetUInt("Sidelen", true);
@@ -178,11 +199,11 @@ void perfObj::ProcessResultsData()
 		
 		std::string fileName;
 		if(m_test == 1)
-			fileName = cfg->m_PQBTestDir + "/PQBReport.csv";
+			fileName = cfg->m_TestDir + "/PQBReport.csv";
 		if(m_test == 2)
-			fileName = cfg->m_PQBTestDir + "/PCDReport.csv"; 
-		if(m_test == 2)
-			fileName = cfg->m_PQBTestDir + "/CFDReport.csv"; 
+			fileName = cfg->m_TestDir + "/PCDReport.csv"; 
+		if(m_test == 3)
+			fileName = cfg->m_TestDir + "/CFBReport.csv"; 
 
 		dataFile.open(fileName);
 		if (!dataFile.is_open())
@@ -190,7 +211,7 @@ void perfObj::ProcessResultsData()
 			std::string err = "Cannot open report data file::" + fileName;
 			throw std::runtime_error(err.c_str());
 		}
-		dataFile << "file,avgfps,avgcpums,avgcms,avggms,minfps,mincpums,mincms,mingms,maxfps,maxcpums,maxcms,maxgms" << std::endl;
+		dataFile << "file,numparticles,numcollsions,avgfps,avgcpums,avgcms,avggms,minfps,mincpums,mincms,mingms,maxfps,maxcpums,maxcms,maxgms" << std::endl;
 	}
 	for(int ii = 0; ii< m_TestPair.size(); ii++)
 	{
@@ -290,7 +311,9 @@ void perfObj::PerformanceReport(size_t itNum)
 	agms= tgms/counter;
 
 	
-	dataFile << m_TestPair[itNum].testFile << "," << afps << "," << acpums << "," << acms << "," << agms << 
+	dataFile << m_TestPair[itNum].testFile << "," << m_TestPair[itNum].tstData.m_partcount 
+				<< "," << m_TestPair[itNum].tstData.m_colcount
+				<< "," << afps << "," << acpums << "," << acms << "," << agms << 
 				"," << minfps << "," << mincpums << "," << mincms << "," << mingms << 
 				"," << maxfps << "," << maxcpums << "," << maxcms << "," << maxgms << std::endl;
 	
@@ -304,59 +327,78 @@ void perfObj::PerformDebugTests(size_t itNum)
 	
 		if(m_TestPair[itNum].resultData[rloc].expectedp != m_TestPair[itNum].resultData[rloc].loadedp)
 		{
+			objtxt.clear();
 			 objtxt << m_testName << " " << m_TestPair[itNum].testFile 
 				 << " Expected Number of particles:" 
 				<< m_TestPair[itNum].resultData[rloc].expectedp
 				<< " Not euqal to loaded number of particles:"
-				<< m_TestPair[itNum].resultData[rloc].loadedp
-				<< std::endl;
+				<< m_TestPair[itNum].resultData[rloc].loadedp << '\0';
 
 			mout << objtxt.str().c_str() << ende;
 			//throw std::runtime_error(objtxt.str());
 		}
 		if(m_TestPair[itNum].resultData[rloc].expectedp != m_TestPair[itNum].resultData[rloc].shaderp_comp)
 		{
+			objtxt.clear();
 			objtxt << m_testName << " " << m_TestPair[itNum].testFile 
 				<< " Expected Number of particles:" 
 				<< m_TestPair[itNum].resultData[rloc].expectedp
 				<< " Not equal to particles counted by compute:"
-				<< m_TestPair[itNum].resultData[rloc].shaderp_comp
-				<< std::endl;
+				<< m_TestPair[itNum].resultData[rloc].shaderp_comp << '\0';;
+				
 			mout << objtxt.str().c_str() << ende;
 			//throw std::runtime_error(objtxt.str());
 		}
 		if(m_TestPair[itNum].resultData[rloc].expectedp != m_TestPair[itNum].resultData[rloc].shaderp_grph)
 		{
+			objtxt.clear();
 			objtxt << m_testName << " " << m_TestPair[itNum].testFile 
 				<< " Expected Number of particles:" 
 				<< m_TestPair[itNum].resultData[rloc].expectedp
 				<< " Not equal to particles counted by vertex:"
-				<< m_TestPair[itNum].resultData[rloc].shaderp_grph
-				<< std::endl;
+				<< m_TestPair[itNum].resultData[rloc].shaderp_grph << '\0';
+				
 			mout << objtxt.str().c_str() << ende;
 			//throw std::runtime_error(objtxt.str());
 		}
 		if(m_TestPair[itNum].resultData[rloc].expectedc != m_TestPair[itNum].resultData[rloc].shaderc)
 		{
+			objtxt.clear();
 			objtxt << m_testName << " " << m_TestPair[itNum].testFile 
 				<< " Expected Number of collisions:" 
 				<< m_TestPair[itNum].resultData[rloc].expectedc
 				<< " Not equal to collisions counted by compute:"
-				<< m_TestPair[itNum].resultData[rloc].shaderc
-				<< std::endl;
+				<< m_TestPair[itNum].resultData[rloc].shaderc << '\0';;
+				
 			mout << objtxt.str().c_str() << ende;
 			//throw std::runtime_error(objtxt.str());
 		}
 	}
 }
-
+#include <cstring>
+#include <iostream>
 void perfObj::GetResultsData(size_t itNum)
 {
 	int ret = 0;
+#if 0
+	std::ofstream dataFile;
+	dataFile.open(m_TestPair[itNum].tstData.m_AprFile);
+	if (!dataFile.is_open())
+	{
+		if(std::strstr(m_TestPair[itNum].tstData.m_AprFile.c_str(), "R.csv"))
+		{
+			std::ostringstream  objtxt;
+			objtxt << "Report file not found - this is normal if you have not run the release version. File:" 
+				<< m_TestPair[itNum].tstData.m_AprFile.c_str() << std::ends;
+			throw std::runtime_error(objtxt.str());
+		}
+	}
+	dataFile.close();
+#endif
 	io::CSVReader<16> in(m_TestPair[itNum].tstData.m_AprFile);
 	in.read_header(io::ignore_extra_column, "time", "fps", "cpums", "cms", "gms", "expectedp", "loadedp", 
 		"shaderp_comp", "shaderp_grph","expectedc","shaderc","threadcount","sidelen","density","PERR","CERR");
-	
+
 	float atime;
 	float fps;
 	float cpums;

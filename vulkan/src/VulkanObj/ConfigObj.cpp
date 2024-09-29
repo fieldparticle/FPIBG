@@ -31,12 +31,16 @@
 %******************************************************************/
 #include "libconfig.h"
 #include "VulkanObj/VulkanApp.hpp"
-
+//#define DEBUG_LIBC
 int ConfigObj::GetInt(std::string lookup, bool failFlag)
 {
 	int int_temp = 0;
 	if (config_lookup_int(&m_cfg, lookup.c_str(), &int_temp))
+	{
+		#ifdef DEBUG_LIBC
 		mout << "Cfg:" << lookup << " is:" << int_temp << ende;
+		#endif
+	}
 	else if (failFlag == true)
 	{
 		
@@ -50,7 +54,11 @@ uint32_t ConfigObj::GetUInt(std::string lookup, bool failFlag)
 {
 
 	if (config_lookup_int(&m_cfg, lookup.c_str(), &int_temp))
+	{
+		#ifdef DEBUG_LIBC
 		mout << "Cfg:" << lookup << " is:" << int_temp << ende;
+		#endif
+	}
 	else if (failFlag == true)
 	{
 		
@@ -64,7 +72,11 @@ const char* ConfigObj::GetString(std::string lookup, bool failFlag)
 
 	
 	if (config_lookup_string(&m_cfg, lookup.c_str(), &str_temp))
+	{
+		#ifdef DEBUG_LIBC
 		mout << "Cfg:" << lookup << " is:" << str_temp << ende;
+		#endif
+	}
 	else if (failFlag == true)
 	{
 		std::string err = "GetString - Unable to find:" + lookup ;
@@ -77,7 +89,11 @@ bool ConfigObj::GetBool(std::string lookup, bool failFlag)
 {
 
 	if (config_lookup_bool(&m_cfg, lookup.c_str(), &int_temp))
+	{
+		#ifdef DEBUG_LIBC
 		mout << "Cfg:" << lookup << " is:" << int_temp << ende;
+		#endif
+	}
 	else if (failFlag == true)
 	{
 		
@@ -90,7 +106,11 @@ float ConfigObj::GetFloat(std::string lookup, bool failFlag)
 {
 
 	if (config_lookup_float(&m_cfg, lookup.c_str(), &float_temp))
+	{
+		#ifdef DEBUG_LIBC
 		mout << "Cfg:" << lookup << " is:" << float_temp << ende;
+		#endif
+	}
 	else if (failFlag == true)
 	{
 		
@@ -237,7 +257,9 @@ void ConfigObj::GetArrayElementFloats(config_setting_t* setting, std::string Nam
 		for (uint32_t j = 0; j < ccount && j < Max; j++)
 		{
 			float_temp = (config_setting_get_float_elem(cary, j));
+			#ifdef DEBUG_LIBC
 			mout << "Cfg:" << lookup << " is:" << float_temp << ende;
+			#endif	
 			Ary[j] = static_cast<float>(float_temp);
 		}
 
@@ -248,7 +270,9 @@ const char* ConfigObj::GetArrayElementString(config_setting_t* setting, int inde
 {
 
 	str_temp = config_setting_get_string_elem(setting, index);
+	#ifdef DEBUG_LIBC
 	mout << "Cfg:" << lookup << " is:" << str_temp << ende;
+	#endif
 	return str_temp;
 }
 

@@ -31,7 +31,7 @@
 
 #ifndef CSV_H
 #define CSV_H
-
+#include <sstream>
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -312,7 +312,13 @@ private:
       error::can_not_open_file err;
       err.set_errno(x);
       err.set_file_name(file_name);
-      throw err;
+      
+        std::ostringstream  objtxt;
+        objtxt << "Cannot open csv file:" << file_name << " Error #" << x << std::ends;
+        throw std::runtime_error(objtxt.str());
+
+    
+      //throw err;
     }
     return std::unique_ptr<ByteSourceBase>(
         new detail::OwningStdIOByteSourceBase(file));
@@ -450,7 +456,8 @@ public:
       error::line_length_limit_exceeded err;
       err.set_file_name(file_name);
       err.set_file_line(file_line);
-      throw err;
+      throw std::runtime_error(err.error_message_buffer);
+      //throw err;
     }
 
     if (line_end != data_end && buffer[line_end] == '\n') {
@@ -726,6 +733,7 @@ template <char sep, char quote> struct double_quote_escape {
           while (*col_begin != quote) {
             if (*col_begin == '\0')
               throw error::escaped_string_not_closed();
+              
             ++col_begin;
           }
           ++col_begin;
@@ -818,7 +826,8 @@ void parse_line(char *line, char **sorted_col,
     }
   }
   if (line != nullptr)
-    throw ::io::error::too_many_columns();
+      throw std::runtime_error("CSV processing file : Too many columns");
+    //throw ::io::error::too_many_columns();
 }
 
 template <unsigned column_count, class trim_policy, class quote_policy>

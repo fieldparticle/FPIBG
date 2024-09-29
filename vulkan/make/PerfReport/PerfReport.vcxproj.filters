@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="logFile">
+      <UniqueIdentifier>{b4870170-4a92-438f-bb7c-f860f9fd445b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ConfigFile">
+      <UniqueIdentifier>{6aba2da5-7226-4630-83bd-7f1d29738fdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_app\PerfReport\perfReport.cpp">
@@ -89,6 +95,9 @@
     <ClInclude Include="..\..\src_app\PerfReport\perfObj.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\csv\csv.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\libconfig\grammar.y">
@@ -97,5 +106,13 @@
     <None Include="..\..\src\libconfig\scanner.l">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="..\..\run\PerfReport\perfReport.cfg">
+      <Filter>ConfigFile</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\run\PerfReport\perfReport.log">
+      <Filter>logFile</Filter>
+    </Text>
   </ItemGroup>
 </Project>

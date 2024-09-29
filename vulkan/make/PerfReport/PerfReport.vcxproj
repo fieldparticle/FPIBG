@@ -147,6 +147,7 @@
     <ClCompile Include="..\..\src_app\PerfReport\perfReport.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\csv\csv.hpp" />
     <ClInclude Include="..\..\src\libconfig\grammar.h" />
     <ClInclude Include="..\..\src\libconfig\libconfig.h" />
     <ClInclude Include="..\..\src\libconfig\parsectx.h" />
@@ -161,8 +162,12 @@
     <ClInclude Include="..\..\src_app\PerfReport\perfObj.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\run\PerfReport\perfReport.cfg" />
     <None Include="..\..\src\libconfig\grammar.y" />
     <None Include="..\..\src\libconfig\scanner.l" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\run\PerfReport\perfReport.log" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
