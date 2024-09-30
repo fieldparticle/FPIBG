@@ -18,6 +18,8 @@ void ConfigObj::GetSettings()
 	m_PCDTestName = GetString("application.PCD.testfile", true);;
 	m_PCDTestDir = GetString("application.PCD.testdir", true);;
 
+	m_MMRRTestName = GetString("application.MMRR.testfile", true);;
+	m_MMRRTestDir = GetString("application.MMRR.testdir", true);;
 
 }
 void ConfigObj::GetParticleSettings()

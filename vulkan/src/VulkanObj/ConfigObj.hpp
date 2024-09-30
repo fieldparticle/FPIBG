@@ -68,6 +68,10 @@ public:
 	std::string					m_PCDTestName;
 	std::string					m_PCDTestDir;
 
+	std::string					m_MMRRStudyName;
+	std::string					m_MMRRTestName;
+	std::string					m_MMRRTestDir;
+
 	std::string					m_TestName;
 	std::string					m_TestDir;
 	std::string					m_TestCFG;

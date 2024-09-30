@@ -11,7 +11,7 @@ Unzip in FPIBG3rdPty as FPIBG3rdPty/VMA (Chnage the full name to VMA)
 
 Get it here as zip: https://github.com/google/shaderc
 
-	It does not need to be compiled.
+**It does not need to be compiled.**
 
 1. Download Open G/L Window library (glfw)
 
@@ -22,11 +22,11 @@ Get it here : https://www.glfw.org/
 
 1.A. Using the cmake gui set "where is the source code" to:
 	
-	FPIBG3rdPty/glfw
+	`FPIBG3rdPty/glfw`
     
 in "Where to build the libraries" set this to:
 	
-	FPIBG3rdPty/glfw/build
+	`FPIBG3rdPty/glfw/build`
 
 Then press "Configure" until there are no red colored lines 
 
@@ -36,7 +36,7 @@ Then press "Open Project" which should open Visual C++
 
 Or, navigate to 
 
-	FPIBG3rdPty/glfw/build 
+	`FPIBG3rdPty/glfw/build`
 	
 and open GLFW.sln.
 
@@ -46,13 +46,13 @@ elect "Release" Version and build.
 
 NOTE: The application looks for glfw3.lib. If it is a newer version then change 
 
-VisualC++->Properties->Linker->J:\FPIBG3rdPty\glfw\build\src\Debug\glfw3.lib 
+`VisualC++->Properties->Linker->J:\FPIBG3rdPty\glfw\build\src\Debug\glfw3.lib` 
 
 to the glfw version.
 
 NOTE: If you get undefined errors go to the glfw project and make sure this is set
 	
-	VisualC++->Properties->C/C++/Code Generation/Multi-Threaded Debug (/MTd)
+	`VisualC++->Properties->C/C++/Code Generation/Multi-Threaded Debug (/MTd)`
 
 
 2. Open G/L Math library (glm)
@@ -76,11 +76,11 @@ Get it here as zip: https://github.com/google/shaderc
 
 2. Download google test and install in: 
 
-	FPIBG3rdPty/shaderc/third_party
+	`FPIBG3rdPty/shaderc/third_party`
 
 as 
 
-	FPIBG3rdPty/shaderc/third_party/googletest
+	`FPIBG3rdPty/shaderc/third_party/googletest`
 
 Get it here as zip: https://github.com/google/googletest
 
@@ -104,53 +104,53 @@ Get it here as zip: https://github.com/google/googletest
 
 3. Download SPRIV-Tools 
     
-	PIBG3rdPty/shaderc/third_party/
+	`PIBG3rdPty/shaderc/third_party/`
 
     as 
 
-	FPIBG3rdPty/shaderc/third_party/SPIRV-Tools
+	`FPIBG3rdPty/shaderc/third_party/SPIRV-Tools`
 
 Get it here: https://github.com/KhronosGroup/SPIRV-Tools
 
 4. Download regular expression library re2 and install in 
     
-	PIBG3rdPty/shaderc/third_party/
+	`PIBG3rdPty/shaderc/third_party/`
 as 
-    FPIBG3rdPty/shaderc/third_party/re2
+    `FPIBG3rdPty/shaderc/third_party/re2`
 
 Get it here: https://github.com/google/re2
 
 5. Download 
-    SPRIV-Headers PIBG3rdPty/shaderc/third_party/
-as 
 
-	FPIBG3rdPty/shaderc/third_party/SPIRV-Headers
+    `SPRIV-Headers PIBG3rdPty/shaderc/third_party/`
+as
+	`FPIBG3rdPty/shaderc/third_party/SPIRV-Headers`
 
 Get it here: https://github.com/KhronosGroup/SPIRV-Headers
 
 6. Download glslang 
 
-	PIBG3rdPty/shaderc/third_party/
+	`PIBG3rdPty/shaderc/third_party/`
 as 
 
-	FPIBG3rdPty/shaderc/third_party/glslang
+	`FPIBG3rdPty/shaderc/third_party/glslang`
 
 Get it here: https://github.com/KhronosGroup/glslang
 
 
 7. Download Effcee to 
     
-	PIBG3rdPty/shaderc/third_party/
+	`PIBG3rdPty/shaderc/third_party/`
 as 
-    FPIBG3rdPty/shaderc/third_party/effcee
+    `FPIBG3rdPty/shaderc/third_party/effcee`
 
 Get it here: https://github.com/google/effcee
 
 8. Download Abseil C++ library 
 
-	PIBG3rdPty/shaderc/third_party/
+	`PIBG3rdPty/shaderc/third_party/`
 as 
-    FPIBG3rdPty/shaderc/third_party/abseil_cpp
+    `FPIBG3rdPty/shaderc/third_party/abseil_cpp`
 
 NOTE: it installs as as abseil-cpp so change the name to abseil_cpp
 
@@ -162,21 +162,21 @@ NOTE: There is a good tutorial on Reddit if you experience problems building sha
 
 9. Using the cmake gui set "where is the source code" to 
  
-        FPIBG3rdPty/shaderc
+        `FPIBG3rdPty/shaderc`
 
 In 	"Where to build the libraries" set this to 
 
-	FPIBG3rdPty/shaderc/build
+	`FPIBG3rdPty/shaderc/build`
 
 Then press "Configure"
 
-	Mark the check boxes beside:
+Mark the check boxes beside:
 
-		SPRIV_SKIP_TESTS
+		`SPRIV_SKIP_TESTS`
 		and		
-		SHADERC_SKIP_EXAMPLES
+		`SHADERC_SKIP_EXAMPLES`
 			
-    Then press "Generate"
+Then press "Generate"
 
 	Press "Open Project" which should open the visual C++.
 	or navigate to shaderc/build and open shaderc.sln

@@ -44,7 +44,9 @@ void GenData(ConfigObj* configObj)
 	
 	perfObj *po = new perfObj(configObj);
 	po->m_co = configObj;
-
+	configObj->m_TestName = configObj->m_MMRRTestName;
+	configObj->m_TestDir = configObj->m_MMRRTestDir;
+	po->ProcessMMRR();
 
 	po->SetTest(1,1);
 	configObj->m_TestName = configObj->m_PQBTestName;
@@ -91,6 +93,40 @@ void GenData(ConfigObj* configObj)
 	po->ProcessResultsData();
 	
 }
+void perfObj::ProcessMMRR()
+{
+	m_TestPair.resize(1);
+	m_TestPair[0].tstData.m_AprFile = cfg->m_MMRRTestName;
+	GetResultsData(0);
+	m_MMRRTestPair=m_TestPair;
+	m_TestPair.clear();
+	float tfps=0.0;
+	float maxfps=0.0;
+	float minfps=0.0;
+	float avgfps=0.0;
+	size_t counter = 1;
+	uint32_t itNum = 0;
+	for(size_t rloc = 0; rloc< m_MMRRTestPair[0].resultData.size();rloc++)
+	{
+
+		tfps += m_MMRRTestPair[itNum].resultData[rloc].fps;
+		
+		if(m_MMRRTestPair[itNum].resultData[rloc].fps > maxfps)
+			maxfps = m_MMRRTestPair[itNum].resultData[rloc].fps;
+
+		if(m_MMRRTestPair[itNum].resultData[rloc].fps < minfps || minfps == 0.0 )
+			minfps = m_MMRRTestPair[itNum].resultData[rloc].fps;
+		counter++;
+	}
+
+	avgfps = tfps/counter;
+	maxmmrr = 1.0/minfps;
+	minmmrr = 1.0/maxfps;
+	avgmmrr = 1.0/avgfps;
+	
+}
+
+
 
 int main() try
 {
@@ -211,7 +247,31 @@ void perfObj::ProcessResultsData()
 			std::string err = "Cannot open report data file::" + fileName;
 			throw std::runtime_error(err.c_str());
 		}
-		dataFile << "file,numparticles,numcollsions,avgfps,avgcpums,avgcms,avggms,minfps,mincpums,mincms,mingms,maxfps,maxcpums,maxcms,maxgms" << std::endl;
+		dataFile << "file" << 
+				"," << "numparticles"
+				<< "," << "numcollsions"
+				<< "," << "avgfps"
+				<< "," << "avgcpums"
+				<< "," << "avgcms"
+				<< "," << "avggms"
+				<< "," << "minfps"
+				<< "," << "mincpums"
+				<< "," << "mincms"
+				<< "," << "mingms"
+				<< "," << "maxfps"
+				<< "," << "maxcpums"
+				<< "," << "maxcms"
+				<< "," << "maxgms" 
+				<< "," << "maxspf" 
+				<< "," << "minspf"
+				<< "," << "avgspf" 
+				<< "," << "maxmmrr" 
+				<< "," << "minmmrr" 
+				<< "," << "avgmmrr"  
+				<< "," << "maxarr" 
+				<< "," << "minarr" 
+				<< "," << "avgarr"  
+				<< std::endl;
 	}
 	for(int ii = 0; ii< m_TestPair.size(); ii++)
 	{
@@ -264,6 +324,11 @@ void perfObj::PerformanceReport(size_t itNum)
 	float maxcms= 0.0;
 	float maxgms= 0.0;
 
+	float minarr;
+	float maxarr;
+	float avgarr;
+
+
 
 	
 	uint32_t counter=1;
@@ -309,13 +374,25 @@ void perfObj::PerformanceReport(size_t itNum)
 	acpums= tcpums/counter;
 	acms= tcms/counter;
 	agms= tgms/counter;
+	float maxspf = 1.0/minfps;
+	float minspf = 1.0/maxfps;
+	float avgspf = 1.0/afps;
 
+	maxarr = maxmmrr/maxspf; 
+	minarr = minmmrr/minspf;
+	avgarr = avgmmrr/avgspf;
 	
+
+
 	dataFile << m_TestPair[itNum].testFile << "," << m_TestPair[itNum].tstData.m_partcount 
 				<< "," << m_TestPair[itNum].tstData.m_colcount
 				<< "," << afps << "," << acpums << "," << acms << "," << agms << 
 				"," << minfps << "," << mincpums << "," << mincms << "," << mingms << 
-				"," << maxfps << "," << maxcpums << "," << maxcms << "," << maxgms << std::endl;
+				"," << maxfps << "," << maxcpums << "," << maxcms << "," << maxgms << 
+				"," << maxspf << "," << minspf << "," << avgspf << 
+				"," << maxmmrr << "," << minmmrr << "," << avgmmrr << 
+				"," << maxarr << "," << minarr << "," << avgarr << 
+				std::endl;
 	
 }
 void perfObj::PerformDebugTests(size_t itNum)

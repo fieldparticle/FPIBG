@@ -79,6 +79,7 @@ class perfObj
 {
     public:
 		std::vector<testPair> m_TestPair;
+		std::vector<testPair> m_MMRRTestPair;
 		std::string m_testName;
 		ConfigObj* m_co;
 		// 1 debug
@@ -89,7 +90,13 @@ class perfObj
 		// 3 == cfb
 		uint32_t	m_test;
 		std::ofstream dataFile;
+		float maxmmrr;
+		float minmmrr;
+		float avgmmrr;
 
+		
+
+		void ProcessMMRR();
 		void SetTest(uint32_t RDType,uint32_t subType)
 		{
 			m_testType = RDType;

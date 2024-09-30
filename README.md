@@ -21,20 +21,31 @@ This version is for performance testing and software evaluation.
 The stepwise process for using the software is as follows:
 
 1. Download or clone the FPGIBG repository to some root directory
-	<rootdir>/FPIBG
+
+`<rootdir>/FPIBG`
 
 2. Create a directory in the same root named FPIBG3rdPty
-	<rootdir>/FPIBG3rdPty
 
+`<rootdir>/FPIBG3rdPty`
+
+3. Follow the directions for dowloading 3rd party dependencies in the ReadMe.md located in 
+ 
 	3rd Party Installation instructions can be found here:
 
 [Install Third Party Dependencies](InstallREADME.md)
-
-3. Follow the directions for dowloading 3rd party dependencies in the ReadMe.md located in 
-	<rootdir>/FPIBG/vulkan directory.
+	
 
 4. Clone tne data directory in the same root named 
-	<rootdir>/FPIBGData
+
+`<rootdir>/FPIBGData`
+
+It will create the folowing directory structure
+
+	[your root dir]FPIBGData|
+				+--- perfdataCFB 
+				+--- perfdataPCD
+				+--- perfdataPQD 
+				+--- perfdataDUP
 
 5. Open the Vullkan Project and compile ParticleObly.exe, GenBenchData.exe, and PerformanceData.exe as debug.
 
@@ -48,15 +59,17 @@ The stepwise process for using the software is as follows:
 
 	Verification and Performance Instruction can be found here:
 
-[Run Verification](VerifyAppREADME.md)
+[Run Verification Data](VerifyAppREADME.md)
 
 8. Run PerformanceData.exe on the debug data which will verify the number of particles, threads, and collsions.
 	If there are problems the application will alert you and stop. Ascertian what went wrong and run until all data sets are verifgied.
 
+[Run Performance Data](ParticleTestREADME.md)
+
 9. Run particleOnly.exe in release mode for the performance process. 
 Three data sets will be created labelled as release.
 
-[Run Performance](PerformanceAppREADME.md)
+[Run Performance Analysis](PerformanceAppREADME.md)
 
 10. Run PerformanceData.exe on the release data which will accumulate performance data and save it in a comma seperated performance file. 
 

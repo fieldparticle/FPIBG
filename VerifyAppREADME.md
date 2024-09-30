@@ -26,3 +26,4 @@ particleApp in release mode so there won't be a waste of time rerunning it if th
 It will not complete if there are errors which will be reported in the log file 
 `FPIBG\vulkan\run\PerfReport\PerfReport.log`
 
+
