@@ -33,13 +33,9 @@
 
 uint isParticleContact(uint crnr, uint Findex, uint Tindex, in out vec3 OutVel)
 {
-#if  !defined(VERPONLY)
-	if(Findex == Tindex || Tindex <= bbound)
-		return 0;
-#else
+
 	if(Findex == Tindex )
 		return 0;
-#endif
 
 	float xT = P[Findex].PosLoc.x;
     float yT = P[Findex].PosLoc.y;
@@ -68,8 +64,8 @@ uint isParticleContact(uint crnr, uint Findex, uint Tindex, in out vec3 OutVel)
 	if (dsq <= rsq )
     {
 	
-#if 0
-		if(uint(ShaderFlags.frameNum) == 9 && Findex == 1)
+#if 1
+		if(uint(ShaderFlags.frameNum) == 5)// && Findex == 1)
 			debugPrintfEXT("Collison Frame(%0.1f),FRM:%d,TO:%d dsq:%0.4f,rsq:%0.4f,Radius1:%0.4f,Radius2:%0.4f",
 			ShaderFlags.frameNum,
 			Findex+1,

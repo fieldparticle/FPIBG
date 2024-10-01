@@ -69,7 +69,11 @@ It will create the folowing directory structure
 9. Run particleOnly.exe in release mode for the performance process. 
 Three data sets will be created labelled as release.
 
+<<<<<<< HEAD
 [Run Performance Analysis](PerformanceAppREADME.md)
+=======
+[Run Performance](PerformanceAppREADME.md)  **Link does not work for some reason - manually open PerformanceAppREADME.md**
+>>>>>>> bcdb0ba3e7ab31da5a7dd98c80cf706e5721acae
 
 10. Run PerformanceData.exe on the release data which will accumulate performance data and save it in a comma seperated performance file. 
 

@@ -13,24 +13,9 @@
 #include "../common/CollimageIndex.glsl"
 #include "../common/Lockimage.glsl"
 #include "../common/particle.glsl"
-#include "../common/GetCflg.glsl"
-#include "../common/CalcMomentum.glsl"
 
 
-#ifndef VERPONLY
 
-	#ifdef VERPIPE
-		#include "ChangePosPipe.glsl"
-	#endif
-	#if  !defined(VERPIPE) && !defined(VERCDNOZ)
-		#include "ChangePos.glsl"
-	#endif
-	#ifdef VERCDNOZ
-		#include "GetCDRadius.glsl"
-		#include "ChangePosCDNoz.glsl"
-		
-	#endif
-#endif
 out gl_PerVertex {
     vec4 gl_Position;
 	float gl_PointSize;
@@ -71,7 +56,7 @@ void main(){
 		atomicAdd(collIn.numParticles,1);	
 	#endif
 	// Set point size 
-	gl_PointSize = 3.0;
+	gl_PointSize = 1.0;
 	
 	// Apply view to location
 	vec3 posLocNDC =  P[index].PosLoc.xyz;
@@ -84,7 +69,7 @@ void main(){
 		0,P[index].VelRad.x,P[index].VelRad.y,P[index].VelRad.z);
 	#endif	
 	
-	#if !defined(VERPONLY)
+
 	// If the particle is not live return.		
 	if(uint(P[index].parms.x) > uint(ShaderFlags.actualFrame))
 		return;	
@@ -92,7 +77,7 @@ void main(){
 	if(uint(P[index].prvvel.w) == 1)
 		return;
 	
-	#endif	
+
 	//clear zlink
 	for(uint jj=0;jj<MAX_OCCUPANCY;jj++)
 	{
@@ -100,21 +85,6 @@ void main(){
 		P[index].zlink[jj].pindex =0;
 		//P[index].wary[jj].x = 0.0;
 	}
-	#ifndef VERPONLY 
-	if(index > bbound)
-	{
-		#ifdef VERPIPE
-			ChangePosPipe(index);	
-		#endif
-		#if  !defined(VERPIPE) && !defined(VERCDNOZ)
-			ChangePos(index);	
-		#endif
-		#ifdef VERCDNOZ
-			if(ChangePosCDNoz(index) != 0)
-				return;
-		#endif
-	}
-	#endif
 	
 	uint Loc[8];
 	float cx 		= P[index].PosLoc.x;
@@ -224,7 +194,7 @@ void main(){
 	
 // DEBUG
 #if 0 && defined(DEBUG)
-	if(uint(ShaderFlags.frameNum) == 3 && index == 1)
+	if(uint(ShaderFlags.frameNum) == 3 && index == 2)
 	{
 		debugPrintfEXT(",,,-------------------------");
 		for(uint ii = 0; ii< MAX_OCCUPANCY;ii++)

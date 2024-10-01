@@ -310,27 +310,14 @@
   <ItemGroup>
     <None Include="..\..\run\particleOnly\mps.cfg" />
     <None Include="..\..\run\particleOnly\Particle.cfg" />
-    <None Include="..\..\run\ParticleOnly\ParticleOnly.cfg" />
-    <None Include="..\..\run\ParticleOnly\shaders\atomicg.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\CalcParticleCollision.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\CollimageIndex.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\constants.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\Lockimage.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\params.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\particle.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.comp" />
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.frag" />
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.geom" />
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.vert" />
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnlyThreads.frag" />
-    <None Include="..\..\run\ParticleOnly\shaders\push.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\removeDuplicates.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\util.glsl" />
-    <None Include="..\..\run\ParticleOnly\shaders\workgroups.glsl" />
     <None Include="..\..\run\particle\Particle.cfg" />
+    <None Include="..\..\shaders\common\isParticleContact.glsl" />
+    <None Include="..\..\shaders\NoThreads\ParticleNoThreads.comp" />
+    <None Include="..\..\shaders\NoThreads\ParticleNoThreads.frag" />
+    <None Include="..\..\shaders\NoThreads\ParticleNoThreads.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\run\ParticleOnly\mps.log" />
+    <Text Include="..\..\run\particleOnly\particle.log" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

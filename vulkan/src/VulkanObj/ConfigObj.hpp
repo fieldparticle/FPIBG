@@ -68,6 +68,11 @@ public:
 	std::string					m_PCDTestName;
 	std::string					m_PCDTestDir;
 
+	std::string					m_DUPStudyName;
+	std::string					m_DUPTestName;
+	std::string					m_DUPTestDir;
+
+
 	std::string					m_MMRRStudyName;
 	std::string					m_MMRRTestName;
 	std::string					m_MMRRTestDir;
@@ -78,6 +83,7 @@ public:
 	std::string					m_testPQBDir;
 	std::string					m_testCFBDir;
 	std::string					m_testPCDDir;
+	std::string					m_testDUPDir;
 
 	std::string					m_Name;
 	uint32_t					m_View;

@@ -30,7 +30,7 @@
 %*
 %******************************************************************/
 
-#include "particleOnly/pdata.hpp"
+#include "VulkanObj/pdata.hpp"
 #include "particleOnly/SwapChain.hpp"
 #include "particleOnly/FrameBuffer.hpp"
 #include "particleOnly/RenderPassParticleOnly.hpp"

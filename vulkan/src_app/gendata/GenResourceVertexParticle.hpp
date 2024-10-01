@@ -86,6 +86,7 @@ class GenResourceVertexParticle : public Resource
 		uint32_t m_CountedSidelength = 0;
 		uint32_t m_CountedBoundaryParticles = 0;
 		float m_Centerlen = 0.0;
+		bool m_TestCollisions = true;
 
 		uint32_t m_PinRow = 0;
 		uint32_t m_PInCell = 0;
@@ -115,6 +116,12 @@ class GenResourceVertexParticle : public Resource
 		
 			OpenParticleDataA003();
 		};
+		void ProcessDUP();
+		void WriteDUPParticle(pdata pd);
+		uint32_t CountCollisions();
+		void ProcessTestDUP(benchSetItem* bsi);
+		void OpenDUPParticleData(size_t num, benchSetItem* bsi);
+		uint32_t  ProcessDUPPattern(uint32_t xcell, uint32_t ycell, uint32_t zcell);
 		void ProcessSet();
 		void ProcessTestA001(benchSetItem* bsi);
 		void ProcessTestA002(benchSetItem* bsi);

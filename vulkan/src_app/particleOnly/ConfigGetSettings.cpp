@@ -67,7 +67,7 @@ void ConfigObj::GetSettings()
 	m_testPQBDir= GetString("application.testdirPQB", true);
 	m_testCFBDir= GetString("application.testdirCFB", true);
 	m_testPCDDir= GetString("application.testdirPCD", true);
-
+	m_testDUPDir= GetString("application.testdirDUP", true);
 	if(!m_TestCFG.compare("testdirPQB"))
 	{
 		m_TestDir = m_testPQBDir;
@@ -79,6 +79,10 @@ void ConfigObj::GetSettings()
 	if(!m_TestCFG.compare("testdirPCD"))
 	{
 		m_TestDir = m_testPCDDir;
+	}
+	if(!m_TestCFG.compare("testdirDUP"))
+	{
+		m_TestDir = m_testDUPDir;
 	}
 	//m_TestNumber = GetInt("application.testNum", true)-1;
 	m_NoCompute = GetBool("application.noCompute", true);

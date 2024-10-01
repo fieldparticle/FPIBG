@@ -160,7 +160,7 @@ void GenResourceVertexParticle::WriteTstFile(uint32_t index, benchSetItem* bsi)
 	ostrm.close();
 
 
-	if (m_CountedCollisions != m_TotCollsions)
+	if (m_CountedCollisions != m_TotCollsions && m_TestCollisions == true)
 	{
 		std::ostringstream  objtxt;
 		objtxt << "Counted Collsions:" << m_CountedCollisions << " Expected:" << m_TotCollsions << std::ends;

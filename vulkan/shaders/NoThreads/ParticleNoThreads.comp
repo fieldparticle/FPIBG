@@ -53,22 +53,6 @@
 #include "../common/ProcessParticleContact.glsl"
 #include "../common/isParticleContact.glsl"
 
-#include "../common/CheckCompDups.glsl"
-
-#ifdef VERPIPE
-	#include "../common/ProcessPipeBoundary.glsl"
-#endif
-
-#if  !defined(VERPIPE) && !defined(VERCDNOZ)
-	#include "../common/ProcessCubeBoundary.glsl"
-#endif
-
-#ifdef VERCDNOZ
-	#include "../common/GetCDRadius.glsl"
-	#include "../common/CalcBoundaryVel.glsl"
-	#include "../common/ProcessCDBoundary.glsl"
-#endif
-
 
 void main()  
 {
@@ -97,17 +81,12 @@ void main()
 #ifdef DEBUG
 		atomicAdd(collOut.holdPidx,1);	
 #endif	
-#if !defined(VERPONLY)
-	if (index >= NUMPARTS || index <= bbound)
-	{
-		return;	
-	}
-#else
+
 	if (index >= NUMPARTS)
 	{
 		return;	
 	}
-#endif
+	
 #ifdef DEBUG
 	float(atomicAdd(collOut.numParticles,1));	
 #endif
@@ -120,25 +99,19 @@ void main()
 	uint duplst[256]; 	
 	uint dupcnt = 0;
 	bool dupflg = false;
+	vec3 OutVel = vec3(0.0,0.0,0.0);;		
 	
-	#if  !defined(VERPONLY)
-	if(P[0].PosLoc.w == 1.0)
-		return;
-	
-	// If the particle is not live return.
-	if(uint(P[Findex].parms.x) > uint(ShaderFlags.actualFrame))
-		return;
-	//if the particle is dead
-	if(uint(P[Findex].prvvel.w) == 1)
-		return;
-	#endif
-	
+	uint cc = 0;	
 	//uint ii = gl_GlobalInvocationID.y;
 	for(uint ii = 0; ii < 8; ii++)
 	{
 		// Set location to local variable.
 		uint loc = P[Findex].zlink[ii].ploc;
-
+		#if 0
+			if(uint(ShaderFlags.frameNum) == 2 && index == 2)
+					debugPrintfEXT("loc:%d",loc);
+				
+		#endif
 		// If the lcation is not zero..
 		if (loc != 0)
 		{
@@ -146,53 +119,58 @@ void main()
 			// And compare this particle with all of the paricles at this location.
 			for(uint jj = 0; jj< MAX_ARY;jj++)
 			{
+				dupflg = true;
 				Tindex = clink[loc].idx[jj];
 
 				// If the linked particle is zero teminate
-				if(Tindex == 0)
-					break;
-				
-				// Process boundary first.
-				vec3 OutVel = vec3(0.0,0.0,0.0);
-				#ifdef VERPIPE
-					ProcessPipeBoundary(Findex,Tindex,OutVel);
-				#endif
-				#ifdef VERCDNOZ
-					ProcessCDBoundary(Findex,Tindex,OutVel);
-				#endif
-				#ifdef VERCUBE
-					ProcessCubeBoundary(Findex,Tindex,OutVel);
-				#endif
-				#if 1
-				for(uint ii = 0; ii <= dupcnt && dupcnt < 256; ii++)
+				if(Tindex != 0 && Tindex != Findex)
 				{
-					if(duplst[ii] == Tindex)
+	#if 1			
+					cc = 0;
+					while(cc <= dupcnt+1 && dupcnt < 32)
 					{
-						dupflg = true;
-						break;
-					}
-					if(duplst[ii] == 0)
-					{
-						dupflg = false;
-						duplst[ii] == Tindex;
-						dupcnt = ii;
-						break;
-					}
-				}
-				#endif						
-				if(dupflg == false)						
-				{
+							
+						if(duplst[cc] == Tindex)
+						{
+							dupflg = true;
+							break;
+						}
+						else if(duplst[cc] == 0)
+						{
+							
+								
+							dupflg = false;
+							duplst[dupcnt] = Tindex;
+					#if 0						
+							if(uint(ShaderFlags.frameNum) == 2 && index == 2)
+								debugPrintfEXT("DUPITM:%d",duplst[dupcnt]);
+					#endif
+							dupcnt++;
+							break;
+						}
+						
 					
-					if(isParticleContact(ii,Findex, Tindex, OutVel) > 0)
-					{
-						atomicAdd(collOut.CollisionCount,1);
+						cc++;
 					}
 					
+	#endif
+					if(dupflg == false)						
+					{
+						#if 0
+						if(uint(ShaderFlags.frameNum) == 2 && index == 2)
+							debugPrintfEXT("Findex:%d,Tindex%d,",Findex,Tindex);
+						
+						#endif
+						if(isParticleContact(ii,Findex, Tindex, OutVel) > 0)
+						{
+							atomicAdd(collOut.CollisionCount,1);
+						}
+						
+					}
 				}
 			}
 		}
 	}
-	
-	//P[Findex].VelRad.xyz += totVel;
+
 	
 	}

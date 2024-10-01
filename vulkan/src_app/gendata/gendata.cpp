@@ -48,7 +48,7 @@ void GenData(ConfigObj* configObj)
 	resourceVertexParticle->m_App = vulkanObj;
 	vulkanObj->m_CFG = configObj;
 	resourceVertexParticle->Create(0);
-	
+#if 0
 	configObj->m_TestName = configObj->m_PQBTestName;
 	std::cout << "Processing PQB Benchfile:" << configObj->m_TestName << std::endl;
 	configObj->m_TestDir = configObj->m_PQBTestDir;
@@ -65,7 +65,13 @@ void GenData(ConfigObj* configObj)
 	configObj->m_TestDir = configObj->m_CFBTestDir;
 	std::cout << "Processing CFB Benchfile:" << configObj->m_TestName << std::endl;
 	resourceVertexParticle->ProcessCFB();
-
+#endif
+	configObj->m_TestName = configObj->m_DUPTestName;
+	configObj->m_TestDir = configObj->m_DUPTestDir;
+	std::cout << "Processing DUP Benchfile:" << configObj->m_TestName << std::endl;
+	resourceVertexParticle->GenBenchSet();
+	resourceVertexParticle->ProcessDUP();
+	
 	
 	
 }

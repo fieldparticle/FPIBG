@@ -22,6 +22,9 @@
     <Filter Include="ConfigFiles">
       <UniqueIdentifier>{93b4bd20-702d-4db5-b64a-7002829a4699}</UniqueIdentifier>
     </Filter>
+    <Filter Include="logfiles">
+      <UniqueIdentifier>{8c12aa8c-eadb-4f20-b59b-d278eae8cfec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\libconfig\grammar.h">
@@ -370,57 +373,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\run\ParticleOnly\shaders\atomicg.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\CalcParticleCollision.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\CollimageIndex.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\constants.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\params.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\particle.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.comp">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.geom">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnly.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\push.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\removeDuplicates.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\util.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\workgroups.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\Lockimage.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\shaders\ParticleOnlyThreads.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\run\ParticleOnly\ParticleOnly.cfg">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\..\run\particle\Particle.cfg" />
     <None Include="..\..\run\particleOnly\mps.cfg">
       <Filter>ConfigFiles</Filter>
@@ -428,10 +380,22 @@
     <None Include="..\..\run\particleOnly\Particle.cfg">
       <Filter>ConfigFiles</Filter>
     </None>
+    <None Include="..\..\shaders\NoThreads\ParticleNoThreads.comp">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\NoThreads\ParticleNoThreads.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\NoThreads\ParticleNoThreads.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\common\isParticleContact.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\run\ParticleOnly\mps.log">
-      <Filter>shaders</Filter>
+    <Text Include="..\..\run\particleOnly\particle.log">
+      <Filter>logfiles</Filter>
     </Text>
   </ItemGroup>
 </Project>
