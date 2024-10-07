@@ -35,7 +35,74 @@
 MsgStream			mout;
 #include "gendata/GenResourceVertexParticle.hpp"
 
+void GenResourceVertexParticle::ProcessAll()
+{
 
+	if(m_cfg->m_DoAuto == false && !m_cfg->m_runOnly.compare("PQB"))
+		{
+		m_cfg->m_TestName = m_cfg->m_PQBTestName;
+		std::cout << "Processing PQB Benchfile:" << m_cfg->m_TestName << std::endl;
+		m_cfg->m_TestDir = m_cfg->m_PQBTestDir;
+		GenBenchSet();
+		ProcessPQB();
+	}
+	
+	if(m_cfg->m_DoAuto == false && !m_cfg->m_runOnly.compare("PCD"))
+	{
+	
+		m_cfg->m_TestName = m_cfg->m_PCDTestName;
+		m_cfg->m_TestDir = m_cfg->m_PCDTestDir;
+		std::cout << "Processing PCD Benchfile:" << m_cfg->m_TestName << std::endl;
+		GenBenchSet();
+		ProcessPCD();
+	}
+
+	if(m_cfg->m_DoAuto == false && !m_cfg->m_runOnly.compare("CFB"))
+	{
+		m_cfg->m_TestName = m_cfg->m_CFBTestName;
+		m_cfg->m_TestDir = m_cfg->m_CFBTestDir;
+		std::cout << "Processing CFB Benchfile:" << m_cfg->m_TestName << std::endl;
+		GenBenchSet();
+		ProcessCFB();
+	}
+	
+	if(m_cfg->m_DoAuto == false && !m_cfg->m_runOnly.compare("DUP"))
+	{
+		m_cfg->m_TestName = m_cfg->m_DUPTestName;
+		m_cfg->m_TestDir = m_cfg->m_DUPTestDir;
+		std::cout << "Processing DUP Benchfile:" << m_cfg->m_TestName << std::endl;
+		GenBenchSet();
+		ProcessDUP();
+	}
+	
+	if(m_cfg->m_DoAuto == true)
+	{
+		m_cfg->m_TestName = m_cfg->m_PQBTestName;
+		std::cout << "Processing PQB Benchfile:" << m_cfg->m_TestName << std::endl;
+		m_cfg->m_TestDir = m_cfg->m_PQBTestDir;
+		GenBenchSet();
+		ProcessPQB();
+
+		m_cfg->m_TestName = m_cfg->m_PCDTestName;
+		m_cfg->m_TestDir = m_cfg->m_PCDTestDir;
+		std::cout << "Processing PCD Benchfile:" << m_cfg->m_TestName << std::endl;
+		GenBenchSet();
+		ProcessPCD();
+
+		m_cfg->m_TestName = m_cfg->m_CFBTestName;
+		m_cfg->m_TestDir = m_cfg->m_CFBTestDir;
+		std::cout << "Processing CFB Benchfile:" << m_cfg->m_TestName << std::endl;
+		GenBenchSet();
+		ProcessCFB();
+
+		m_cfg->m_TestName = m_cfg->m_DUPTestName;
+		m_cfg->m_TestDir = m_cfg->m_DUPTestDir;
+		std::cout << "Processing DUP Benchfile:" << m_cfg->m_TestName << std::endl;
+		GenBenchSet();
+		ProcessDUP();
+	}
+
+}
 
 void GenData(ConfigObj* configObj)
 {
@@ -47,32 +114,8 @@ void GenData(ConfigObj* configObj)
 
 	resourceVertexParticle->m_App = vulkanObj;
 	vulkanObj->m_CFG = configObj;
-	resourceVertexParticle->Create(0);
-#if 0
-	configObj->m_TestName = configObj->m_PQBTestName;
-	std::cout << "Processing PQB Benchfile:" << configObj->m_TestName << std::endl;
-	configObj->m_TestDir = configObj->m_PQBTestDir;
-	resourceVertexParticle->GenBenchSet();
-	resourceVertexParticle->ProcessPQB();
-	
-	configObj->m_TestName = configObj->m_PCDTestName;
-	configObj->m_TestDir = configObj->m_PCDTestDir;
-	std::cout << "Processing PCD Benchfile:" << configObj->m_TestName << std::endl;
-	resourceVertexParticle->GenBenchSet();
-	resourceVertexParticle->ProcessPCD();
-
-	configObj->m_TestName = configObj->m_CFBTestName;
-	configObj->m_TestDir = configObj->m_CFBTestDir;
-	std::cout << "Processing CFB Benchfile:" << configObj->m_TestName << std::endl;
-	resourceVertexParticle->ProcessCFB();
-#endif
-	configObj->m_TestName = configObj->m_DUPTestName;
-	configObj->m_TestDir = configObj->m_DUPTestDir;
-	std::cout << "Processing DUP Benchfile:" << configObj->m_TestName << std::endl;
-	resourceVertexParticle->GenBenchSet();
-	resourceVertexParticle->ProcessDUP();
-	
-	
+	resourceVertexParticle->Create(configObj);
+	resourceVertexParticle->ProcessAll();
 	
 }
 int main() try

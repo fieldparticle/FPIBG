@@ -209,7 +209,7 @@ int ShaderObj::CompileShader(std::string ShaderGLSLName,
 		InputArgs.push_back("-o");
 		InputArgs.push_back(ShaderSPVFileName);
 		int ret =  glsl(InputArgs, SPVBuffer);
-		if (ret != 0)
+		if (ret != 0 || SPVBuffer.empty())
 		{
 			std::ostringstream  objtxt;
 			objtxt << "Error from glsl in:" << m_Name 

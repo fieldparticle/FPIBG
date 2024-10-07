@@ -60,6 +60,7 @@ struct benchSetItem
 class GenResourceVertexParticle : public Resource
 {
     public:
+		ConfigObj* m_cfg;
 		char FileText[256] = { 0 };
 		bool m_InitFlag = false;
 		uint32_t  m_SideLength = 0;
@@ -70,6 +71,7 @@ class GenResourceVertexParticle : public Resource
 		uint32_t				m_NumParticles = 0;
 		std::vector<benchSetItem> m_BenchSet;
 		std::ofstream m_DataFile;
+		std::ofstream m_CFBDataFile;
 		std::string m_fileName;
 		std::string m_FullBinFile;
 		///Counting variables
@@ -87,13 +89,14 @@ class GenResourceVertexParticle : public Resource
 		uint32_t m_CountedBoundaryParticles = 0;
 		float m_Centerlen = 0.0;
 		bool m_TestCollisions = true;
-
+		uint32_t m_ColArySize = 0;
 		uint32_t m_PinRow = 0;
 		uint32_t m_PInCell = 0;
 		uint32_t m_PInLayer = 0;
 		uint32_t m_CInCell = 0;
 		uint32_t PInCellCount = 0;
 		uint32_t CInCellCount = 0;
+		void WriteEntry(benchSetItem* bsi);
 		void SaveParticles();
 		void DoMotionStudy();
 		void WriteTstFile(uint32_t index, benchSetItem* bsi);
@@ -113,9 +116,10 @@ class GenResourceVertexParticle : public Resource
 
 		void ProcessCFB()
 		{
-		
 			OpenParticleDataA003();
+			m_BenchSet.clear();
 		};
+		void ProcessAll();
 		void ProcessDUP();
 		void WriteDUPParticle(pdata pd);
 		uint32_t CountCollisions();
@@ -145,13 +149,19 @@ class GenResourceVertexParticle : public Resource
 		GenResourceVertexParticle() {};
 		void CleanFiles();
 		virtual void AskObject(uint32_t AnyNumber) {};
+
 		GenResourceVertexParticle(VulkanObj *App, std::string Name):
 					Resource(App, Name, VBW_DESCRIPTOR_TYPE_PARTICLE)
 				{
 				
 				};
 		
+	void Create(ConfigObj* CFG)
+	{
 		
+		m_cfg = CFG;
+		
+	};		
 	virtual void Create(uint32_t BindPoint);
 	void CreateLayout() {};
 #if 0

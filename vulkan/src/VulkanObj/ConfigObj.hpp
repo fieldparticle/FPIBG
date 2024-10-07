@@ -57,6 +57,10 @@ public:
 	std::string					m_compSPVParticle;
 	std::string					m_glslc_path;
 
+	bool						m_DebugVer=false;
+	bool						m_ReleaseVer=false;
+	std::string					m_runOnly;
+
 	std::string					m_PQBTestName;
 	std::string					m_PQBTestDir;
 

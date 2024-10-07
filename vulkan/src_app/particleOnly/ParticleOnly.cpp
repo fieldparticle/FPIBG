@@ -150,6 +150,9 @@ int ParticleOnly(ConfigObj* configVCube)
 	syncObjects->AddWaitSemaphore("imageAvailableSemaphore", VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 	syncObjects->AddWaitSemaphore("computeFinishedSemaphore", VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 	syncObjects->AddSignalSemaphore("renderFinishedSemaphore");
+
+	MemStats(vulkanObj);
+
 	if(Extflg == true)
 			return 1;
 	

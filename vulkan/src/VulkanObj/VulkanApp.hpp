@@ -51,6 +51,7 @@
 #include "VulkanObj/InstanceObj.hpp"
 #include "VulkanObj/ResourceVertexObj.hpp"
 #include "particleOnly/ParticleOnly.hpp"
+void MemStats(VulkanObj* vulkanObj);
 
 #include <glm/glm.hpp>
 //#include "objloader.hpp"

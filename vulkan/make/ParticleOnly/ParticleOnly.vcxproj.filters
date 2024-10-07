@@ -371,6 +371,9 @@
     <ClCompile Include="..\..\src\glsl\call_glsl.cpp">
       <Filter>glslang_custom</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\VulkanObj\MemStats.cpp">
+      <Filter>vulkanobj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\run\particle\Particle.cfg" />

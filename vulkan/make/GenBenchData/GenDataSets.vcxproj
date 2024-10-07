@@ -213,9 +213,11 @@
     <ClCompile Include="..\..\src\VulkanObj\ConfigObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\Resource.cpp" />
     <ClCompile Include="..\..\src_app\gendata\AddParticlePatternA002.cpp" />
+    <ClCompile Include="..\..\src_app\gendata\CFBStudy.cpp" />
     <ClCompile Include="..\..\src_app\gendata\ConfigGenGetSettings.cpp" />
     <ClCompile Include="..\..\src_app\gendata\DoParticleBoundary.cpp" />
     <ClCompile Include="..\..\src_app\gendata\DupStudy.cpp" />
+    <ClCompile Include="..\..\src_app\gendata\FileIO.cpp" />
     <ClCompile Include="..\..\src_app\gendata\gendata.cpp" />
     <ClCompile Include="..\..\src_app\gendata\GenResourceVertexParticle.cpp" />
     <ClCompile Include="..\..\src_app\gendata\mpsCountCollisions.cpp" />

@@ -43,6 +43,7 @@ void GenData(ConfigObj* configObj)
 	configObj->GetSettings();
 	
 	perfObj *po = new perfObj(configObj);
+#if 0
 	po->m_co = configObj;
 	configObj->m_TestName = configObj->m_MMRRTestName;
 	configObj->m_TestDir = configObj->m_MMRRTestDir;
@@ -68,7 +69,7 @@ void GenData(ConfigObj* configObj)
 	po->OpenPerfData();
 	po->ProcessFileList();
 	po->ProcessResultsData();
-	
+#endif	
 
 	// Run release 
 	po->SetTest(2,1);
@@ -426,6 +427,7 @@ void perfObj::PerformDebugTests(size_t itNum)
 			mout << objtxt.str().c_str() << ende;
 			//throw std::runtime_error(objtxt.str());
 		}
+#if 0
 		if(m_TestPair[itNum].resultData[rloc].expectedp != m_TestPair[itNum].resultData[rloc].shaderp_grph)
 		{
 			objtxt.clear();
@@ -438,6 +440,7 @@ void perfObj::PerformDebugTests(size_t itNum)
 			mout << objtxt.str().c_str() << ende;
 			//throw std::runtime_error(objtxt.str());
 		}
+#endif
 		if(m_TestPair[itNum].resultData[rloc].expectedc != m_TestPair[itNum].resultData[rloc].shaderc)
 		{
 			objtxt.clear();

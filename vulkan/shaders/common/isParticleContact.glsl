@@ -53,23 +53,24 @@ uint isParticleContact(uint crnr, uint Findex, uint Tindex, in out vec3 OutVel)
 	
 	// If square of distance is less than square of radii there is a collision.
 	float tdt = rsq/dsq;
+#if 0		
+		if(uint(ShaderFlags.frameNum) == 3)// && Findex == 1)
+			debugPrintfEXT("Collison Frame(%0.1f),FRM:%d,TO:%d dsq:%0.8f,rsq:%0.8f,rddiff:%0.8f,Radius1:%0.4f,Radius2:%0.4f",
+			ShaderFlags.frameNum,
+			Findex,
+			Tindex,dsq,rsq,dsq-rsq,P[Findex].PosLoc.w,P[Tindex].PosLoc.w);
+#endif	
+	float rddiff = dsq-rsq;	
+	//if (dsq <= rsq )
+	if(rddiff < 0.0001 || rddiff < 0.0)
+    {
+	
 #if 0
-		if(uint(ShaderFlags.frameNum) == 8 && Findex == 1)
+		if(uint(ShaderFlags.frameNum) == 3)// && Findex == 1)
 			debugPrintfEXT("Collison Frame(%0.1f),FRM:%d,TO:%d dsq:%0.4f,rsq:%0.4f,Radius1:%0.4f,Radius2:%0.4f",
 			ShaderFlags.frameNum,
 			Findex,
 			Tindex,dsq,rsq,P[Findex].PosLoc.w,P[Tindex].PosLoc.w);
-#endif	
-		
-	if (dsq <= rsq )
-    {
-	
-#if 1
-		if(uint(ShaderFlags.frameNum) == 5)// && Findex == 1)
-			debugPrintfEXT("Collison Frame(%0.1f),FRM:%d,TO:%d dsq:%0.4f,rsq:%0.4f,Radius1:%0.4f,Radius2:%0.4f",
-			ShaderFlags.frameNum,
-			Findex+1,
-			Tindex+1,dsq,rsq,P[Findex].PosLoc.w,P[Tindex].PosLoc.w);
 #endif	
 		return 1;
 	}

@@ -143,6 +143,12 @@
     <ClCompile Include="..\..\src_app\gendata\mpsCountCollisions.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_app\gendata\FileIO.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_app\gendata\CFBStudy.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\run\ParticleOnly\shaders\atomicg.glsl">

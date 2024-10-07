@@ -37,7 +37,7 @@ bool Extflg = false;
 
 void VulkanObj::NameObject(VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
 {
-
+	#ifndef NDEBUG
 	//https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkObjectType.html
 	VkDebugUtilsObjectNameInfoEXT nameobj{};
 	nameobj.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
@@ -46,14 +46,15 @@ void VulkanObj::NameObject(VkObjectType objectType, uint64_t objectHandle, const
 	nameobj.objectHandle = objectHandle;
 	nameobj.pObjectName = pObjectName;
 
-
 	SetDebugUtilsObjectNameEXT(m_LogicalDevice, &nameobj);
+#endif
 
 
 }
 #if 1
 void VulkanObj::AssignMarkerFunctions()
 {
+#ifndef NDEBUG
 	// Setup the function pointers
 	CmdBeginDebugUtilsLabelEXT =
 		reinterpret_cast<PFN_vkCmdBeginDebugUtilsLabelEXT>(
@@ -93,7 +94,7 @@ void VulkanObj::AssignMarkerFunctions()
 	}
 
 	
-
+#endif
 }
 #endif
 

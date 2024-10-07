@@ -43,14 +43,15 @@ uint32_t GenResourceVertexParticle::CountCollisions()
 	// Reading from it
 	std::ifstream input_file(m_FullBinFile, std::ios::binary);
 	if (!input_file.is_open())
-		{
-			std::string err = "Cannot create collsion verification data file::" + m_FullBinFile;
+	{
+		std::string err = "Cannot create collsion verification data file::" + m_FullBinFile;
 			throw std::runtime_error(err.c_str());
-		}
+	}
 	pdata part_pos;
 	uint32_t m_NumParticles = 0;
-	uint32_t count = 0;
-	float radius=0;
+	uint32_t count			= 0;
+	float radius			= 0;
+
 	while (input_file.peek() != EOF)
 	{
 		input_file.read((char*)&part_pos, sizeof(part_pos));
@@ -59,55 +60,46 @@ uint32_t GenResourceVertexParticle::CountCollisions()
 			std::string err = "Unable to open particle data file:" + m_FullBinFile;
 			throw std::runtime_error(err.c_str());
 		}
-
 		m_Particle.push_back(part_pos);
-#if 0
-		mout << "Particle #" << (float)part_pos.pnum << ende;
-		mout << "rx: " << (float)part_pos.rx << ende;
-		mout << "ry: " << (float)part_pos.ry << ende;
-		mout << "rz: " << (float)part_pos.rz << ende;
-		mout << ende;
-#endif
-		radius = (float)part_pos.radius;
 
 	}
-	uint32_t colCount = 0;
-	double xT = 0;
-	double yT = 0;
-	double zT = 0;
-	double xP = 0;
-	double yP = 0;
-	double zP = 0;
-	double dsq = 0;
-	double rsq  = pow((2*radius),2);
-	const auto start{ std::chrono::steady_clock::now() };
-	
-	
-	for (pdata Pin : m_Particle)
-	{
-		xT = Pin.rx;
-		yT = Pin.ry;
-		zT = Pin.rz;
-		count++;
-		for (pdata Pout : m_Particle)
-		{
-			
-			
-			xP = Pout.rx;
-			yP = Pout.ry;
-			zP = Pout.rz;
+	radius = (float)part_pos.radius;
+	uint32_t colCount	= 0;
+	double xT			= 0;
+	double yT			= 0;
+	double zT			= 0;
+	double xP			= 0;
+	double yP			= 0;
+	double zP			= 0;
+	double dsq			= 0;
+	double rsq			= 0;
 
-			dsq = pow((xP - xT), 2) + pow((yP - yT), 2) + pow((zP - zT), 2);
-			if (abs((dsq - rsq)) < 0.00001)
-				coLocCount++;
-			if (xP != xT || yT != yP || zT != zP)
+	const auto start{ std::chrono::steady_clock::now()};
+	
+	
+	for (uint32_t ii = 0; ii < m_Particle.size(); ii++)
+	{
+		count++;
+		for (uint32_t jj = 0; jj < m_Particle.size(); jj++)
+		{
+			if (ii != jj )
 			{
-				
-				if (dsq < rsq)
-					colCount++;
-				
-			}
+				xT = m_Particle[jj].rx;
+				yT = m_Particle[jj].ry;
+				zT = m_Particle[jj].rz;
 		
+				xP = m_Particle[ii].rx;
+				yP = m_Particle[ii].ry;
+				zP = m_Particle[ii].rz;
+
+				dsq = pow((xP - xT), 2) + pow((yP - yT), 2) + pow((zP - zT), 2);
+				rsq = pow((m_Particle[ii].radius+m_Particle[jj].radius),2);
+				if (dsq < rsq)
+				{
+					colCount++;
+					mout << "Collision From:" << ii << " To:" << jj << ende;
+				}
+			}
 		}
 		if (count % 1000 == 0)
 			std::cout << "At:" << count << " ColCount:" << colCount << std::endl;

@@ -96,17 +96,13 @@ void main()
 	uint Findex = index;
 	uint Tindex = 0;
 	boundStruct colQ;	
-	uint duplst[MAX_ARY+1];
-	
-	for(uint kk =0; kk < MAX_ARY; kk++)
-		duplst[kk] = 0;
-	
+	uint duplst[256]; 	
 	uint dupcnt = 0;
 	bool dupflg = false;
 	vec3 OutVel = vec3(0.0,0.0,0.0);;		
 	uint flg=0;
 	
-	
+	uint cc = 0;	
 	//uint ii = gl_GlobalInvocationID.y;
 	for(uint ii = 0; ii < 8; ii++)
 	{
@@ -126,88 +122,65 @@ void main()
 			{
 				
 				Tindex = clink[loc].idx[jj];
-				if(Tindex == 0)
-					break;
-				
-				//----------------------- DUP Process start		
-				
-				for(uint cc =0; cc < MAX_ARY; cc++)
-				{
-					if(duplst[cc] == Tindex)
-					{
-						dupflg = true;
-						#if 0						
-						if(uint(ShaderFlags.frameNum) == 3)
-							debugPrintfEXT("DUPTRUE:cc:%d,dupcnt:%d,[%d,%d,%d,%d,%d,%d,%d]",cc,dupcnt,
-							duplst[0],
-							duplst[1],
-							duplst[2],
-							duplst[3],
-							duplst[4],
-							duplst[5],
-							duplst[6]						
-							);
-						#endif	
-						break;
-					}
-					if(duplst[cc] == 0)
-					{
-						dupflg = false;
-						duplst[cc] = Tindex;
-						dupcnt = cc;
-						#if 0						
-						if(uint(ShaderFlags.frameNum) == 3)
-							debugPrintfEXT("DUPFFALSE:cc:%d,dupcnt:%d,[%d,%d,%d,%d,%d,%d,%d]",cc,dupcnt,
-							duplst[0],
-							duplst[1],
-							duplst[2],
-							duplst[3],
-							duplst[4],
-							duplst[5],
-							duplst[6]						
-							);
-						#endif	
-						break;
-					}
-				}
-				//----------------------- DUP Process end
-				
-					
 
-					if(dupflg == false)						
-					{
+				// If the linked particle is zero teminate
+				if(Tindex != 0 && Tindex != Findex)
+				{
+
+#if 0			
+	
+						cc = 0;
+						while(cc <= dupcnt+1 && dupcnt < 32)
+						{
+							if(duplst[cc] == Tindex)
+							{
+								dupflg = true;
+								break;
+							}
+							else if(duplst[cc] == 0)
+							{
+								dupflg = false;
+								duplst[dupcnt] = Tindex;
+						#if 1						
+								if(uint(ShaderFlags.frameNum) == 2 && index == 2)
+									debugPrintfEXT("DUPITM:%d",duplst[dupcnt]);
+						#endif
+								dupcnt++;
+								break;
+							}
+							
+						
+							cc++;
+						}
 					
-#if 0
-					if(uint(ShaderFlags.frameNum) == 3 && dupflg == false)
+	#if 1
+					if(uint(ShaderFlags.frameNum) == 3)
 					{
-						atomicAdd(collOut.CollisionCount,1);
 						if(dupflg == true)
 							flg = 1;
 						else
 							flg = 0;
-						debugPrintfEXT("F:%d C:%d, ploc:%d,aryloc:%d,Findex:%d,Tindex:%d, DUP:%d",
-								uint(ShaderFlags.frameNum),
-								int(collOut.CollisionCount),
-								ii,
-								jj,
-								Findex,
-								Tindex,flg);
+						debugPrintfEXT("F:%d C:%d,Findex:%d,Tindex:%d, DUP:%d,",uint(ShaderFlags.frameNum),uint(collOut.CollisionCount),Findex,Tindex,flg);
 					}
-#endif
+	#endif
 						
-						if(isParticleContact(ii,Findex, Tindex, OutVel) > 0)
-						{
-							atomicAdd(collOut.CollisionCount,1);
-							
-						}
-						dupflg = true;
 					
+#endif
+						if(dupflg == false)						
+						{
+							
+							if(isParticleContact(ii,Findex, Tindex, OutVel) > 0)
+							{
+								atomicAdd(collOut.CollisionCount,1);
+								
+							}
+							dupflg = true;
+						
+						}
 					}
-				
-
 				}
 			}
 		}
+
 	
-	
-}
+	}

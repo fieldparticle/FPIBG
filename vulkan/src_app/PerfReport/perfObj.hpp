@@ -99,8 +99,8 @@ class perfObj
 		void ProcessMMRR();
 		void SetTest(uint32_t RDType,uint32_t subType)
 		{
-			m_testType = RDType;
-			m_test = subType;
+			m_testType = subType;
+			m_test = RDType;
 			if(RDType == 1)
 			{
 				if(subType == 1)

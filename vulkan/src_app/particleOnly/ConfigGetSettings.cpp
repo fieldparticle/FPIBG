@@ -75,6 +75,7 @@ void ConfigObj::GetSettings()
 	if(!m_TestCFG.compare("testdirCFB"))
 	{
 		m_TestDir = m_testCFBDir;
+		m_AutoTimeOut = 3;
 	}
 	if(!m_TestCFG.compare("testdirPCD"))
 	{

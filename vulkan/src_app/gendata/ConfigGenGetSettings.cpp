@@ -9,6 +9,11 @@ void ConfigObj::GetSettings()
 
 	//m_TestType = GetUInt("application.testType", true);
 
+	m_DebugVer=false;
+	m_ReleaseVer=false;
+	m_runOnly = GetString("application.runOnly", true);
+	m_DoAuto = GetBool("application.doAuto", true);
+
 	m_PQBTestName = GetString("application.PQB.testfile", true);;
 	m_PQBTestDir = GetString("application.PQB.testdir", true);;
 

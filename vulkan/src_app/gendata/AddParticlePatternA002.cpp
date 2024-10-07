@@ -47,6 +47,7 @@ void GenResourceVertexParticle::OpenParticleDataA002(size_t num, benchSetItem* b
 
 	if (m_PInCell > m_NumParticles)
 		m_PInCell = m_NumParticles;
+	m_ColArySize = m_PInCell+10;
 
 	m_CInCell		= std::ceil(static_cast<float>(m_PInCell) * m_Cdensity/2.0f);
 	m_SideLength	= CalcSideLength();

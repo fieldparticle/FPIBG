@@ -82,7 +82,7 @@
     <TargetName>ParticleD</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\..\..\RCCD3rdPty\shaderc-main\third_party\glslang;../../../../RCCD3rdPty/glfw-master/include/;..\..\..\..\RCCD3rdPty\glfw-master\include;..\..\..\..\RCCD3rdPty\VMA\include;..\..\..\..\RCCD3rdPty\tinyobjloader-release;..\..\src_app;..\..\src;..\..\..\..\RCCD3rdPty\stb-master;..\..\src_app\ParticleWBoundary;..\..\..\..\RCCD3rdPty\shaderc-main\libshaderc_util\include;..\..\..\..\RCCD3rdPty\shaderc-main\glslc\src;..\..\..\..\RCCD3rdPty\shaderc-main\libshaderc\include;..\..\..\..\RCCD3rdPty\shaderc-main\third_party\SPIRV-Tools\include;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc;..\..\..\..\RCCD3rdPty\shaderc-main;..\..\..\..\RCCD3rdPty\VulkanSDK\Include;..\..\..\..\RCCD3rdPty\glm-master;..\..\src\libconfig;$(VK_SDK_PATH)\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\..\FPIBG3rdPty\shaderc\third_party\glslang;../../../../FPIBG3rdPty/glfw/include/;..\..\..\..\FPIBG3rdPty\VMA\include;..\..\..\..\FPIBG3rdPty\tinyobjloader-release;..\..\src_app;..\..\src;..\..\..\..\FPIBG3rdPty\stb;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc_util\include;..\..\..\..\FPIBG3rdPty\shaderc\glslc\src;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc\include;..\..\..\..\FPIBG3rdPty\shaderc\third_party\SPIRV-Tools\include;..\..\..\..\FPIBG3rdPty\shaderc\build_vcc;..\..\..\..\FPIBG3rdPty\shaderc;..\..\..\..\FPIBG3rdPty\VulkanSDK\Include;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc_util;..\..\..\..\FPIBG3rdPty\glm;..\..\src\libconfig;$(VK_SDK_PATH)\include;$(IncludePath)</IncludePath>
     <OutDir>..\..\run\ParticleOnly\</OutDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <TargetName>ParticleR</TargetName>
@@ -158,7 +158,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Shlwapi.lib;..\..\..\..\RCCD3rdPty\glfw-master\build\src\Debug\glfw3.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\glslc\Release\glslc.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\libshaderc_util\Release\shaderc_util.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\libshaderc\Release\shaderc.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\third_party\glslang\glslang\Release\glslang.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\third_party\glslang\SPIRV\Release\SPIRV.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\third_party\spirv-tools\source\opt\Release\SPIRV-Tools-opt.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\third_party\spirv-tools\source\Release\SPIRV-Tools.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\third_party\glslang\glslang\Release\MachineIndependent.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\third_party\glslang\glslang\OSDependent\Windows\Release\OSDependent.lib;..\..\..\..\RCCD3rdPty\shaderc-main\build_vcc\third_party\glslang\glslang\Release\GenericCodeGen.lib;$(VULKAN_SDK)\Lib\vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Shlwapi.lib;$(VULKAN_SDK)\Lib\vulkan-1.lib;..\..\..\..\FPIBG3rdPty\glfw\build\src\Release\glfw3.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\glslc\Release\glslc.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\libshaderc_util\Release\shaderc_util.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\libshaderc\Release\shaderc.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\third_party\glslang\glslang\Release\glslang.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\third_party\glslang\SPIRV\Release\SPIRV.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\third_party\spirv-tools\source\opt\Release\SPIRV-Tools-opt.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\third_party\spirv-tools\source\Release\SPIRV-Tools.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\third_party\glslang\glslang\Release\MachineIndependent.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\third_party\glslang\glslang\OSDependent\Windows\Release\OSDependent.lib;..\..\..\..\FPIBG3rdPty\shaderc\build\third_party\glslang\glslang\Release\GenericCodeGen.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
@@ -270,6 +270,7 @@
     <ClCompile Include="..\..\src\VulkanObj\InstanceObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\loop.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\main.cpp" />
+    <ClCompile Include="..\..\src\VulkanObj\MemStats.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\ObjLoader.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\PhysDevObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\PipelineObj.cpp" />

@@ -47,8 +47,6 @@ void GenResourceVertexParticle::ProcessDUP()
 		for(uint32_t jj =0; jj < m_NumParticles;jj+=4)
 			m_SideLength+=3;
 
-		//m_SideLength = 2*m_BenchSet[ii].tot/3;
-		//uint32_t sidelen = 8*m_SideLength;
 		m_CountedCollisions = m_TotCollsions;
 		sprintf(FileText, "%04dCollisionDataSet%dX%dX%d\0", (int)ii,
 			int(m_NumParticles), m_TotCollsions, m_SideLength);
@@ -77,6 +75,9 @@ void GenResourceVertexParticle::ProcessDUP()
 		CloseParticleData();
 		m_CountedCollisions = CountCollisions();
 		m_TestCollisions = false;
+
+		m_ColArySize  = m_BenchSet[ii].cols;
+		m_PInCell = 3;
 		WriteTstFile(ii,&m_BenchSet[ii]);
 		
 	}
