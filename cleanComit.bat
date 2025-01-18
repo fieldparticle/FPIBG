@@ -2,8 +2,20 @@ rmdir /S /Q vulkan\make\build_all\.vs
 rmdir /S /Q vulkan\make\build_all\x64 
 rmdir /S /Q vulkan\make\GenBenchData\x64 
 rmdir /S /Q vulkan\make\GenBenchData\.vs 
+rmdir /S /Q vulkan\make\vcubeverify\x64 
+rmdir /S /Q vulkan\make\make\vcubeverify\.vs 
+
 del /S /Q vulkan\run\GenBenchData\*.pdb
 del /S /Q vulkan\run\GenBenchData\*.exe
+
+del /S /Q vulkan\run\vcubeverify\*.spv
+del /S /Q vulkan\run\vcubeverify\*.exp
+del /S /Q vulkan\run\vcubeverify\*.lib
+del /S /Q vulkan\run\vcubeverify\*.log
+del /S /Q vulkan\run\vcubeverify\*.pdb
+del /S /Q vulkan\run\vcubeverify\*.exe
+rmdir /S /Q vulkan\make\vcubeverify\x64
+rmdir /S /Q vulkan\make\vcubeverify\.vs
 
 
 del /S /Q vulkan\run\mmrrTriangle\*.spv

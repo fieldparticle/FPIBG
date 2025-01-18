@@ -32,7 +32,7 @@
 #include "mpsVerify.hpp"
 
 #include <thread>
-#include "particleOnly/pdata.hpp"
+#include "VulkanObj/pdata.hpp"
 uint32_t NumParticles;
 float radius = 0;
 uint32_t ColTask(uint32_t thnum, uint32_t Frm, uint32_t To, std::vector<pdata>& m_Particle);
@@ -41,7 +41,7 @@ uint32_t ColTask(uint32_t thnum, uint32_t Frm, uint32_t To, std::vector<pdata>& 
 uint32_t coLocCount = 0;
 uint32_t missed_link_count = 0;
 uint32_t* colary;
-uint32_t Count(bool CountCollisions)
+uint32_t CountCollisions(bool CountCollisions)
 {
 	//pdata* m_Particle;
 	uint32_t readcount = 0;
@@ -57,11 +57,12 @@ uint32_t Count(bool CountCollisions)
 	NumParticles = cfg->m_partcount;
 	std::vector<pdata> m_Particle;
 	
-	std::ifstream input_file(cfg->m_TestName , std::ios::binary);
+	std::string dataFile = cfg->m_TestDir + "/" + cfg->m_TestName;
+	std::ifstream input_file(dataFile, std::ios::binary);
 	
 	if (!input_file.is_open())
 	{
-		std::string err = "Unable to open particle data file:" + cfg->m_TestName ;
+		std::string err = "Unable to open particle data file:" + cfg->m_DataFile;
 		throw std::runtime_error(err.c_str());
 	}
 	
@@ -127,7 +128,7 @@ uint32_t Count(bool CountCollisions)
 			<< " Duration:" << elapsed_seconds.count() << " s" << ende;
 
 		std::ostringstream  flnmtxt;
-		flnmtxt << "J:/RCCData/perfdataV/CollisonDataSetVerify" << readcount << "x" << colcount << ".csv" << std::ends;
+		flnmtxt << "J:/FPIBGDATA/perfdataPQB" << readcount << "x" << colcount << ".csv" << std::ends;
 		std::string filename = flnmtxt.str().c_str();
 		{
 			std::ofstream ostrm(filename);
@@ -149,15 +150,19 @@ uint32_t ColTask(uint32_t thnum, uint32_t Frm, uint32_t To, std::vector<pdata> &
 	double dsq = 0;
 	double rsq = 0;
 	uint32_t colCount = 0;
-
+	
+	
 	
 	for (uint32_t ii = Frm; ii < To; ii++)
 	{
+		const auto start{ std::chrono::steady_clock::now() };
 
 		xT = m_Particle[ii].rx;
 		yT = m_Particle[ii].ry;
 		zT = m_Particle[ii].rz;
 		
+		if (ii == 1)
+			return 0;
 		for (uint32_t jj = 0; jj < To; jj++)
 		{
 
@@ -174,11 +179,24 @@ uint32_t ColTask(uint32_t thnum, uint32_t Frm, uint32_t To, std::vector<pdata> &
 					coLocCount++;
 				if (dsq < rsq)
 					colCount++;
+
+				
 				
 			}
+
+			
+			if (jj % (To-1) == 0 && jj != 0)
+			{
+				std::cout << "For::" << ii << " At:" << jj << " ColCount:" << colCount << std::endl;
+				const auto end{ std::chrono::steady_clock::now() };
+				const std::chrono::duration<double> elapsed_seconds{ end - start };
+				double timepertest = elapsed_seconds.count()/(To-1);
+
+				mout << "jj:" << jj << " ii:" << ii << " tpt:" << timepertest << " duration:" << elapsed_seconds.count() << " s" << ende;
+			}
+
 		}
-		if (ii % 1000 == 0)
-			std::cout << "For::" << ii << " At:" << ii << " ColCount:" << colCount << std::endl;
+		
 	}
 	return colCount;
 

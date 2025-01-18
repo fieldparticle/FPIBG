@@ -650,7 +650,7 @@ Collision From:0 To:1
 Collision From:0 To:2
 Collision From:1 To:0
 Collision From:2 To:0
-Collisons Verification:4 Of :3 Particles, Colocated:0 SideLen:6 Radius:0.2 Duration:4.17e-05 s
+Collisons Verification:4 Of :3 Particles, Colocated:0 SideLen:6 Radius:0.2 Duration:4.36e-05 s
 Processing:../../../../FPIBGDATA/perfdataDUP/0001CollisionDataSet6X6X12.bin
 Counted Particles:6 Required Particles:6
 Counted Collisions:6 Required Collisions:6
@@ -668,7 +668,7 @@ Collision From:3 To:5
 Collision From:4 To:2
 Collision From:4 To:3
 Collision From:5 To:3
-Collisons Verification:10 Of :6 Particles, Colocated:0 SideLen:12 Radius:0.2 Duration:8.72e-05 s
+Collisons Verification:10 Of :6 Particles, Colocated:0 SideLen:12 Radius:0.2 Duration:7.97e-05 s
 Processing:../../../../FPIBGDATA/perfdataDUP/0002CollisionDataSet9X9X21.bin
 Counted Particles:9 Required Particles:9
 Counted Collisions:9 Required Collisions:9
@@ -690,7 +690,7 @@ Collision From:6 To:7
 Collision From:6 To:8
 Collision From:7 To:6
 Collision From:8 To:6
-Collisons Verification:14 Of :9 Particles, Colocated:0 SideLen:21 Radius:0.2 Duration:0.0001248 s
+Collisons Verification:14 Of :9 Particles, Colocated:0 SideLen:21 Radius:0.2 Duration:0.0001097 s
 Processing:../../../../FPIBGDATA/perfdataDUP/0003CollisionDataSet12X12X30.bin
 Counted Particles:12 Required Particles:12
 Counted Collisions:12 Required Collisions:12
@@ -718,4 +718,4 @@ Collision From:9 To:11
 Collision From:10 To:9
 Collision From:11 To:7
 Collision From:11 To:9
-Collisons Verification:20 Of :12 Particles, Colocated:0 SideLen:30 Radius:0.2 Duration:0.000239 s
+Collisons Verification:20 Of :12 Particles, Colocated:0 SideLen:30 Radius:0.2 Duration:0.0001488 s

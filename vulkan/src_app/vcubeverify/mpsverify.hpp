@@ -65,5 +65,5 @@ uint32_t ArrayToIndex(uint32_t x, uint32_t y, uint32_t z, uint32_t len);
 void IndexToArray(uint32_t index, uint32_t len, uint32_t* ary);
 void VerifyArrayIndexing();
 void VerifyArrayIndexingV2();
-void CountCollisions();
+uint32_t CountCollisions(bool);
 #endif

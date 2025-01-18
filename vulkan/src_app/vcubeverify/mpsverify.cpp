@@ -52,22 +52,15 @@ int  main()  try
 	cfg->m_partcount = cfg->GetInt("application.pcount", true);
 	cfg->m_TestName = cfg->GetString("application.testfile", true);
 	cfg->m_TestDir = cfg->GetString("application.testdir", true);
-	
 #if 1
 	if(testnum == 1)
-		Count(1);
-	if (testnum == 2)
-		VerifyArrayIndexingV2();
+		CountCollisions(true);
 	if (testnum == 3)
 		CountParticlesMain();
+	if (testnum == 2)
+		VerifyArrayIndexingV2();
 
 #endif
-
-
-	
-		
-	
-
 
 }
 catch (const std::exception& e)
@@ -127,8 +120,8 @@ void CountParticlesMain()
 			//config->m_AprFile = hold;
 			cfg->m_DataFile = hold + "bin";
 			mout << "Auto DataFile : " << cfg->m_DataFile << ende;
-			if(Count(false)!=0)
-				return;
+			//if(Count(false)!=0)
+			//	return;
 			
 
 		}

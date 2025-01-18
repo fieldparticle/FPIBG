@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GenDataSets", "..\GenBenchD
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PerfReport", "..\PerfReport\PerfReport.vcxproj", "{72613107-7AA8-4F10-BE2D-73A18A40FB64}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vcubeverify", "..\vcubeverify\vcubeverify.vcxproj", "{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{72613107-7AA8-4F10-BE2D-73A18A40FB64}.Release|x64.Build.0 = Release|x64
 		{72613107-7AA8-4F10-BE2D-73A18A40FB64}.Release|x86.ActiveCfg = Release|Win32
 		{72613107-7AA8-4F10-BE2D-73A18A40FB64}.Release|x86.Build.0 = Release|Win32
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Debug|x64.ActiveCfg = Debug|x64
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Debug|x64.Build.0 = Debug|x64
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Debug|x86.ActiveCfg = Debug|Win32
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Debug|x86.Build.0 = Debug|Win32
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Release|x64.ActiveCfg = Release|x64
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Release|x64.Build.0 = Release|x64
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Release|x86.ActiveCfg = Release|Win32
+		{71CC0B21-03DD-4E18-9D3E-C55FB48C16E4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
