@@ -56,7 +56,7 @@ void DrawParticleOnly::DrawFrame()
 	// Allocate all semaphores
 	//=========================================================
 	
-	//if (m_App->m_CFG->m_NoCompute != true)
+	//if (CfgApp->m_NoCompute != true)
 	{
 		//=========================================================
 		// Wait for compute fences

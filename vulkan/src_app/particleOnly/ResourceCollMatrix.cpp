@@ -41,7 +41,7 @@ void ResourceCollMatrix::Create(uint32_t BindPoint, ResourceVertexParticle* part
     
     //Writeing to params at
     m_particle->m_SideLength;
-    ConfigObj* cfg = m_App->m_CFG;
+    ConfigObj* cfg = CfgApp;
     m_MaxCollArray = cfg->m_MaxCollArray;
 
     //m_ColMat.IndexArray = new uint32_t[m_MaxCollArray];
@@ -51,14 +51,14 @@ void ResourceCollMatrix::Create(uint32_t BindPoint, ResourceVertexParticle* part
     if(cfg->m_TstFileVersion == 2)
     {
         m_MaxLoc = static_cast<uint32_t>((cfg->m_CellAryW+1) * (cfg->m_CellAryH+1) * (cfg->m_CellAryL+1));
-        m_BufSize = m_MaxLoc*sizeof(uint32_t)*m_App->m_CFG->m_MaxCollArray;
+        m_BufSize = m_MaxLoc*sizeof(uint32_t)*CfgApp->m_MaxCollArray;
         mout << "MEMALLOC:ResourceCollMatrix V2:" << m_BufSize << ende;    
     }
     else
-        m_BufSize = sizeof(uint32_t) * (Size+1) * (Size+1) * (Size+1)*m_App->m_CFG->m_MaxCollArray;
+        m_BufSize = sizeof(uint32_t) * (Size+1) * (Size+1) * (Size+1)*CfgApp->m_MaxCollArray;
 
     uint32_t elements = m_BufSize / sizeof(uint32_t);
-    uint32_t locations = elements / m_App->m_CFG->m_MaxCollArray;
+    uint32_t locations = elements / CfgApp->m_MaxCollArray;
     createLayout();
     createBuffers();
 }

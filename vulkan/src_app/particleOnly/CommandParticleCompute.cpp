@@ -88,7 +88,7 @@ void CommandParticleCompute::RecordCommands(uint32_t imageIndex, uint32_t curren
 	vkCmdWriteTimestamp(m_CommandBuffers[currentBuffer],
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_PerfQueryPool, 0);
 	uint32_t vnum = dvo->m_NumElements;
-	vkCmdDispatch(m_CommandBuffers[currentBuffer], m_App->m_CFG->m_dkx, m_App->m_CFG->m_dky, m_App->m_CFG->m_dkz);
+	vkCmdDispatch(m_CommandBuffers[currentBuffer], CfgApp->m_dkx, CfgApp->m_dky, CfgApp->m_dkz);
 	vkCmdWriteTimestamp(m_CommandBuffers[currentBuffer],
 		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_PerfQueryPool, 1);
 	

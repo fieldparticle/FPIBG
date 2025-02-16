@@ -97,7 +97,7 @@ void ResourceAtomicGraphics::PushMem(uint32_t currentBuffer)
 void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 {
 #ifndef NDEBUG
-	if (m_App->m_CFG->m_EnableValidationLayers == false)
+	if (CfgApp->m_EnableValidationLayers == false)
 		return;
 
 	void* mappedData = {};
@@ -169,7 +169,7 @@ void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 
 		}
 
-	if (m_App->m_FrameNumber < m_App->m_CFG->m_reportGraphFramesLessThan )
+	if (m_App->m_FrameNumber < CfgApp->m_reportGraphFramesLessThan )
 	{
 		
 		mout << "Vertex F:" << m_App->m_FrameNumber

@@ -35,8 +35,8 @@
 void PipelineComputeParticle::CreatePipeline()
 {
     
-    std::string cshader_spv = m_App->m_CFG->m_compSPVParticle;
-    std::string cshader_glsl = m_App->m_CFG->m_compShaderParticle;
+    std::string cshader_spv = CfgApp->m_compSPVParticle;
+    std::string cshader_glsl = CfgApp->m_compShaderParticle;
 
     std::vector<char>  compShaderCode;
     m_SHO->CompileShader(cshader_glsl, cshader_spv, compShaderCode, m_SHO->SH_COMP);

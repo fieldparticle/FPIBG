@@ -37,7 +37,7 @@
 void CommandParticleGraphics::RecordCommands( uint32_t imageIndex, uint32_t currentBuffer)
 {
 			
-	ConfigObj* cfg = m_App->m_CFG;
+	ConfigObj* cfg = CfgApp;
 
 
 	Resource* collMem = (m_RCO->GetResourceName("CollisionImage"));

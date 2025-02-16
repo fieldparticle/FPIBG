@@ -40,7 +40,7 @@ void ResourceLockMatrix::Create(uint32_t BindPoint, ResourceVertexParticle* part
     
     m_particle = particle;
     m_particle->m_SideLength;
-    ConfigObj* cfg = m_App->m_CFG;
+    ConfigObj* cfg = CfgApp;
     m_thisFramesBuffered = 1;
     uint32_t Size = static_cast<uint32_t>(m_particle->m_SideLength);
     m_BindPoint = BindPoint;
@@ -52,7 +52,7 @@ void ResourceLockMatrix::Create(uint32_t BindPoint, ResourceVertexParticle* part
         mout << "MEMALLOC:ResourceLockMatrix V2:" << m_BufSize << ende;    
     }
     else
-        m_BufSize = sizeof(uint32_t) * (Size+1) * (Size+1) * (Size+1)*m_App->m_CFG->m_MaxCollArray;
+        m_BufSize = sizeof(uint32_t) * (Size+1) * (Size+1) * (Size+1)*CfgApp->m_MaxCollArray;
 
     
    

@@ -38,7 +38,7 @@ void ResourceVertexObj::Create(uint32_t BindPoint, ResourceVertexParticle* PartV
 {
 	
 	m_ParticleVert = PartVert;
-	ConfigObj* cfg = m_App->m_CFG;
+	ConfigObj* cfg = CfgApp;
 	
 	
 	bool res = loadOBJ(m_FileName.c_str(), m_vtemp, m_UVS, m_Normals);

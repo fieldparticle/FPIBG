@@ -37,11 +37,11 @@
 void PipelineGraphicsParticleOnly::CreatePipeline()
 {
     m_RenderPassName = "SubpassParticle";
-    std::string fshader_spv = m_App->m_CFG->m_fragSPVParticle;
-    std::string fshader_glsl = m_App->m_CFG->m_fragShaderParticle;
+    std::string fshader_spv = CfgApp->m_fragSPVParticle;
+    std::string fshader_glsl = CfgApp->m_fragShaderParticle;
 
-    std::string vshader_spv = m_App->m_CFG->m_vertSPVParticle;
-    std::string vshader_glsl = m_App->m_CFG->m_vertShaderParticle;
+    std::string vshader_spv = CfgApp->m_vertSPVParticle;
+    std::string vshader_glsl = CfgApp->m_vertShaderParticle;
 
     std::vector<char>  fragShaderCode;
     m_SHO->CompileShader(fshader_glsl, fshader_spv, fragShaderCode, m_SHO->SH_FRAG);

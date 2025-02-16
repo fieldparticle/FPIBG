@@ -48,7 +48,7 @@ float ResourceVertexParticle::CalcSpeedLimit(float max_vel, float radius)
 }
 void ResourceVertexParticle::Create(uint32_t BindPoint)
 {
-	ConfigObj* cfg = m_App->m_CFG;
+	ConfigObj* cfg = CfgApp;
 	m_MaxColls = MAXSPCOLLS;
 	m_thisFramesBuffered = 1;
 	m_Particles={};

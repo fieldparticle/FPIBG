@@ -36,7 +36,7 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 		m_CMO = CMO;
 		m_SCO = SCO;
 		m_LMO = LMO;
-		ConfigObj* cfg = m_App->m_CFG;
+		ConfigObj* cfg = CfgApp;
 		GenWorkGroups();
 		if(cfg->m_TstFileVersion == 2)
 		{
@@ -53,7 +53,7 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 void ShaderObj::GenWorkGroups()
 {
 
-	ConfigObj* cfg = m_App->m_CFG;
+	ConfigObj* cfg = CfgApp;
 	std::string filename = "../../shaders/workgroups.glsl";
 	{
 		std::ofstream ostrm(filename);
@@ -73,7 +73,7 @@ void  ShaderObj::WriteShaderHeader()
 {
 	
 	uint32_t compflag=0;
-	ConfigObj* cfg = m_App->m_CFG;
+	ConfigObj* cfg = CfgApp;
 	
     std::string filename = "../../shaders/params.glsl";
     {
@@ -94,15 +94,15 @@ void  ShaderObj::WriteShaderHeader()
 		ostrm << "const uint WIDTH=" << m_VPO->m_SideLength << ";\n"
 			<< "const uint HEIGHT=" << m_VPO->m_SideLength << ";\n"
 			<< "const uint DEPTH=" << m_VPO->m_SideLength << ";\n"
-			<< "const uint MAX_ARY=" << m_App->m_CFG->m_MaxCollArray << ";\n"
+			<< "const uint MAX_ARY=" << CfgApp->m_MaxCollArray << ";\n"
 			<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
 			<< "const uint SCR_H =" << m_SCO->m_SwapHeight << ";\n"
 			<< "const uint SCR_X =" << m_SCO->m_SwapX << ";\n"
 			<< "const uint SCR_Y =" << m_SCO->m_SwapY << ";\n"
 			<< "const uint NUMPARTS =" << m_VPO->m_NumParticles << ";\n"
-			<< "const uint NUMCOLS =" << m_App->m_CFG->m_colcount << ";\n"
+			<< "const uint NUMCOLS =" << CfgApp->m_colcount << ";\n"
 			<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
-			<< "const uint doMotion =" << m_App->m_CFG->m_DoMotion << ";\n"
+			<< "const uint doMotion =" << CfgApp->m_DoMotion << ";\n"
 			<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
 			<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
 			<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
@@ -119,7 +119,7 @@ void  ShaderObj::WriteShaderHeaderV2()
 {
 	
 	uint32_t compflag=0;
-	ConfigObj* cfg = m_App->m_CFG;
+	ConfigObj* cfg = CfgApp;
     std::string filename = "../../shaders/params.glsl";
     {
 		std::string dbgflag = {};
@@ -157,17 +157,17 @@ void  ShaderObj::WriteShaderHeaderV2()
 				<< "const uint DEPTH=" << cfg->m_CellAryL << ";\n"
 				<< "const uint CENTER=" << cfg->m_PipeCenter << ";\n"
 				<< "const float RADIUS=" << cfg->m_PipeRadius << ";\n"
-				<< "const uint MAX_ARY=" << m_App->m_CFG->m_MaxCollArray << ";\n"
+				<< "const uint MAX_ARY=" << CfgApp->m_MaxCollArray << ";\n"
 				<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
 				<< "const uint SCR_H =" << m_SCO->m_SwapHeight << ";\n"
 				<< "const uint SCR_X =" << m_SCO->m_SwapX << ";\n"
 				<< "const uint SCR_Y =" << m_SCO->m_SwapY << ";\n"
 				<< "const uint NUMPARTS =" << m_VPO->m_NumParticles << ";\n"
-				<< "const uint NUMCOLS =" << m_App->m_CFG->m_colcount << ";\n"
+				<< "const uint NUMCOLS =" << CfgApp->m_colcount << ";\n"
 				<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
 				<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
 				<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
-				<< "const uint doMotion =" << m_App->m_CFG->m_DoMotion << ";\n"
+				<< "const uint doMotion =" << CfgApp->m_DoMotion << ";\n"
 				<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
 				<< "const float dt =" << m_VPO->m_dt << ";\n"
 				<< "const uint compflag =" << compflag << ";\n"
@@ -182,7 +182,7 @@ void  ShaderObj::WriteShaderHeaderV2()
 int ShaderObj::CompileShader(std::string ShaderGLSLName, 
 		std::string ShaderSPVFileName, std::vector<char> &SPVBuffer, uint32_t type)
 {
-	ConfigObj* cfg = m_App->m_CFG;
+	ConfigObj* cfg = CfgApp;
 	std::vector<std::string> InputArgs;
 
 	//std::cout << cfg->m_CompileShaders << std::endl;

@@ -53,7 +53,7 @@ void GenResourceVertexParticle::ProcessDUP()
 
 		m_fileName = FileText;
 		
-		std::string dirval = m_App->m_CFG->m_TestDir;
+		std::string dirval = CfgApp->m_TestDir;
 		m_FullBinFile = dirval + "/" + m_fileName + ".bin";
 	
 		mout << "Processing:" << m_FullBinFile << ende;

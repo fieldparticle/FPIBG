@@ -41,7 +41,7 @@ void GenResourceVertexParticle::OpenParticleDataA003()
 
 
 	m_SideLengths.clear();	
-	ConfigObj* cfg = (ConfigObj*)m_App->m_CFG;
+	ConfigObj* cfg = (ConfigObj*)CfgApp;
 	m_Cdensity = cfg->m_CDensity;
 	m_Radius = cfg->m_Radius;
 	float sepdist = 0.15f;
@@ -108,7 +108,7 @@ void GenResourceVertexParticle::OpenParticleDataA003()
 void GenResourceVertexParticle::OpenParticleDataA003()
 {
 
-	ConfigObj* cfg = (ConfigObj*)m_App->m_CFG;
+	ConfigObj* cfg = (ConfigObj*)CfgApp;
 	std::string dirval = cfg->m_TestDir;
 	sprintf(FileText, "CFBStudyEntries");
 

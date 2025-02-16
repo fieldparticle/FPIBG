@@ -38,13 +38,13 @@ void InstanceObj::InitWindow()
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-	m_App->m_Window = glfwCreateWindow(m_App->m_CFG->m_Width, m_App->m_CFG->m_Height, "Vulkan", nullptr, nullptr);
+	m_App->m_Window = glfwCreateWindow(CfgApp->m_Width, CfgApp->m_Height, "Vulkan", nullptr, nullptr);
 	glfwSetWindowUserPointer(m_App->m_Window, this);
 	glfwSetFramebufferSizeCallback(m_App->m_Window, m_App->FramebufferResizeCallback);
 }
 void InstanceObj::CreateInstance()
 {
-	if (m_App->m_CFG->m_EnableValidationLayers && !CheckValidationLayerSupport())
+	if (CfgApp->m_EnableValidationLayers && !CheckValidationLayerSupport())
 	{
 		throw std::runtime_error("validation layers requested, but not available!");
 	}
@@ -66,18 +66,18 @@ void InstanceObj::CreateInstance()
 
 
 	GetRequiredInstanceExtensions();
-	createInfo.enabledExtensionCount = static_cast<uint32_t>(m_App->m_CFG->m_InstanceExtensions.size());
-	createInfo.ppEnabledExtensionNames = m_App->m_CFG->m_InstanceExtensions.data();
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(CfgApp->m_InstanceExtensions.size());
+	createInfo.ppEnabledExtensionNames = CfgApp->m_InstanceExtensions.data();
 
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 
 
-	if (m_App->m_CFG->m_EnableValidationLayers)
+	if (CfgApp->m_EnableValidationLayers)
 	{
 
 		mout << "Validation Layers Enabled!" << ende;
-		createInfo.enabledLayerCount = static_cast<uint32_t>(m_App->m_CFG->m_ValidationLayers.size());
-		createInfo.ppEnabledLayerNames = m_App->m_CFG->m_ValidationLayers.data();
+		createInfo.enabledLayerCount = static_cast<uint32_t>(CfgApp->m_ValidationLayers.size());
+		createInfo.ppEnabledLayerNames = CfgApp->m_ValidationLayers.data();
 		m_App->PopulateDebugMessengerCreateInfo(debugCreateInfo);
 		//createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 
@@ -116,7 +116,7 @@ bool InstanceObj::CheckValidationLayerSupport()
 
 	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-	for (const char* layerName : m_App->m_CFG->m_ValidationLayers)
+	for (const char* layerName : CfgApp->m_ValidationLayers)
 	{
 		bool layerFound = false;
 
@@ -199,7 +199,7 @@ std::vector<const char*> InstanceObj::GetRequiredInstanceExtensions()
 	vkEnumerateInstanceExtensionProperties(nullptr,
 		&instanceExtensionCount, availableExtensions.data());
 
-	if (m_App->m_CFG->m_SaveExtensions)
+	if (CfgApp->m_SaveExtensions)
 	{
 		std::ofstream file("InstanceExtensions.log", std::ios::out | std::ios::binary);
 		for (uint32_t i = 0; i < availableExtensions.size(); i++)
@@ -217,13 +217,13 @@ std::vector<const char*> InstanceObj::GetRequiredInstanceExtensions()
 
 	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
-	m_App->m_CFG->m_InstanceExtensions.insert(m_App->m_CFG->m_InstanceExtensions.end(), extensions.begin(), extensions.end());
-	if (m_App->m_CFG->m_SaveExtensions)
+	CfgApp->m_InstanceExtensions.insert(CfgApp->m_InstanceExtensions.end(), extensions.begin(), extensions.end());
+	if (CfgApp->m_SaveExtensions)
 	{
 		std::ofstream file("ActiveInstanceExtensions.log", std::ios::out | std::ios::binary);
-		for (uint32_t i = 0; i < m_App->m_CFG->m_InstanceExtensions.size(); i++)
+		for (uint32_t i = 0; i < CfgApp->m_InstanceExtensions.size(); i++)
 		{
-			file << m_App->m_CFG->m_InstanceExtensions[i] << std::endl;
+			file << CfgApp->m_InstanceExtensions[i] << std::endl;
 		}
 		file.close();
 	}

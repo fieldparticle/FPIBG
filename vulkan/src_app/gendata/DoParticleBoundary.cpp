@@ -54,14 +54,14 @@ void GenResourceVertexParticle::BuildCubeBoundary(size_t num, benchSetItem* bsi)
 		m_TotCell = m_NumParticles / m_PInCell;
 		m_TotCollsions = std::ceil(static_cast<uint32_t>(m_TotCell * m_CInCell * 2.0));
 
-		//m_Radius = m_App->m_CFG->m_PRadius;
+		//m_Radius = CfgApp->m_PRadius;
 		mout << "Number of particles:" << m_NumParticles << ende;
 		mout << "Total Collisions:" << m_CInCell << ende;
 		mout << "Total Particles in a cell:" << m_TotCell << ende;
 		mout << "Side Length:" << m_SideLength << ende;
 		mout << "Total Collsion Density:" << m_Cdensity << ende;
 		mout << "Collsion Density per cell:" << m_CInCell << ende;
-		std::string dirval = m_App->m_CFG->m_TestDir;
+		std::string dirval = CfgApp->m_TestDir;
 
 
 		sprintf(FileText, "%04dCollisionDataSet%dX%dX%d\0", (int)num,

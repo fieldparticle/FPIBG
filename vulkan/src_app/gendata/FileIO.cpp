@@ -36,11 +36,11 @@
 #include "csv/csv.hpp"
 void GenResourceVertexParticle::WriteTstFile(uint32_t index, benchSetItem* bsi)
 {
-	std::string dirval	= m_App->m_CFG->m_TestDir;
+	std::string dirval	= CfgApp->m_TestDir;
 	std::string fulFile = dirval + "/" + m_fileName + ".tst";
 	std::string txtFile = "\"" + dirval + "/" + m_fileName + "\"";
 	std::string binFile = "\"" + m_FullBinFile + "\"";
-	ConfigObj* cfg		= (ConfigObj*)m_App->m_CFG;
+	ConfigObj* cfg		= (ConfigObj*)CfgApp;
 	
 	std::ofstream ostrm(fulFile);
 	if (!ostrm.is_open())
@@ -87,7 +87,7 @@ void GenResourceVertexParticle::WriteTstFile(uint32_t index, benchSetItem* bsi)
 int GenResourceVertexParticle::GenBenchSet()
 {
 	int ret = 0;
-	io::CSVReader<18> in(m_App->m_CFG->m_TestName);
+	io::CSVReader<18> in(CfgApp->m_TestName);
 	in.read_header(io::ignore_extra_column, "wx", "wy", "wz", "dx", "dy", "dz", "tot", "sel", "cols","collision","cdens","radius","vx","vy","vz","px","py","pz");
 	std::string sel;
 	int wx, wy, wz, dx, dy, dz, tot, cols, collision;

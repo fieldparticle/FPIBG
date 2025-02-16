@@ -38,10 +38,10 @@ void GenResourceVertexParticle::DoMotionStudy()
 {
 #if 0
 	bool wflg=true;
-	ConfigObj* cfg = (ConfigObj*)m_App->m_CFG;
+	ConfigObj* cfg = (ConfigObj*)CfgApp;
 	uint32_t num = 1;
 	std::string direction = {};
-	std::string dirval = m_App->m_CFG->m_TestDir;
+	std::string dirval = CfgApp->m_TestDir;
 
 	//Boundary only
 	if (cfg->m_TestName.find("BX") != std::string::npos)
@@ -123,7 +123,7 @@ void GenResourceVertexParticle::Create(uint32_t BindPoint)
 	
 	m_Particles={};
 	m_SideLength = 0;
-	ConfigObj* cfg = (ConfigObj*)m_App->m_CFG;
+	ConfigObj* cfg = (ConfigObj*)CfgApp;
 	cfg->GetParticleSettings();
 	m_Pdensity = cfg->m_PDensity;
 	m_PInCell = static_cast<uint32_t>(std::floor(uint32_t(cfg->m_MaxPopPerCell * cfg->m_PDensity)));
