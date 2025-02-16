@@ -34,29 +34,32 @@
 #include "VulkanObj/VulkanApp.hpp"
 #include "windows.h"
 MsgStream			mout;
+ConfigObj*			CfgApp;
+ConfigObj*			CfgTst;
+ConfigObj*			MpsApp;
 uint32_t DoStudy(ConfigObj* configVCube);
 int main() try
 {
 	
 	mout.Init("particle.log", "Particle");
-	ConfigObj* config = new ConfigObj;
+	CfgApp = new ConfigObj;
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
-	config->Create("mps.cfg");
-	if (config->m_DoAuto == true)
+	CfgApp->Create("mps.cfg");
+	if (CfgApp->m_DoAuto == true)
 	{
-		config->m_TstFileVersion = 2;
-		config->m_TstFileMinorVersion = 3;
-		if (DoStudy(config))
+		CfgApp->m_TstFileVersion = 2;
+		CfgApp->m_TstFileMinorVersion = 3;
+		if (DoStudy(CfgApp))
 			return 1;
 	}
 	else
 	{
-		config->m_TstFileVersion = 2;
-		config->m_TstFileMinorVersion = 3;
-		config->GetParticleSettingsV2();
-		if (ParticleOnly(config))
+		CfgApp->m_TstFileVersion = 2;
+		CfgApp->m_TstFileMinorVersion = 3;
+		CfgApp->GetParticleSettingsV2();
+		if (ParticleOnly(CfgApp))
 			return 1;
 	}
 	return 0;
