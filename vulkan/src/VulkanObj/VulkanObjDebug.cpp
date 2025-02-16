@@ -32,7 +32,7 @@
 
 #include "VulkanObj/VulkanApp.hpp"
 #define VK_USE_PLATFORM_WIN32_KHR
-#include "J:\VulkanSDK\Include\vulkan\vulkan.hpp"
+#include "C:\VulkanSDK\1.4.304.1\Include\vulkan\vulkan.hpp"	
 bool Extflg = false;
 
 void VulkanObj::NameObject(VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
@@ -215,8 +215,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
 	{
 
 		msgstr = "Process Verbose: ";
-		if (!debugVerbose)
-			return VK_FALSE;
+		//if (!debugVerbose)
+			//return VK_FALSE;
 	}
 	else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
 	{
@@ -310,7 +310,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
 		}
 	}
 	
-	throw std::runtime_error(objtxt.str().c_str());
+	//throw std::runtime_error(objtxt.str().c_str());
 	if(Extflg == true)
 		mout << objtxt.str().c_str() << ende;
 	else

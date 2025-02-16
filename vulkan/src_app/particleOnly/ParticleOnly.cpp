@@ -141,6 +141,7 @@ int ParticleOnly(ConfigObj* configVCube)
 	// frame buffer and pipelines
 	commandPool->Create(physDevObj,swapChain, renderPass, frameBuffer,
 			{ commandParticleGraphics,commandParticleCompute });
+	Extflg = false;
 	if(Extflg == true)
 			return 1;
 
