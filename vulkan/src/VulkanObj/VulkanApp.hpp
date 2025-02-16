@@ -67,7 +67,7 @@ void MemStats(VulkanObj* vulkanObj);
 
 extern bool Extflg;
 int Loop(DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
-int ParticleOnly(ConfigObj* configVCube);
+int ParticleOnly();
 int ParticleBoundary(ConfigObj* configVCube);
 int ParticleBoundaryV2(ConfigObj* configVCube);
 int glsl(std::vector<std::string>& InputArgs, std::vector<char>& OutPutSPV);

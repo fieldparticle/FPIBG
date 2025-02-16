@@ -59,7 +59,7 @@ int main() try
 		CfgApp->m_TstFileVersion = 2;
 		CfgApp->m_TstFileMinorVersion = 3;
 		CfgApp->GetParticleSettingsV2();
-		if (ParticleOnly(CfgApp))
+		if (ParticleOnly())
 			return 1;
 	}
 	return 0;
@@ -134,7 +134,7 @@ uint32_t DoStudy(ConfigObj* config)
 			}
 #endif
 
-			if (ParticleOnly(config))
+			if (ParticleOnly())
 			{
 				mout << "Auto - ParticleOnly failed" << ende;
 				return 1;

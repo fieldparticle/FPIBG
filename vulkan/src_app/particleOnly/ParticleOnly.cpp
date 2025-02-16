@@ -33,7 +33,7 @@
 
 
 
-int ParticleOnly(ConfigObj* configVCube)
+int ParticleOnly()
 {
 	
 	VulkanObj* vulkanObj = new VulkanObj;
@@ -84,9 +84,9 @@ int ParticleOnly(ConfigObj* configVCube)
 
 	//================================= Create =================================
 	
-	vulkanObj->Create(configVCube, physDevObj);
+	vulkanObj->Create(CfgApp, physDevObj);
 	instanceObject->Create();
-	physDevObj->Create(configVCube);
+	physDevObj->Create(CfgApp);
 	swapChain->Create(physDevObj);
 	swapChain->SetSizzorMin(0);
 	swapChain->SetSizzorMax(1);
@@ -172,7 +172,7 @@ int ParticleOnly(ConfigObj* configVCube)
 	vulkanObj->CleanAll();
 	vulkanObj->Cleanup();
 #if 1 // ##JMB## MAKE THIS A config item
-	if (configVCube->m_DoAuto)
+	if (CfgApp->m_DoAuto)
 		Sleep(1000);
 #endif	
 	return ret;
