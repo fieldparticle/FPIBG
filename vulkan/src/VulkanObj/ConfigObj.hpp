@@ -207,7 +207,7 @@ public:
 	float GetFloat(std::string lookup, bool failFlag);
 	void ReadConfigFile(std::string FileName);
 	void GetParticleSettings();
-	void GetParticleSettingsV2();
+	void GetParticleSettingsV2(std::string TestName);
 	std::vector<const char*> GetArray(std::string Name);
 	config_setting_t* StartStructure(std::string Name, int& Count);
 	config_setting_t* GetSubStructAddress(config_setting_t* setting, int index);
@@ -220,14 +220,7 @@ public:
 	//	: BaseObj(Name, VTType, App) { };
 
 	ConfigObj() {};
-	virtual void Create(std::string cfg_file)
-	{
-		m_cfg_file = cfg_file;
-		// Intialize libconfig
-		config_init(&m_cfg);
-		ReadConfigFile(m_cfg_file);
-		GetSettings();
-	}
+	virtual void Create(std::string cfg_file);
 	void SetVulkanObj(VulkanObj* app)
 	{
 		m_App = app;

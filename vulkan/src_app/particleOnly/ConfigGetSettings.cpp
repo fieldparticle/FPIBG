@@ -1,34 +1,21 @@
 #include "libconfig.h"
 #include "VulkanObj/VulkanApp.hpp"
+
+void ConfigObj::Create(std::string CfgName)
+	{
+		
+		// Intialize libconfig
+		config_init(&m_cfg);
+		ReadConfigFile(CfgName);
+		
+	}
 void ConfigObj::GetSettings()
 {
-	//char  buf1[1024], buf2[1024]; 
-	//const char* variable = TEXT("RCCDDRIVE");
-	//DWORD rc = GetEnvironmentVariableA(variable, buf1, sizeof(buf1));
-	//DWORD errrc = GetLastError() ;
-	const char* rccdrv = getenv("RCCDDRIVE");
-	if(rccdrv == nullptr)
-	{
-		std::string err = "RCCDRV not set or not found.";
-		throw std::runtime_error(err.c_str());
-
-	}
-	m_rccdrv = rccdrv;
-
-	const char* rccdver = std::getenv("RCCDVER\0");
-	if(rccdver == nullptr)
-	{
-		std::string err = "RCCDIR not set or not found.";
-		throw std::runtime_error(err.c_str());
-
-	}
-
-	m_rccdver = rccdver;
 	
 
-	m_StudyName = GetString("studyFile", true);
-	config_init(&m_cfg);
-	ReadConfigFile(m_StudyName);
+	
+	//config_init(&m_cfg);
+	//ReadConfigFile(studyName);
 
 	m_AppName = GetString("name", true);
 	m_InstanceExtensions = GetArray("application.instance_extensions");
@@ -133,10 +120,10 @@ void ConfigObj::GetParticleSettings()
 	m_MaxSingleCollisions = GetInt("MaxSingleCollisions", false);
 };
 
-void ConfigObj::GetParticleSettingsV2()
+void ConfigObj::GetParticleSettingsV2(std::string TestName)
 {
 	config_init(&m_cfg);
-	ReadConfigFile(m_TestName);
+	ReadConfigFile(TestName);
 	m_AprFile =  GetString("aprFile", true);
 	m_DataFile = GetString("dataFile", true);
 	if (m_TstFileMinorVersion == 3)

@@ -42,11 +42,16 @@ int main() try
 {
 	
 	mout.Init("particle.log", "Particle");
+	MpsApp = new ConfigObj;
+	MpsApp->Create("mps.cfg");
 	CfgApp = new ConfigObj;
+	CfgApp->Create(MpsApp->GetString("studyFile", true));
+	CfgApp->GetSettings();
+
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
-	CfgApp->Create("mps.cfg");
+	
 	if (CfgApp->m_DoAuto == true)
 	{
 		CfgApp->m_TstFileVersion = 2;
@@ -58,7 +63,8 @@ int main() try
 	{
 		CfgApp->m_TstFileVersion = 2;
 		CfgApp->m_TstFileMinorVersion = 3;
-		CfgApp->GetParticleSettingsV2();
+		
+		CfgApp->GetParticleSettingsV2(CfgApp->m_TestName);
 		if (ParticleOnly())
 			return 1;
 	}
@@ -118,7 +124,7 @@ uint32_t DoStudy(ConfigObj* config)
 			config->m_TestName.clear();
 			config->m_TestName = filename[ii];
 			if(config->m_TstFileVersion == 2)
-				config->GetParticleSettingsV2();
+				config->GetParticleSettingsV2(filename[ii]);
 			else
 				config->GetParticleSettings();
 			

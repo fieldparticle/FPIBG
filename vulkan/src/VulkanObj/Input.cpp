@@ -54,6 +54,12 @@ float ox = -1;
 float oy = -1;
 bool rightMouse = false;
 
+void GLFWError(int err, const char* err_str)
+{
+	mout << "Error Code:" << err << " Err Msg:" << err_str << ende;
+
+}
+
 void SetCallBacks(VulkanObj* VO)
 {
 // tell GLFW to capture our mouse

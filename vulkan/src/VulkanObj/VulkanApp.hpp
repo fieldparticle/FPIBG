@@ -72,3 +72,4 @@ int ParticleBoundary(ConfigObj* configVCube);
 int ParticleBoundaryV2(ConfigObj* configVCube);
 int glsl(std::vector<std::string>& InputArgs, std::vector<char>& OutPutSPV);
 int ParticleOnlyGraphics(ConfigObj* configVCube);
+void GLFWError(int err, const char* err_str);

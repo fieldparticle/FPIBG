@@ -40,12 +40,12 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 		GenWorkGroups();
 		if(cfg->m_TstFileVersion == 2)
 		{
-			cfg->GetParticleSettingsV2();
+			//cfg->GetParticleSettingsV2();
 			WriteShaderHeaderV2();
 		}
 		else
 		{
-			cfg->GetParticleSettings();
+			//cfg->GetParticleSettings();
 			WriteShaderHeader();
 		}
 		
