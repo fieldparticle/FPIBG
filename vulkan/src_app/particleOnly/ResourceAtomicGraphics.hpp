@@ -56,13 +56,7 @@ public:
 		m_VkType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 	};
 		
-	void Create(uint32_t BindPoint)
-	{
-		Resource::CheckBindPoint(BindPoint);
-		m_thisFramesBuffered = m_App->m_FramesBuffered;
-			createLayout();
-			createBuffers();
-	}
+	void Create(uint32_t BindPoint);
 	virtual void AskObject(uint32_t AnyNumber);
 		
 	std::vector<VkVertexInputAttributeDescription>* GetAttributeDescriptions();

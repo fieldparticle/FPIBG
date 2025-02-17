@@ -38,7 +38,8 @@ void InstanceObj::InitWindow()
 	glfwSetErrorCallback(GLFWError);
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	m_App->m_Window = glfwCreateWindow(CfgApp->m_Width, CfgApp->m_Height, "Vulkan", nullptr, nullptr);
+	m_App->m_Window = glfwCreateWindow(CfgTemp->GetInt("application.window.size.w", true),
+			CfgTemp->GetInt("application.window.size.h", true), "Vulkan", nullptr, nullptr);
 	glfwSetWindowUserPointer(m_App->m_Window, this);
 	glfwSetFramebufferSizeCallback(m_App->m_Window, m_App->FramebufferResizeCallback);
 }

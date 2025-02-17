@@ -35,7 +35,13 @@
 using namespace std;
 // Create the layouts for the decriptors which are esentially descriptor definitions.
 // Shader Uniform struct->binding point->UniformBuffersMemory
-
+void ResourceAtomicGraphics::Create(uint32_t BindPoint)
+{
+	Resource::CheckBindPoint(BindPoint);
+	m_thisFramesBuffered = m_App->m_FramesBuffered;
+	createLayout();
+	createBuffers();
+}
 void ResourceAtomicGraphics::createLayout() 
 {  
 	
@@ -97,7 +103,7 @@ void ResourceAtomicGraphics::PushMem(uint32_t currentBuffer)
 void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 {
 #ifndef NDEBUG
-	if (CfgApp->m_EnableValidationLayers == false)
+	if (CfgTemp->GetBool("application.enableValidationLayers", true) == false)
 		return;
 
 	void* mappedData = {};

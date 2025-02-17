@@ -35,6 +35,15 @@
 using namespace std;
 // Create the layouts for the decriptors which are esentially descriptor definitions.
 // Shader Uniform struct->binding point->UniformBuffersMemory
+void ResourceAtomicCompute::Create(uint32_t BindPoint)
+{
+	Resource::CheckBindPoint(BindPoint);
+	m_thisFramesBuffered = m_App->m_FramesBuffered;
+	createLayout();
+	createBuffers();
+	m_ReportCompFramesLessThan = CfgTemp->GetInt("application.reportCompFramesLessThan", true);
+	
+}
 
 void ResourceAtomicCompute::createLayout() 
 {  
@@ -107,7 +116,7 @@ void ResourceAtomicCompute::PullMem(uint32_t currentBuffer)
 #ifndef NDEBUG
 	if (CfgApp->m_EnableValidationLayers == false)
 		return;
-	if (m_App->m_FrameNumber < CfgApp->m_reportCompFramesLessThan )
+	if (m_App->m_FrameNumber < m_ReportCompFramesLessThan )
 	{
 	#if 1
 		void* mappedData = {};

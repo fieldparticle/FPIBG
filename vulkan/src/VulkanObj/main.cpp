@@ -37,6 +37,7 @@ MsgStream			mout;
 ConfigObj*			CfgApp;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
+ConfigObj*			CfgTemp;
 uint32_t DoStudy(ConfigObj* configVCube);
 int main() try
 {
@@ -44,6 +45,9 @@ int main() try
 	mout.Init("particle.log", "Particle");
 	MpsApp = new ConfigObj;
 	MpsApp->Create("mps.cfg");
+	CfgTemp = new ConfigObj;
+	CfgTemp->Create(MpsApp->GetString("studyFile", true));
+	CfgTemp->GetSettings();
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
 	CfgApp->GetSettings();

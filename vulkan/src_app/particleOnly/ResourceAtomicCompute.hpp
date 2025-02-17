@@ -47,6 +47,7 @@ public:
 	std::vector<Particle>	m_Particles;
 	uint32_t				m_NumParticles = 0;
 	bool					m_isInit = false;
+	uint32_t				m_ReportCompFramesLessThan=0;
 
 	bool InitFlag = false;
 	ResourceAtomicCompute(VulkanObj* App, std::string Name) :
@@ -57,13 +58,7 @@ public:
 	};
 		
 	void createBuffers();
-	void Create(uint32_t BindPoint)
-	{
-		Resource::CheckBindPoint(BindPoint);
-		m_thisFramesBuffered = m_App->m_FramesBuffered;
-		createLayout();
-		createBuffers();
-	}
+	void Create(uint32_t BindPoint);
 
 
 	std::vector<VkVertexInputAttributeDescription>* GetAttributeDescriptions();

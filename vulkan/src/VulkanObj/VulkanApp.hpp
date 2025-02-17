@@ -35,6 +35,7 @@
 #include "VulkanObj/ConfigObj.hpp"
 extern ConfigObj* CfgApp;
 extern ConfigObj* CfgTst;
+extern ConfigObj* CfgTemp;
 #include "VulkanObj/BaseObj.hpp"
 #include "VulkanObj/VulkanObj.hpp"
 #include "VulkanObj/SyncObj.hpp" // Needs obj
