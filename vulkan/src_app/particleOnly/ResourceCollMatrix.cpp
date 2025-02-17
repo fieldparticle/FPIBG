@@ -37,28 +37,26 @@ void ResourceCollMatrix::Create(uint32_t BindPoint, ResourceVertexParticle* part
 {
 
     m_thisFramesBuffered = 1;
-    m_particle = particle;
+    m_particle           = particle;
     
-    //Writeing to params at
-    m_particle->m_SideLength;
-    ConfigObj* cfg = CfgApp;
-    m_MaxCollArray = cfg->m_MaxCollArray;
+    m_MaxCollArray = CfgTst->GetInt("ColArySize", true);
 
-    //m_ColMat.IndexArray = new uint32_t[m_MaxCollArray];
-    
     uint32_t Size = static_cast<uint32_t>(m_particle->m_SideLength);
     m_BindPoint = BindPoint;
-    if(cfg->m_TstFileVersion == 2)
+    if(CfgApp->m_TstFileVersion == 2)
     {
-        m_MaxLoc = static_cast<uint32_t>((cfg->m_CellAryW+1) * (cfg->m_CellAryH+1) * (cfg->m_CellAryL+1));
-        m_BufSize = m_MaxLoc*sizeof(uint32_t)*CfgApp->m_MaxCollArray;
+        m_MaxLoc = static_cast<uint32_t>((CfgTst->GetUInt("CellAryW", true)+1) 
+                                        * (CfgTst->GetUInt("CellAryH", true)+1) 
+                                        * (CfgTst->GetUInt("CellAryL", true)+1));
+
+        m_BufSize = m_MaxLoc*sizeof(uint32_t)*CfgTst->GetInt("ColArySize", true);
         mout << "MEMALLOC:ResourceCollMatrix V2:" << m_BufSize << ende;    
     }
     else
-        m_BufSize = sizeof(uint32_t) * (Size+1) * (Size+1) * (Size+1)*CfgApp->m_MaxCollArray;
+        m_BufSize = sizeof(uint32_t) * (Size+1) * (Size+1) * (Size+1)*CfgTst->GetInt("ColArySize", true);
 
     uint32_t elements = m_BufSize / sizeof(uint32_t);
-    uint32_t locations = elements / CfgApp->m_MaxCollArray;
+    uint32_t locations = elements / CfgTst->GetInt("ColArySize", true);
     createLayout();
     createBuffers();
 }
