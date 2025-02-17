@@ -132,7 +132,7 @@ void VulkanObj::CreateLogicalDevice() {
             file.close();
         }
 
-        if (m_CFG->m_EnableValidationLayers) 
+        if (m_EnableValidationLayers) 
 		{
             createInfo.enabledLayerCount = static_cast<uint32_t>(m_CFG->m_ValidationLayers.size());
             createInfo.ppEnabledLayerNames = m_CFG->m_ValidationLayers.data();

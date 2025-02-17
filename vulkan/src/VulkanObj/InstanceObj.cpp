@@ -31,7 +31,16 @@
 %******************************************************************/
 
 #include "VulkanObj/VulkanApp.hpp"
-
+void InstanceObj::Create() 
+{
+	
+	InitWindow();
+	CreateInstance();
+	m_App->AssignMarkerFunctions();
+	m_App->SetupDebugMessenger();
+	m_App->CreateReportUtilsMessengerEXT();
+	CreateSurface();
+};
 void InstanceObj::InitWindow()
 {
 	
@@ -45,7 +54,7 @@ void InstanceObj::InitWindow()
 }
 void InstanceObj::CreateInstance()
 {
-	if (CfgApp->m_EnableValidationLayers && !CheckValidationLayerSupport())
+	if (m_App->m_EnableValidationLayers && !CheckValidationLayerSupport())
 	{
 		throw std::runtime_error("validation layers requested, but not available!");
 	}
@@ -73,7 +82,7 @@ void InstanceObj::CreateInstance()
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 
 
-	if (CfgApp->m_EnableValidationLayers)
+	if (m_App->m_EnableValidationLayers)
 	{
 
 		mout << "Validation Layers Enabled!" << ende;

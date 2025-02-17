@@ -40,15 +40,7 @@ public:
 	void InitWindow();
 
 	InstanceObj(VulkanObj* App, std::string Name) : BaseObj(Name, 0, App) {};
-	void Create() 
-	{
-		InitWindow();
-		CreateInstance();
-		m_App->AssignMarkerFunctions();
-		m_App->SetupDebugMessenger();
-		m_App->CreateReportUtilsMessengerEXT();
-		CreateSurface();
-	};
+	void Create();
 	std::vector<const char*> GetRequiredInstanceExtensions();
 	bool CheckValidationLayerSupport();
 	void CreateInstance();

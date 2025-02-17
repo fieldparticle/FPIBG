@@ -99,7 +99,7 @@ void ResourceAtomicCompute::createBuffers()
 void ResourceAtomicCompute::PushMem(uint32_t currentBuffer)
 {
 	return;
-	if (CfgApp->m_EnableValidationLayers == false)
+	if (m_App->m_EnableValidationLayers == false)
 		return;
 
 	m_collisionStruct.CollisionCount = 0;
@@ -114,7 +114,7 @@ void ResourceAtomicCompute::PushMem(uint32_t currentBuffer)
 void ResourceAtomicCompute::PullMem(uint32_t currentBuffer)
 {
 #ifndef NDEBUG
-	if (CfgApp->m_EnableValidationLayers == false)
+	if (m_App->m_EnableValidationLayers == false)
 		return;
 	if (m_App->m_FrameNumber < m_ReportCompFramesLessThan )
 	{

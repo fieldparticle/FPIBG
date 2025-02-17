@@ -99,12 +99,14 @@ class VulkanObj
 	VkQueue				m_PresentQueue = VK_NULL_HANDLE;;
 	QueueFamilyIndices	m_QueueFamiliesIndexes;
 	uint32_t 			m_GraphicsQueueIndex = 0;
-	uint32_t				m_ComputeQueueIndex = 0;
-	uint32_t				m_PresentQueueIndex =0;
+	uint32_t			m_ComputeQueueIndex = 0;
+	uint32_t			m_PresentQueueIndex =0;
 	uint32_t			m_NumSwapImages = 0; 
 	VkSurfaceKHR 		m_Surface = {};
-	
 	VkInstance 			m_Instance;
+
+	bool m_EnableValidationLayers = false;
+
 	VkDebugUtilsMessengerEXT 				m_DebugMessenger;
 	VkDebugReportCallbackEXT  				m_ReportMessenger;
 	PFN_vkDestroyDebugReportCallbackEXT		m_DDRCE;

@@ -34,53 +34,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define VMA_IMPLEMENTATION
 #include "VulkanObj/VulkanApp.hpp"
-#if 0
-void VulkanObj::InitImgui(VkDescriptorPool discriptorPool,
-						VkRenderPass renderPass, 
-						uint32_t NumSwapImages)
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-
-	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForVulkan(m_Window, true);
-	ImGui_ImplVulkan_InitInfo init_info = {};
-	init_info.Instance = m_Instance;
-	init_info.PhysicalDevice = m_PhysicalDevice;
-	init_info.Device = m_LogicalDevice;
-	init_info.QueueFamily = m_ComputeQueueIndex;
-	init_info.Queue = m_GraphicsQueue;
-	init_info.PipelineCache = VK_NULL_HANDLE;
-	init_info.DescriptorPool = discriptorPool;
-	init_info.RenderPass = renderPass;
-	init_info.Subpass = 0;
-	init_info.MinImageCount = 2;
-	init_info.ImageCount = NumSwapImages;
-	init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-	init_info.Allocator = VK_NULL_HANDLE;
-	init_info.CheckVkResultFn = VK_NULL_HANDLE;
-	//ImGui_ImplVulkan_Init(&init_info);
-
-
-
-
-}
-#endif
 
 void VulkanObj::Create(ConfigObj* CFG)
 {
 	m_CFG = CFG;
-	m_FramesBuffered = m_CFG->m_FramesBuffered;
-
-	
-	
+	m_FramesBuffered = CfgTemp->GetUInt("application.framesBuffered", true);
+	m_EnableValidationLayers = CfgTemp->GetBool("application.enableValidationLayers", true);
 }
 //
 //
@@ -114,7 +73,7 @@ void VulkanObj::Cleanup()
 	vmaDestroyAllocator(m_vmaAllocator);
 	
 	
-	if (m_CFG->m_EnableValidationLayers)
+	if (m_EnableValidationLayers)
 	{
 		DestroyReportUtilsMessengerEXT();
 		DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);

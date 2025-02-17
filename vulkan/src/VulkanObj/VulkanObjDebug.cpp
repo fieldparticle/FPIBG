@@ -381,7 +381,7 @@ void VulkanObj::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfo
 
 void VulkanObj::SetupDebugMessenger()
 {
-	if (!m_CFG->m_EnableValidationLayers) return;
+	if (!m_EnableValidationLayers) return;
 
 	VkDebugUtilsMessengerCreateInfoEXT createInfo;
 	PopulateDebugMessengerCreateInfo(createInfo);
