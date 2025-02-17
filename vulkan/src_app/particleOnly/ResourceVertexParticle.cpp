@@ -48,23 +48,29 @@ float ResourceVertexParticle::CalcSpeedLimit(float max_vel, float radius)
 }
 void ResourceVertexParticle::Create(uint32_t BindPoint)
 {
-	ConfigObj* cfg = CfgApp;
-	m_MaxColls = MAXSPCOLLS;
-	m_thisFramesBuffered = 1;
-	m_Particles={};
-	m_BindPoint = BindPoint;
-	m_SideLength = 0;
+	
+	m_MaxColls				= MAXSPCOLLS;
+	m_thisFramesBuffered	= 1;
+	m_Particles				= {};
+	m_BindPoint				= BindPoint;
+	m_SideLength			= 0;
+
 	CreateLayout();
-	m_Radius = cfg->m_radius;
-	uint32_t dataStart = 0;
-	BoundaryParticleLimit = 0;
-	mout << "Data File:" << cfg->m_DataFile << ende;
+
+	m_Radius				= CfgTst->GetFloat("radius", true);
+	std::string dataFile	= CfgTst->GetString("dataFile", true);
+	uint32_t dataStart		= 0;
+	BoundaryParticleLimit	= 0;
+	
+
+	mout << "Data File:" << dataFile << ende;
+	
 
 	// Reading from it
-	std::ifstream input_file(cfg->m_DataFile, std::ios::binary);
+	std::ifstream input_file(dataFile, std::ios::binary);
 	if (!input_file.is_open())
 	{
-		std::string err = "Cannot open benchmarking data file::" + cfg->m_DataFile;
+		std::string err = "Cannot open benchmarking data file::" + dataFile;
 		throw std::runtime_error(err.c_str());
 	}
 
@@ -76,14 +82,14 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 	m_Particles.push_back(part0);
 	m_NumParticles = 1;
 
-	if (cfg->m_dt == 0.0)
+	if (CfgApp->m_dt == 0.0)
 	{
 		// Get dt from radious and temp speed.
-		m_dt = CalcSpeedLimit(0.5200f, cfg->m_radius);
+		m_dt = CalcSpeedLimit(0.5200f, m_Radius);
 	}
 	else
 	{
-		m_dt = cfg->m_dt;
+		m_dt = CfgApp->m_dt;
 	}
 	uint32_t count = 0;
 	
@@ -124,9 +130,10 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 		}
 	}
 	
-	
-	m_SideLength = static_cast<float>(cfg->m_CfgSidelen)+1.0f;
-
+	uint32_t sidelen = CfgTst->GetUInt("CellAryW", true);
+	m_SideLength = static_cast<float>(sidelen)+1.0f;
+	/*
+	* ##JMB How can they match you just add one ot it
 	if(cfg->m_CfgSidelen != m_SideLength)
 	{
 		std::ostringstream  objtxt;
@@ -134,9 +141,9 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 			<< cfg->m_CfgSidelen << " calculated:" << m_SideLength  << std::ends;
 
 		//throw std::runtime_error(objtxt.str().c_str());
-	}
+	}*/
 
-	m_App->m_SideLength = cfg->m_CfgSidelen;
+	m_App->m_SideLength = m_SideLength;
 	size_t styrsz = sizeof(Particle);
 	mout << "Particle Read:" << m_NumParticles << " Side Length =" << m_SideLength << " ParticleStruct Size:" 
 		<< styrsz << ende;
