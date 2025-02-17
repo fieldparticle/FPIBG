@@ -36,9 +36,9 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 		m_CMO = CMO;
 		m_SCO = SCO;
 		m_LMO = LMO;
-		ConfigObj* cfg = CfgApp;
+		
 		GenWorkGroups();
-		if(cfg->m_TstFileVersion == 2)
+		if(CfgApp->m_TstFileVersion == 2)
 		{
 			//cfg->GetParticleSettingsV2();
 			WriteShaderHeaderV2();
@@ -53,7 +53,7 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 void ShaderObj::GenWorkGroups()
 {
 
-	ConfigObj* cfg = CfgApp;
+	//std::string fildir = CfgApp->GetString("application.workgroups_glsl", true);
 	std::string filename = "../../shaders/workgroups.glsl";
 	{
 		std::ofstream ostrm(filename);
@@ -62,9 +62,9 @@ void ShaderObj::GenWorkGroups()
 			std::string rpt = "Failed to open file:" + filename;
 			throw std::runtime_error(rpt.c_str());
 		}
-		ostrm << "layout(local_size_x = " << cfg->m_wkx <<
-			", local_size_y = " << cfg->m_wky <<
-			", local_size_z = " << cfg->m_wkz << ") in;\n";
+		ostrm << "layout(local_size_x = " << CfgTst->GetInt("workGroupsx", true) <<
+			", local_size_y = " << CfgTst->GetInt("workGroupsy", true) <<
+			", local_size_z = " << CfgTst->GetInt("workGroupsz", true) << ") in;\n";
 	}
 }
 
@@ -73,7 +73,6 @@ void  ShaderObj::WriteShaderHeader()
 {
 	
 	uint32_t compflag=0;
-	ConfigObj* cfg = CfgApp;
 	
     std::string filename = "../../shaders/params.glsl";
     {
@@ -94,19 +93,20 @@ void  ShaderObj::WriteShaderHeader()
 		ostrm << "const uint WIDTH=" << m_VPO->m_SideLength << ";\n"
 			<< "const uint HEIGHT=" << m_VPO->m_SideLength << ";\n"
 			<< "const uint DEPTH=" << m_VPO->m_SideLength << ";\n"
-			<< "const uint MAX_ARY=" << CfgApp->m_MaxCollArray << ";\n"
+			<< "const uint MAX_ARY=" << CfgTst->m_MaxCollArray << ";\n"
 			<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
 			<< "const uint SCR_H =" << m_SCO->m_SwapHeight << ";\n"
 			<< "const uint SCR_X =" << m_SCO->m_SwapX << ";\n"
 			<< "const uint SCR_Y =" << m_SCO->m_SwapY << ";\n"
 			<< "const uint NUMPARTS =" << m_VPO->m_NumParticles << ";\n"
-			<< "const uint NUMCOLS =" << CfgApp->m_colcount << ";\n"
+			<< "const uint NUMCOLS =" << CfgTst->m_colcount << ";\n"
 			<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
+			/// hard coded
 			<< "const uint doMotion =" << CfgApp->m_DoMotion << ";\n"
 			<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
 			<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
 			<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
-			<< "const float dt =" << m_VPO->m_dt << ";\n"
+			<< "const float dt =" << CfgApp->GetFloat("application.dt", true) << ";\n"
 			<< "const uint compflag =" << compflag << ";\n"
 			<< "const uint bbound =" << m_VPO->BoundaryParticleLimit << ";\n"
 			<< "#define " << dbgflag << "\n";
@@ -119,7 +119,7 @@ void  ShaderObj::WriteShaderHeaderV2()
 {
 	
 	uint32_t compflag=0;
-	ConfigObj* cfg = CfgApp;
+	
     std::string filename = "../../shaders/params.glsl";
     {
 		std::string dbgflag = {};
@@ -130,20 +130,18 @@ void  ShaderObj::WriteShaderHeaderV2()
 #endif
 		
 		std::string version = {};
-		if(cfg->m_TstFileMinorVersion == 0)
+		if(CfgApp->m_TstFileMinorVersion == 0)
 			version = "VERPIPE ";
-		if(cfg->m_TstFileMinorVersion == 1)
+		if(CfgApp->m_TstFileMinorVersion == 1)
 			version = "VERCUBE ";
-		if(cfg->m_TstFileMinorVersion == 2)
+		if(CfgApp->m_TstFileMinorVersion == 2)
 			version = "VERCDNOZ ";
-		if(cfg->m_TstFileMinorVersion == 3)
+		if(CfgApp->m_TstFileMinorVersion == 3)
 			version = "VERPONLY ";
 		
-		
-		
-
-		
-		uint32_t MaxLoc = static_cast<uint32_t>((cfg->m_CellAryW) * (cfg->m_CellAryH) * (cfg->m_CellAryL));
+		uint32_t MaxLoc = static_cast<uint32_t>(CfgTst->GetUInt("CellAryW", true)
+											  * CfgTst->GetUInt("CellAryH", true) 
+											  * CfgTst->GetUInt("CellAryL", true));
         std::ofstream ostrm(filename);
 		if (!ostrm.is_open())
 		{
@@ -152,24 +150,27 @@ void  ShaderObj::WriteShaderHeaderV2()
 		}
 		ostrm	<< "#define " << dbgflag << "\n"
 				<< "#define " << version.c_str()  << "\n"
-				<< "const uint WIDTH=" << cfg->m_CellAryW << ";\n"
-				<< "const uint HEIGHT=" << cfg->m_CellAryH << ";\n"
-				<< "const uint DEPTH=" << cfg->m_CellAryL << ";\n"
-				<< "const uint CENTER=" << cfg->m_PipeCenter << ";\n"
-				<< "const float RADIUS=" << cfg->m_PipeRadius << ";\n"
-				<< "const uint MAX_ARY=" << CfgApp->m_MaxCollArray << ";\n"
+				<< "const uint WIDTH=" << CfgTst->GetUInt("CellAryW", true) << ";\n"
+				<< "const uint HEIGHT=" << CfgTst->GetUInt("CellAryH", true)  << ";\n"
+				<< "const uint DEPTH=" << CfgTst->GetUInt("CellAryL", true) << ";\n"
+				//##JMB Get RID
+				<< "const uint CENTER=" << CfgApp->m_PipeCenter << ";\n"
+				<< "const float RADIUS=" << CfgApp->m_PipeRadius << ";\n"
+
+				<< "const uint MAX_ARY=" << CfgTst->GetInt("ColArySize", true) << ";\n"
 				<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
 				<< "const uint SCR_H =" << m_SCO->m_SwapHeight << ";\n"
 				<< "const uint SCR_X =" << m_SCO->m_SwapX << ";\n"
 				<< "const uint SCR_Y =" << m_SCO->m_SwapY << ";\n"
 				<< "const uint NUMPARTS =" << m_VPO->m_NumParticles << ";\n"
-				<< "const uint NUMCOLS =" << CfgApp->m_colcount << ";\n"
+				<< "const uint NUMCOLS =" << CfgTst-> GetInt("colcount", true) << ";\n"
 				<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
 				<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
 				<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
 				<< "const uint doMotion =" << CfgApp->m_DoMotion << ";\n"
 				<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
 				<< "const float dt =" << m_VPO->m_dt << ";\n"
+				//##JMBDont know what this is
 				<< "const uint compflag =" << compflag << ";\n"
 				<< "const uint bbound =" << m_VPO->BoundaryParticleLimit << ";\n";
 			

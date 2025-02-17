@@ -47,6 +47,8 @@ int main() try
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
 	CfgApp->GetSettings();
+	CfgTst = new ConfigObj;
+	CfgTst->GetParticleSettingsV2(CfgApp->m_TestName);
 
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
