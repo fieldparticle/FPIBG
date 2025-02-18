@@ -76,8 +76,8 @@ void InstanceObj::CreateInstance()
 
 
 	GetRequiredInstanceExtensions();
-	createInfo.enabledExtensionCount = static_cast<uint32_t>(CfgApp->m_InstanceExtensions.size());
-	createInfo.ppEnabledExtensionNames = CfgApp->m_InstanceExtensions.data();
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(m_App->m_InstanceExtensions.size());
+	createInfo.ppEnabledExtensionNames = m_App->m_InstanceExtensions.data();
 
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 
@@ -227,13 +227,13 @@ std::vector<const char*> InstanceObj::GetRequiredInstanceExtensions()
 
 	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
-	CfgApp->m_InstanceExtensions.insert(CfgApp->m_InstanceExtensions.end(), extensions.begin(), extensions.end());
+	m_App->m_InstanceExtensions.insert(m_App->m_InstanceExtensions.end(), extensions.begin(), extensions.end());
 	if (CfgApp->m_SaveExtensions)
 	{
 		std::ofstream file("ActiveInstanceExtensions.log", std::ios::out | std::ios::binary);
-		for (uint32_t i = 0; i < CfgApp->m_InstanceExtensions.size(); i++)
+		for (uint32_t i = 0; i < m_App->m_InstanceExtensions.size(); i++)
 		{
-			file << CfgApp->m_InstanceExtensions[i] << std::endl;
+			file << m_App->m_InstanceExtensions[i] << std::endl;
 		}
 		file.close();
 	}
