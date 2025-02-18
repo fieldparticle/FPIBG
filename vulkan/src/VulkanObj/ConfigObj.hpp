@@ -118,8 +118,6 @@ public:
 	uint32_t					m_CellAryW	= 0;
 	uint32_t					m_CellAryH	= 0;
 	uint32_t					m_CellAryL	= 0;
-	uint32_t					m_TstFileVersion = 0;
-	uint32_t					m_TstFileMinorVersion = 0;
 	std::string					m_Compiler;
 	
 	std::string					m_Substance;

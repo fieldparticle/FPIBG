@@ -60,16 +60,12 @@ int main() try
 	
 	if (CfgApp->m_DoAuto == true)
 	{
-		CfgApp->m_TstFileVersion = 2;
-		CfgApp->m_TstFileMinorVersion = 3;
+		
 		if (DoStudy(CfgApp))
 			return 1;
 	}
 	else
 	{
-		CfgApp->m_TstFileVersion = 2;
-		CfgApp->m_TstFileMinorVersion = 3;
-		
 		CfgApp->GetParticleSettingsV2(CfgApp->m_TestName);
 		if (ParticleOnly())
 			return 1;
@@ -129,11 +125,7 @@ uint32_t DoStudy(ConfigObj* config)
 			std::cout << filename[ii] << std::endl;
 			config->m_TestName.clear();
 			config->m_TestName = filename[ii];
-			if(config->m_TstFileVersion == 2)
-				config->GetParticleSettingsV2(filename[ii]);
-			else
-				config->GetParticleSettings();
-			
+			config->GetParticleSettingsV2(filename[ii]);
 			std::string hold = filename[ii].substr(0, pt);
 			//config->m_AprFile = hold;
 			config->m_DataFile = hold + "bin";

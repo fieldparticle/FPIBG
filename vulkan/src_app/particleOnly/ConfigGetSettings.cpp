@@ -126,16 +126,6 @@ void ConfigObj::GetParticleSettingsV2(std::string TestName)
 	ReadConfigFile(TestName);
 	m_AprFile =  GetString("aprFile", true);
 	m_DataFile = GetString("dataFile", true);
-	if (m_TstFileMinorVersion == 3)
-	{
-		m_CfgSidelen = GetUInt("CellAryW", true);
-	}
-
-	if (m_TstFileMinorVersion == 2 || m_TstFileMinorVersion == 1)
-	{
-		m_PipeCenter = GetFloat("PipeCenter", true);
-		m_PipeRadius = GetFloat("PipeRadius", true);
-	}	
 	m_CellAryW = GetUInt("CellAryW", true);
 	m_CellAryH = GetUInt("CellAryH", true);
 	m_CellAryL = GetUInt("CellAryL", true);
