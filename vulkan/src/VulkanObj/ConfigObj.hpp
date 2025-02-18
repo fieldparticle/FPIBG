@@ -37,49 +37,6 @@ class ConfigObj
 {
 public:
 
-	bool						m_DebugVerbose = false;
-	std::string					m_rccdrv;
-	std::string					m_rccdver;
-	std::string					m_fragShaderSphere;
-	std::string					m_vertShaderSphere;
-	std::string					m_fragShaderBoundary;
-	std::string					m_vertShaderBoundary;
-	std::string					m_fragShaderParticle;
-	std::string					m_vertShaderParticle;
-	std::string					m_compShaderParticle;
-
-	std::string					m_fragSPVSphere;
-	std::string					m_vertSPVSphere;
-	std::string					m_fragSPVBoundary;
-	std::string					m_vertSPVBoundary;
-	std::string					m_fragSPVParticle;
-	std::string					m_vertSPVParticle;
-	std::string					m_compSPVParticle;
-	std::string					m_glslc_path;
-
-	bool						m_DebugVer=false;
-	bool						m_ReleaseVer=false;
-	std::string					m_runOnly;
-
-	std::string					m_PQBTestName;
-	std::string					m_PQBTestDir;
-
-	std::string					m_CFBStudyName;
-	std::string					m_CFBTestName;
-	std::string					m_CFBTestDir;
-
-	std::string					m_PCDStudyName;
-	std::string					m_PCDTestName;
-	std::string					m_PCDTestDir;
-
-	std::string					m_DUPStudyName;
-	std::string					m_DUPTestName;
-	std::string					m_DUPTestDir;
-
-
-	std::string					m_MMRRStudyName;
-	std::string					m_MMRRTestName;
-	std::string					m_MMRRTestDir;
 
 	std::string					m_TestName;
 	std::string					m_TestDir;
@@ -89,12 +46,8 @@ public:
 	std::string					m_testPCDDir;
 	std::string					m_testDUPDir;
 
-	std::string					m_Name;
-	uint32_t					m_View;
-	//std::string					m_AppName;
-	std::string					m_StudyName;
 	std::string					m_Version;
-	std::string					m_Boundary;
+	
 	std::string					m_SphereFile;
 	
 	std::string					m_CapFlName;
@@ -126,9 +79,7 @@ public:
 	//std::vector<const char*>	m_ValidationLayers;
 	//bool						m_SaveExtensions = false;
 	
-	bool						m_EnableValidationLayers = false;
-	uint32_t					m_reportCompFramesLessThan = 0;
-	uint32_t					m_reportGraphFramesLessThan = 0;
+	
 	uint32_t					m_PopPerCell = 0;
 	bool						m_CompileShaders = true;
 	uint32_t					m_StartFrame = 0;

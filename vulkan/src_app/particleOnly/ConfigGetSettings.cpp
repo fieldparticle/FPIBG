@@ -14,27 +14,6 @@ void ConfigObj::GetSettings()
 	
 
 	
-	//config_init(&m_cfg);
-	//ReadConfigFile(studyName);
-
-	//m_AppName = GetString("name", true);
-	//m_InstanceExtensions = GetArray("application.instance_extensions");
-	//m_EnableValidationLayers = GetBool("application.enableValidationLayers", true);
-	//m_ValidationLayers = GetArray("application.validation_layers");
-	//m_SaveExtensions = GetBool("application.printExtension", true);
-	//m_SaveDevLimits = GetBool("application.printDevLimtits", true);
-	
-	//m_InstanceExtensions = GetArray("application.instance_extensions");
-	m_RequestedWidth = GetInt("application.window.size.w", true);
-	m_RequestedHeight = GetInt("application.window.size.h", true);
-	//m_PhysDevice = GetString("application.phys_device", true);
-	
-	//m_fragShaderParticle = GetString("application.frag_kernParticle", true);
-	//m_vertShaderParticle = GetString("application.vert_kernParticle", true);
-	m_compShaderParticle = GetString("application.comp_kernParticle", true);
-	//m_fragSPVParticle = GetString("application.frag_kernParticlespv", true);
-	//m_vertSPVParticle = GetString("application.vert_kernParticlespv", true);
-	m_compSPVParticle = GetString("application.comp_kernParticlespv", true);
 	m_FramesBuffered = GetUInt("application.framesBuffered", true);
 	//m_AppName = GetString("name", true);
 	m_Version = GetString("version", true);
@@ -43,7 +22,7 @@ void ConfigObj::GetSettings()
 	m_CapFrmNum = GetInt("application.cap_num", true);
 	m_CapFrms = GetInt("application.cap_frames", true);
 	m_EndFrame = GetUInt("application.end_frame", true);
-	m_DebugVerbose = GetBool("application.verbose_rpt", true);
+	
 	m_Width = GetInt("application.window.size.w", true);
 	m_Height = GetInt("application.window.size.h", true);
 	m_Stopondata = GetBool("application.stopondata", true);
@@ -76,9 +55,9 @@ void ConfigObj::GetSettings()
 	m_NoCompute = GetBool("application.noCompute", true);
 	m_FramesBuffered = GetUInt("application.framesInFlight", true);
 	m_CompileShaders = GetBool("application.compileShaders", true);
-	m_reportCompFramesLessThan = GetInt("application.reportCompFramesLessThan", true);
-	m_reportGraphFramesLessThan = GetInt("application.reportGraphFramesLessThan", true);
-	if (m_NSight == true)
+	
+	//##JMB 
+	/*if (m_NSight == true)
 	{
 		m_CompileShaders = false;
 		m_AutoTimeOut = 0;
@@ -86,7 +65,7 @@ void ConfigObj::GetSettings()
 		m_Stopondata = false;
 		m_EnableValidationLayers = false;
 
-	}
+	}*/
 #ifdef NDEBUG
 	m_CompileShaders = true;
 	m_EnableValidationLayers = false;
