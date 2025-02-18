@@ -48,6 +48,7 @@ public:
 	uint32_t				m_NumParticles = 0;
 	bool					m_isInit = false;
 	uint32_t				m_ReportCompFramesLessThan=0;
+	PerfObj*				m_PerfObj;
 
 	bool InitFlag = false;
 	ResourceAtomicCompute(VulkanObj* App, std::string Name) :
@@ -58,7 +59,7 @@ public:
 	};
 		
 	void createBuffers();
-	void Create(uint32_t BindPoint);
+	void Create(uint32_t BindPoint, PerfObj* perfObj);
 
 
 	std::vector<VkVertexInputAttributeDescription>* GetAttributeDescriptions();

@@ -49,6 +49,7 @@ public:
 	uint32_t				m_NumParticles				= 0;
 	bool					m_isInit					= false;
 	uint32_t				m_ReportGraphFramesLessThan = 0;
+	PerfObj*				m_PerfObj;
 
 	bool InitFlag = false;
 	ResourceAtomicGraphics(VulkanObj* App, std::string Name) : 
@@ -57,7 +58,7 @@ public:
 		m_VkType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 	};
 		
-	void Create(uint32_t BindPoint);
+	void Create(uint32_t BindPoint,PerfObj *perfObj);
 	virtual void AskObject(uint32_t AnyNumber);
 		
 	std::vector<VkVertexInputAttributeDescription>* GetAttributeDescriptions();

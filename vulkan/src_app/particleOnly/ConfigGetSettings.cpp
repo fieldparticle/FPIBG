@@ -13,17 +13,11 @@ void ConfigObj::GetSettings()
 {
 	
 
-	
-	
-	m_Version = GetString("version", true);
-	
 	m_FrameDelay = GetInt("application.frame_delay", true);
-	
-	
 	m_EndFrame = GetUInt("application.end_frame", true);
 	m_Stopondata = GetBool("application.stopondata", true);
 	m_DoAuto = GetBool("application.doAuto", true);
-	m_AutoTimeOut = GetUInt("application.doAutoWait", true);
+	m_SeriesLength = GetUInt("application.seriesLength", true);
 	m_TestName = GetString("application.testfile", true);
 	m_TestCFG = GetString("application.perfTest", true);
 	m_testPQBDir= GetString("application.testdirPQB", true);
@@ -37,7 +31,7 @@ void ConfigObj::GetSettings()
 	if(!m_TestCFG.compare("testdirCFB"))
 	{
 		m_TestDir = m_testCFBDir;
-		m_AutoTimeOut = 3;
+		m_SeriesLength = 3;
 	}
 	if(!m_TestCFG.compare("testdirPCD"))
 	{

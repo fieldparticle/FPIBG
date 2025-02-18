@@ -33,7 +33,7 @@
 
 
 
-int ParticleOnly()
+int ParticleOnly(PerfObj* perObj)
 {
 	
 	VulkanObj* vulkanObj = new VulkanObj;
@@ -104,9 +104,9 @@ int ParticleOnly()
 	// Push constants need particle list.
 	resourceParticlePush->Create(resourceVertexParticle);
 	// Compute atomic counters for debugging
-	resourceAtomic->Create(5);
+	resourceAtomic->Create(5,perObj);
 	// Graphics atomic counters for debugging
-	resourceAtomicG->Create(5);
+	resourceAtomicG->Create(5,perObj);
 	// UBO for model,projectsion, and view matricies
 	resourceUBO->Create(2, swapChain, resourceVertexParticle);
 	// Shader object needs particle list, particle cell hash table.  
@@ -167,7 +167,7 @@ int ParticleOnly()
 	int ret = 0;
 
 
-	ret = Loop(drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
+	ret = Loop(perObj, drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
 	
 	vulkanObj->CleanAll();
 	vulkanObj->Cleanup();

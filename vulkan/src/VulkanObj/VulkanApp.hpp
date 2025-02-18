@@ -53,7 +53,9 @@ extern ConfigObj* CfgTemp;
 #include "VulkanObj/PhysDevObj.hpp"
 #include "VulkanObj/InstanceObj.hpp"
 #include "VulkanObj/ResourceVertexObj.hpp"
+#include "VulkanObj/PerfObj.hpp"
 #include "particleOnly/ParticleOnly.hpp"
+
 void MemStats(VulkanObj* vulkanObj);
 
 #include <glm/glm.hpp>
@@ -67,8 +69,8 @@ void MemStats(VulkanObj* vulkanObj);
 
 
 extern bool Extflg;
-int Loop(DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
-int ParticleOnly();
+int Loop(PerfObj* pf, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
+int ParticleOnly(PerfObj* pf);
 int ParticleBoundary(ConfigObj* configVCube);
 int ParticleBoundaryV2(ConfigObj* configVCube);
 int glsl(std::vector<std::string>& InputArgs, std::vector<char>& OutPutSPV);

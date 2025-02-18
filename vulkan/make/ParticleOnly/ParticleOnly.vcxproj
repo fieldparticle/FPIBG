@@ -188,6 +188,7 @@
     <ClInclude Include="..\..\src\VulkanObj\Input.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\InstanceObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\ObjLoader.hpp" />
+    <ClInclude Include="..\..\src\VulkanObj\PerfObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\PhysDevObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\PipelineObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\RenderPassObj.hpp" />
@@ -272,6 +273,7 @@
     <ClCompile Include="..\..\src\VulkanObj\main.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\MemStats.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\ObjLoader.cpp" />
+    <ClCompile Include="..\..\src\VulkanObj\PerfObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\PhysDevObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\PipelineObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\RenderPassObj.cpp" />

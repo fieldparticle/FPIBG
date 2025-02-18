@@ -40,29 +40,12 @@ class PhysDevObj;
 class VulkanObj
 {
 	public:
-		struct ReportType
-		{
-			uint32_t Second;
-			float		FrameRate;
-			float		SecondPerFrame;
-			double		ComputeExecutionTime;
-			double		GraphicsExecutionTime;
-			uint32_t	NumParticlesGenerated;
-			uint32_t	NumParticlesLoaded;
-			uint32_t	NumParticlesComputeCount;
-			uint32_t	NumParticlesGraphicsCount;
-			uint32_t	NumCollisionsGenerated;
-			uint32_t	NumCollisionsComputeCount;
-			uint32_t	ThreadCountComp;
-			uint32_t	SideLengthLoaded;
-			uint32_t	SideLengthGraphics;
-			uint32_t	SideLengthCompute;
-		};
+		
 
 		// Needs to quit from debug function which is outside the 
 		// Obj
 		
-		std::vector< ReportType> m_ReportBuffer;
+		
 		uint32_t m_TimeStampDivisor = 0;
 		uint32_t			m_quit_event = 0;
 		uint32_t			m_CurrentBuffer = 0;

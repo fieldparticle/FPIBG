@@ -195,6 +195,9 @@
     <ClInclude Include="..\..\src\glsl\call_glsl.hpp">
       <Filter>glslang_custom</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\VulkanObj\PerfObj.hpp">
+      <Filter>vulkanobj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\libconfig\scanctx.c">
@@ -372,6 +375,9 @@
       <Filter>glslang_custom</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\VulkanObj\MemStats.cpp">
+      <Filter>vulkanobj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VulkanObj\PerfObj.cpp">
       <Filter>vulkanobj</Filter>
     </ClCompile>
   </ItemGroup>

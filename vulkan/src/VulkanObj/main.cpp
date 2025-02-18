@@ -38,7 +38,7 @@ ConfigObj*			CfgApp;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
 ConfigObj*			CfgTemp;
-uint32_t DoStudy(ConfigObj* configVCube);
+
 int main() try
 {
 	
@@ -56,18 +56,18 @@ int main() try
 
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
-	
+	PerfObj* pf = new PerfObj();
 	
 	if (CfgApp->m_DoAuto == true)
 	{
 		
-		if (DoStudy(CfgApp))
+		if (pf->DoStudy(CfgApp))
 			return 1;
 	}
 	else
 	{
 		CfgApp->GetParticleSettingsV2(CfgApp->m_TestName);
-		if (ParticleOnly())
+		if (ParticleOnly(pf))
 			return 1;
 	}
 	return 0;
@@ -81,82 +81,3 @@ catch (const std::exception& e)
 	exit(1);
 }
 #endif
-#include <iostream>
-#include <filesystem>
-uint32_t DoStudy(ConfigObj* config)
-{
-	
-	namespace fs = std::filesystem;
-
-
-
-	std::string path = config->m_TestDir;
-	std::set<fs::path> sorted_by_name;
-	std::vector<std::string> filename;
-
-	for (auto& entry : fs::directory_iterator(path))
-	{
-		sorted_by_name.insert(entry.path());
-		filename.push_back(entry.path().string());
-	}
-#if 0
-	for (const auto& entry : sorted_by_name)
-	{
-		if ((entry.string().find("tst")) != std::string::npos)
-			filename.push_back(entry.string());
-	}
-#endif
-	uint32_t count = 0;
-
-	//for (size_t ii = 0; ii < 4; ii++)
-	for(size_t ii = 0; ii< filename.size();ii++)
-	{
-		++count;
-		std::string::size_type pos = filename[ii].find("tst");
-		size_t pt = 0;
-		std::string pathtest{};
-		pathtest = filename[ii];
-	
-		if ((pt= pathtest.find("tst")) != std::string::npos)
-		{
-			std::cout	<< "=======================" 
-						<< filename[ii] 
-						<< "=======================" << std::endl;
-			std::cout << filename[ii] << std::endl;
-			config->m_TestName.clear();
-			config->m_TestName = filename[ii];
-			config->GetParticleSettingsV2(filename[ii]);
-			std::string hold = filename[ii].substr(0, pt);
-			//config->m_AprFile = hold;
-			config->m_DataFile = hold + "bin";
-			mout << "Auto DataFile : " << config->m_DataFile << ende;
-#ifdef PARTICLE_GRAPHICS_PIPE_ONLY			
-			if (ParticleOnlyGraphics(config))
-			{
-				mout << "Auto - ParticleOnly failed" << ende;
-				return 1;
-			}
-#endif
-
-			if (ParticleOnly())
-			{
-				mout << "Auto - ParticleOnly failed" << ende;
-				return 1;
-			}
-			
-
-			if (QuitEvent == 1)
-			return 0;
-			
-			
-
-		}
-		if (GetAsyncKeyState(VK_ESCAPE))
-		{
-			return 0;
-		}
-	}
-	
-
-	return 0;
-}

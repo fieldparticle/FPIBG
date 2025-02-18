@@ -35,8 +35,9 @@
 using namespace std;
 // Create the layouts for the decriptors which are esentially descriptor definitions.
 // Shader Uniform struct->binding point->UniformBuffersMemory
-void ResourceAtomicCompute::Create(uint32_t BindPoint)
+void ResourceAtomicCompute::Create(uint32_t BindPoint, PerfObj* perfObj)
 {
+	m_PerfObj = perfObj;
 	Resource::CheckBindPoint(BindPoint);
 	m_thisFramesBuffered = m_App->m_FramesBuffered;
 	createLayout();
@@ -149,9 +150,9 @@ void ResourceAtomicCompute::AskObject(uint32_t AnyNumber)
 {
 
 	//m_App->m_Numparticles = m_collisionStruct.numParticles;
-	m_App->m_ReportBuffer[AnyNumber].NumCollisionsComputeCount = m_collisionStruct.CollisionCount;
-	m_App->m_ReportBuffer[AnyNumber].NumParticlesComputeCount = uint32_t(m_collisionStruct.numParticles);
-	m_App->m_ReportBuffer[AnyNumber].ThreadCountComp = m_collisionStruct.holdPidx;
+	m_PerfObj->m_ReportBuffer[AnyNumber].NumCollisionsComputeCount = m_collisionStruct.CollisionCount;
+	m_PerfObj->m_ReportBuffer[AnyNumber].NumParticlesComputeCount = uint32_t(m_collisionStruct.numParticles);
+	m_PerfObj->m_ReportBuffer[AnyNumber].ThreadCountComp = m_collisionStruct.holdPidx;
 
 
 }

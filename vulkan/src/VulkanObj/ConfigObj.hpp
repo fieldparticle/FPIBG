@@ -45,7 +45,7 @@ public:
 	std::string					m_testCFBDir;
 	std::string					m_testPCDDir;
 	std::string					m_testDUPDir;
-	std::string					m_Version;
+	
 	std::string					m_AprFile;
 	std::string					m_DataFile;
 	uint32_t					m_EndFrame = 0;
@@ -54,7 +54,7 @@ public:
 	uint32_t					m_PopPerCell = 0;
 	bool						m_CompileShaders = true;
 	bool						m_DoAuto = false;
-	uint32_t					m_AutoTimeOut = 0;
+	uint32_t					m_SeriesLength = 0;
 	unsigned long				m_FrameDelay = 0;
 	uint32_t					m_startSideLength = 0;
 	uint32_t					m_colcount = 0;

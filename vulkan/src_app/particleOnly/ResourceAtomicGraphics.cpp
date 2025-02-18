@@ -35,8 +35,9 @@
 using namespace std;
 // Create the layouts for the decriptors which are esentially descriptor definitions.
 // Shader Uniform struct->binding point->UniformBuffersMemory
-void ResourceAtomicGraphics::Create(uint32_t BindPoint)
+void ResourceAtomicGraphics::Create(uint32_t BindPoint,PerfObj*	perfObj)
 {
+	m_PerfObj = perfObj;
 	m_ReportGraphFramesLessThan = CfgTemp->GetInt("application.reportGraphFramesLessThan", true);
 	Resource::CheckBindPoint(BindPoint);
 	m_thisFramesBuffered = m_App->m_FramesBuffered;
@@ -192,7 +193,7 @@ void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 }
 void ResourceAtomicGraphics::AskObject(uint32_t AnyNumber)
 {
-	m_App->m_ReportBuffer[AnyNumber].NumParticlesGraphicsCount = m_collisionStruct.numParticles;
+	m_PerfObj->m_ReportBuffer[AnyNumber].NumParticlesGraphicsCount = m_collisionStruct.numParticles;
 }
 
 
