@@ -37,7 +37,7 @@
 
 void VulkanObj::Create(ConfigObj* CFG)
 {
-	m_CFG = CFG;
+	
 	m_FramesBuffered = CfgTemp->GetUInt("application.framesBuffered", true);
 	m_EnableValidationLayers = CfgTemp->GetBool("application.enableValidationLayers", true);
 	m_InstanceExtensions = CfgTemp->GetArray("application.instance_extensions");

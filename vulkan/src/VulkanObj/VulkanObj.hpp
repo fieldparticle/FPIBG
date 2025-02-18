@@ -120,7 +120,7 @@ class VulkanObj
 	std::vector<VkDeviceQueueCreateInfo> 	m_QueueCreateInfos;
 	
 	public:
-	ConfigObj*			m_CFG;
+	
 
 
 	VulkanObj() {};

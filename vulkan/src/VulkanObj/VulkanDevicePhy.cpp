@@ -74,7 +74,7 @@ void VulkanObj::CreatePhysicalDevice()
 			}
 			else
 			{
-				mout << "No Match:" << m_CFG->m_PhysDevice.c_str() << " Finding:" << properties.deviceName << ende;
+				mout << "No Match:" << m_PhysDevice.c_str() << " Finding:" << properties.deviceName << ende;
 
 			}
 

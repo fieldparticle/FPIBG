@@ -34,7 +34,7 @@
 TimerObj* timerstep;
 void Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc,size_t aprCount)
 {
-	ConfigObj* cfg = VulkanWin->m_CFG;
+	ConfigObj* cfg = CfgTemp;
 	std::string filename = cfg->m_AprFile;
 	
 #ifndef NDEBUG
@@ -115,7 +115,7 @@ int Loop(DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer*
 	float				lastFrame = 0.0f;
 	uint32_t			quit_event = 0;
 
-	ConfigObj* cfg = VulkanWin->m_CFG;
+	ConfigObj* cfg = CfgTemp;
 	uint32_t AutoWait = 0;
 	if (cfg->m_AutoTimeOut != 0)
 		AutoWait = cfg->m_AutoTimeOut;
