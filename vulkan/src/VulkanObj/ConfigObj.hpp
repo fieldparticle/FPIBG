@@ -124,8 +124,8 @@ public:
 	
 	std::string					m_Substance;
 	std::vector<const char*>	m_DeviceExtensions;
-	std::vector<const char*>	m_InstanceExtensions;
-	std::vector<const char*>	m_ValidationLayers;
+	//std::vector<const char*>	m_InstanceExtensions;
+	//std::vector<const char*>	m_ValidationLayers;
 	bool						m_SaveExtensions = false;
 	bool						m_SaveDevLimits = false;
 	bool						m_EnableValidationLayers = false;

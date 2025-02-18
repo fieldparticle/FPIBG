@@ -86,8 +86,8 @@ void InstanceObj::CreateInstance()
 	{
 
 		mout << "Validation Layers Enabled!" << ende;
-		createInfo.enabledLayerCount = static_cast<uint32_t>(CfgApp->m_ValidationLayers.size());
-		createInfo.ppEnabledLayerNames = CfgApp->m_ValidationLayers.data();
+		createInfo.enabledLayerCount = static_cast<uint32_t>(m_App->m_ValidationLayers.size());
+		createInfo.ppEnabledLayerNames = m_App->m_ValidationLayers.data();
 		m_App->PopulateDebugMessengerCreateInfo(debugCreateInfo);
 		//createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 
@@ -126,7 +126,7 @@ bool InstanceObj::CheckValidationLayerSupport()
 
 	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-	for (const char* layerName : CfgApp->m_ValidationLayers)
+	for (const char* layerName : m_App->m_ValidationLayers)
 	{
 		bool layerFound = false;
 

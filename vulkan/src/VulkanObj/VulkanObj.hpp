@@ -105,8 +105,9 @@ class VulkanObj
 	VkSurfaceKHR 		m_Surface = {};
 	VkInstance 			m_Instance;
 
-	bool m_EnableValidationLayers = false;
+	bool						m_EnableValidationLayers = false;
 	std::vector<const char*>	m_InstanceExtensions;
+	std::vector<const char*>	m_ValidationLayers;
 
 	VkDebugUtilsMessengerEXT 				m_DebugMessenger;
 	VkDebugReportCallbackEXT  				m_ReportMessenger;
