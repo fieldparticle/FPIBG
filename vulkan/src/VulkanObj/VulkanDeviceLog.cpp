@@ -114,20 +114,20 @@ void VulkanObj::CreateLogicalDevice() {
 		createInfo.pNext = &interlock;
         createInfo.pEnabledFeatures = &deviceFeatures;
 
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(m_CFG->m_DeviceExtensions.size());
-        createInfo.ppEnabledExtensionNames = m_CFG->m_DeviceExtensions.data();
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(m_DeviceExtensions.size());
+        createInfo.ppEnabledExtensionNames = m_DeviceExtensions.data();
 
-        for (uint32_t i = 0; i < m_CFG->m_DeviceExtensions.size(); i++)
+        for (uint32_t i = 0; i < m_DeviceExtensions.size(); i++)
         {
-            mout << "DEVICE EXTENSION:" << m_CFG->m_DeviceExtensions[i] << ende;
+            mout << "DEVICE EXTENSION:" << m_DeviceExtensions[i] << ende;
         }
 
         if (m_CFG->m_SaveExtensions)
         {
             std::ofstream file("ActiveDeviceExtensions.log", std::ios::out | std::ios::binary);
-            for (uint32_t i = 0; i < m_CFG->m_DeviceExtensions.size(); i++)
+            for (uint32_t i = 0; i < m_DeviceExtensions.size(); i++)
             {
-                file << m_CFG->m_DeviceExtensions[i] << std::endl;
+                file << m_DeviceExtensions[i] << std::endl;
             }
             file.close();
         }

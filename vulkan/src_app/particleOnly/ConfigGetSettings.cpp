@@ -23,7 +23,7 @@ void ConfigObj::GetSettings()
 	//m_ValidationLayers = GetArray("application.validation_layers");
 	m_SaveExtensions = GetBool("application.printExtension", true);
 	m_SaveDevLimits = GetBool("application.printDevLimtits", true);
-	m_DeviceExtensions = GetArray("application.device_extensions");
+	
 	//m_InstanceExtensions = GetArray("application.instance_extensions");
 	m_RequestedWidth = GetInt("application.window.size.w", true);
 	m_RequestedHeight = GetInt("application.window.size.h", true);

@@ -42,6 +42,7 @@ void VulkanObj::Create(ConfigObj* CFG)
 	m_EnableValidationLayers = CfgTemp->GetBool("application.enableValidationLayers", true);
 	m_InstanceExtensions = CfgTemp->GetArray("application.instance_extensions");
 	m_ValidationLayers = CfgTemp->GetArray("application.validation_layers");
+	m_DeviceExtensions = CfgTemp->GetArray("application.device_extensions");
 }
 //
 //

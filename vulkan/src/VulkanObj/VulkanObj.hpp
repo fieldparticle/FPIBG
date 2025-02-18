@@ -108,6 +108,7 @@ class VulkanObj
 	bool						m_EnableValidationLayers = false;
 	std::vector<const char*>	m_InstanceExtensions;
 	std::vector<const char*>	m_ValidationLayers;
+	std::vector<const char*>	m_DeviceExtensions;
 
 	VkDebugUtilsMessengerEXT 				m_DebugMessenger;
 	VkDebugReportCallbackEXT  				m_ReportMessenger;

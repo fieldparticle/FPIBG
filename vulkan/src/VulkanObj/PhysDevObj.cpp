@@ -250,9 +250,9 @@ void PhysDevObj::CheckPhysDevExtensionSupport(VkPhysicalDevice PhysDev)
 		}
 		file.close();
 	}
-
-	std::set<std::string> requiredExtensions(m_CO->m_DeviceExtensions.begin(),
-		m_CO->m_DeviceExtensions.end());
+	
+	std::set<std::string> requiredExtensions(m_App->m_DeviceExtensions.begin(),
+		m_App->m_DeviceExtensions.end());
 
 	for (const auto& extension : m_AvailableExtensions)
 	{

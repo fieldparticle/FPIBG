@@ -123,7 +123,7 @@ public:
 	std::string					m_Compiler;
 	
 	std::string					m_Substance;
-	std::vector<const char*>	m_DeviceExtensions;
+	
 	//std::vector<const char*>	m_InstanceExtensions;
 	//std::vector<const char*>	m_ValidationLayers;
 	bool						m_SaveExtensions = false;

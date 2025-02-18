@@ -127,8 +127,8 @@ bool VulkanObj::CheckPhysDevExtensionSupport(VkPhysicalDevice PhysDev)
 		file.close();
 	}
 
-	std::set<std::string> requiredExtensions(m_CFG->m_DeviceExtensions.begin(),
-		m_CFG->m_DeviceExtensions.end());
+	std::set<std::string> requiredExtensions(m_DeviceExtensions.begin(),
+		m_DeviceExtensions.end());
 
 	for (const auto& extension : availableExtensions) 
 	{
