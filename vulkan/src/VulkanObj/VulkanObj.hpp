@@ -110,6 +110,8 @@ class VulkanObj
 	bool						m_SaveExtensions = false;
 	bool						m_SaveDevLimits = false;
 	float						m_dt=0.0;
+	std::string					m_PhysDevice;
+
 
 
 	VkDebugUtilsMessengerEXT 				m_DebugMessenger;

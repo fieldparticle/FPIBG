@@ -27,7 +27,7 @@ void ConfigObj::GetSettings()
 	//m_InstanceExtensions = GetArray("application.instance_extensions");
 	m_RequestedWidth = GetInt("application.window.size.w", true);
 	m_RequestedHeight = GetInt("application.window.size.h", true);
-	m_PhysDevice = GetString("application.phys_device", true);
+	//m_PhysDevice = GetString("application.phys_device", true);
 	
 	//m_fragShaderParticle = GetString("application.frag_kernParticle", true);
 	//m_vertShaderParticle = GetString("application.vert_kernParticle", true);

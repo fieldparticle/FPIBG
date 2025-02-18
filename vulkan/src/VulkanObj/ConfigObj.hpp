@@ -96,7 +96,7 @@ public:
 	std::string					m_Version;
 	std::string					m_Boundary;
 	std::string					m_SphereFile;
-	std::string					m_PhysDevice;
+	
 	std::string					m_CapFlName;
 	std::string					m_AprFile;
 	std::string					m_DataFile;

@@ -61,9 +61,9 @@ void VulkanObj::CreatePhysicalDevice()
 			" API Version:" << ver << "." << ver2 << ende;
 		
 		
-		if (strcmp(m_QA->m_Properties.deviceName, m_CFG->m_PhysDevice.c_str()) == 0)
+		if (strcmp(m_QA->m_Properties.deviceName, m_PhysDevice.c_str()) == 0)
 		{
-			mout << "Looking for:" << m_CFG->m_PhysDevice.c_str() << " Finding:" << m_QA->m_Properties.deviceName << ende;
+			mout << "Looking for:" << m_PhysDevice.c_str() << " Finding:" << m_QA->m_Properties.deviceName << ende;
 			if (IsPhysDevSuitable(device))
 			{
 				mout << "Device Selected #:" <<
@@ -117,7 +117,7 @@ bool VulkanObj::CheckPhysDevExtensionSupport(VkPhysicalDevice PhysDev)
 	
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
 	vkEnumerateDeviceExtensionProperties(PhysDev, nullptr, &extensionCount, availableExtensions.data());
-	if (m_CFG->m_SaveExtensions)
+	if (m_SaveExtensions)
 	{
 		std::ofstream file("DeviceExtensions.log", std::ios::out | std::ios::binary);
 		for (uint32_t i = 0; i < availableExtensions.size(); i++)

@@ -46,6 +46,7 @@ void VulkanObj::Create(ConfigObj* CFG)
 	m_SaveDevLimits = CfgTemp->GetBool("application.printDevLimtits", true);
 	m_AppName = CfgTemp->GetString("name", true);
 	m_dt = CfgTemp->GetFloat("application.dt", true);
+	m_PhysDevice = CfgTemp->GetString("application.phys_device", true);
 }
 //
 //

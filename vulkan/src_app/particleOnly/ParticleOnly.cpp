@@ -84,7 +84,7 @@ int ParticleOnly()
 
 	//================================= Create =================================
 	
-	vulkanObj->Create(CfgApp, physDevObj);
+	vulkanObj->Create(CfgApp,physDevObj);
 	instanceObject->Create();
 	physDevObj->Create(CfgApp);
 	swapChain->Create(physDevObj);

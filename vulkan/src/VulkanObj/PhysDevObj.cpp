@@ -49,9 +49,9 @@ void PhysDevObj::CreatePhysicalDevice()
 
 		mout << "Device Available #:" << m_Properties.deviceID << " is:" << m_Properties.deviceName <<
 			" API Version:" << ver << "." << ver2 << ende;
-		if (strcmp(m_Properties.deviceName, m_CO->m_PhysDevice.c_str()) == 0)
+		if (strcmp(m_Properties.deviceName, m_App->m_PhysDevice.c_str()) == 0)
 		{
-			mout << "Looking for:" << m_CO->m_PhysDevice.c_str() << " Finding:" << m_Properties.deviceName << ende;
+			mout << "Looking for:" << m_App->m_PhysDevice.c_str() << " Finding:" << m_Properties.deviceName << ende;
 			IsPhysDevSuitable(device);
 			if (m_DeviceSuitable)
 			{
@@ -63,7 +63,7 @@ void PhysDevObj::CreatePhysicalDevice()
 			}
 			else
 			{
-				mout << "No Match:" << m_CO->m_PhysDevice.c_str() << " Finding:" << m_Properties.deviceName << ende;
+				mout << "No Match:" << m_App->m_PhysDevice.c_str() << " Finding:" << m_Properties.deviceName << ende;
 
 			}
 

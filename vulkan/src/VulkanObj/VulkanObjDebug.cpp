@@ -104,7 +104,7 @@ void VulkanObj::NameStaticObjects()
 	std::string str_tmp;
 	
 	NameObject(VK_OBJECT_TYPE_PHYSICAL_DEVICE, 
-		(uint64_t)m_PhysicalDevice, m_CFG->m_PhysDevice.c_str());
+		(uint64_t)m_PhysicalDevice, m_PhysDevice.c_str());
 	std::string appnm = m_AppName +"LogicalDevice";
 	NameObject(VK_OBJECT_TYPE_DEVICE, (uint64_t)m_LogicalDevice,appnm.c_str());
 	//NameObject(VK_OBJECT_TYPE_INSTANCE, (uint64_t)&instance, "FPM Insytance\0");
