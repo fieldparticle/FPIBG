@@ -37,6 +37,7 @@ using namespace std;
 // Shader Uniform struct->binding point->UniformBuffersMemory
 void ResourceAtomicGraphics::Create(uint32_t BindPoint)
 {
+	m_ReportGraphFramesLessThan = CfgTemp->GetInt("application.reportGraphFramesLessThan", true);
 	Resource::CheckBindPoint(BindPoint);
 	m_thisFramesBuffered = m_App->m_FramesBuffered;
 	createLayout();
@@ -175,7 +176,7 @@ void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 
 		}
 
-	if (m_App->m_FrameNumber < CfgApp->m_reportGraphFramesLessThan )
+	if (m_App->m_FrameNumber < m_ReportGraphFramesLessThan )
 	{
 		
 		mout << "Vertex F:" << m_App->m_FrameNumber

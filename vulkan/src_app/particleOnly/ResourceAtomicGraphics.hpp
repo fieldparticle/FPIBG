@@ -44,10 +44,11 @@ class ResourceAtomicGraphics : public Resource
 
 public:
 	GCollision				m_collisionStruct;
-	float					m_PositionInc = 0.0;
+	float					m_PositionInc				= 0.0;
 	std::vector<Particle>	m_Particles;
-	uint32_t				m_NumParticles = 0;
-	bool					m_isInit = false;
+	uint32_t				m_NumParticles				= 0;
+	bool					m_isInit					= false;
+	uint32_t				m_ReportGraphFramesLessThan = 0;
 
 	bool InitFlag = false;
 	ResourceAtomicGraphics(VulkanObj* App, std::string Name) : 

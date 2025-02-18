@@ -37,9 +37,6 @@
 void CommandParticleGraphics::RecordCommands( uint32_t imageIndex, uint32_t currentBuffer)
 {
 			
-	ConfigObj* cfg = CfgApp;
-
-
 	Resource* collMem = (m_RCO->GetResourceName("CollisionImage"));
 	Resource* lockMem = (m_RCO->GetResourceName("CollisionLockImage"));
 	// Bind vertex buffer to command buffer.
