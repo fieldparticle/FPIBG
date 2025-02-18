@@ -36,16 +36,17 @@ class CommandObj : public BaseObj
 {
 
 public:
-	uint32_t m_QueryCount = 0;
-	VkQueryPool m_PerfQueryPool= VK_NULL_HANDLE;
+	uint32_t m_QueryCount					= 0;
+	VkQueryPool m_PerfQueryPool				= VK_NULL_HANDLE;
 	std::vector<uint64_t> mTimeQueryResults = {};
-	double m_ExecutionTime = 0.0;
-	std::vector<PipelineObj*> m_PLO = {};
-	ResourceContainerObj* m_RCO = {};
-	CommandPoolObj* m_CPL = {};
-	SwapChainObj* m_SCO = {};
-	FrameBufferObj* m_FBO = {};
-	RenderPassObj* m_RPO = {};
+	double m_ExecutionTime					= 0.0;
+	std::vector<PipelineObj*> m_PLO			= {};
+	ResourceContainerObj* m_RCO				= {};
+	CommandPoolObj* m_CPL					= {};
+	SwapChainObj* m_SCO						= {};
+	FrameBufferObj* m_FBO					= {};
+	RenderPassObj* m_RPO					= {};
+	
 	std::vector<VkCommandBuffer>    m_CommandBuffers = {};
 
 

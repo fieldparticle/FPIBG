@@ -32,7 +32,19 @@
 
 
 #include "VulkanObj/VulkanApp.hpp"
+void CommandParticleCompute::Create(SwapChainObj* SCO,
+		FrameBufferObj* FBO,
+		RenderPassObj* RPO,
+		ResourceContainerObj* RCO,
+		std::vector<PipelineObj*> PLO)
+{
+	CommandObj::Create(SCO,FBO,RPO,RCO,PLO);
 
+	m_dkx = CfgTst->GetInt("dispatchx", true);
+	m_dky = CfgTst->GetInt("dispatchy", true);
+	m_dkz = CfgTst->GetInt("dispatchz", true);
+
+}
 //
 //
 //
@@ -90,7 +102,7 @@ void CommandParticleCompute::RecordCommands(uint32_t imageIndex, uint32_t curren
 	uint32_t vnum = dvo->m_NumElements;
 
 
-	vkCmdDispatch(m_CommandBuffers[currentBuffer], CfgApp->m_dkx, CfgApp->m_dky, CfgApp->m_dkz);
+	vkCmdDispatch(m_CommandBuffers[currentBuffer], m_dkx, m_dky, m_dkz);
 	vkCmdWriteTimestamp(m_CommandBuffers[currentBuffer],
 		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_PerfQueryPool, 1);
 	

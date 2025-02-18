@@ -52,7 +52,7 @@ public:
 	ShaderObj(VulkanObj* App, std::string Name) : BaseObj(Name, 0, App) {};
 	void GenWorkGroups();
 	void WriteShaderHeader();
-	void WriteShaderHeaderV2();
+	
 	int WriteBinaryFile(std::string fileName, std::vector<char> buffer);
 	int CompileShader(std::string ShaderName, 
 		std::string ShaderFileName,

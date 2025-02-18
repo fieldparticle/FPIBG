@@ -38,16 +38,7 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 		m_LMO = LMO;
 		
 		GenWorkGroups();
-		if(CfgApp->m_TstFileVersion == 2)
-		{
-			//cfg->GetParticleSettingsV2();
-			WriteShaderHeaderV2();
-		}
-		else
-		{
-			//cfg->GetParticleSettings();
-			WriteShaderHeader();
-		}
+		WriteShaderHeader();
 		
 }
 void ShaderObj::GenWorkGroups()
@@ -68,54 +59,8 @@ void ShaderObj::GenWorkGroups()
 	}
 }
 
-	
-void  ShaderObj::WriteShaderHeader()
-{
-	
-	uint32_t compflag=0;
-	std::string fildir = CfgTemp->GetString("application.gen_glsl_dir", true);
-	std::string filename = fildir + "/params.glsl";
-    {
-		std::string dbgflag = {};
-#ifdef NDEBUG
-		 dbgflag = "RELEASE";
-#else
-		dbgflag = "DEBUG";
-#endif
-		
-		
-        std::ofstream ostrm(filename);
-		if (!ostrm.is_open())
-		{
-			std::string rpt = "Failed to open file:" + filename;
-			throw std::runtime_error(rpt.c_str());
-		}
-		ostrm << "const uint WIDTH=" << m_VPO->m_SideLength << ";\n"
-			<< "const uint HEIGHT=" << m_VPO->m_SideLength << ";\n"
-			<< "const uint DEPTH=" << m_VPO->m_SideLength << ";\n"
-			<< "const uint MAX_ARY=" << CfgTst->m_MaxCollArray << ";\n"
-			<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
-			<< "const uint SCR_H =" << m_SCO->m_SwapHeight << ";\n"
-			<< "const uint SCR_X =" << m_SCO->m_SwapX << ";\n"
-			<< "const uint SCR_Y =" << m_SCO->m_SwapY << ";\n"
-			<< "const uint NUMPARTS =" << m_VPO->m_NumParticles << ";\n"
-			<< "const uint NUMCOLS =" << CfgTst->m_colcount << ";\n"
-			<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
-			/// hard coded
-			<< "const uint doMotion =" << CfgApp->m_DoMotion << ";\n"
-			<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
-			<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
-			<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
-			<< "const float dt =" << CfgApp->GetFloat("application.dt", true) << ";\n"
-			<< "const uint compflag =" << compflag << ";\n"
-			<< "const uint bbound =" << m_VPO->BoundaryParticleLimit << ";\n"
-			<< "#define " << dbgflag << "\n";
-		ostrm.flush();
-		ostrm.close();
-    }
-}
 
-void  ShaderObj::WriteShaderHeaderV2()
+void  ShaderObj::WriteShaderHeader()
 {
 	
 	uint32_t compflag=0;
@@ -131,14 +76,7 @@ void  ShaderObj::WriteShaderHeaderV2()
 #endif
 		
 		std::string version = {};
-		if(CfgApp->m_TstFileMinorVersion == 0)
-			version = "VERPIPE ";
-		if(CfgApp->m_TstFileMinorVersion == 1)
-			version = "VERCUBE ";
-		if(CfgApp->m_TstFileMinorVersion == 2)
-			version = "VERCDNOZ ";
-		if(CfgApp->m_TstFileMinorVersion == 3)
-			version = "VERPONLY ";
+		version = "VERPONLY ";
 		
 		uint32_t MaxLoc = static_cast<uint32_t>(CfgTst->GetUInt("CellAryW", true)
 											  * CfgTst->GetUInt("CellAryH", true) 
@@ -155,8 +93,8 @@ void  ShaderObj::WriteShaderHeaderV2()
 				<< "const uint HEIGHT=" << CfgTst->GetUInt("CellAryH", true)  << ";\n"
 				<< "const uint DEPTH=" << CfgTst->GetUInt("CellAryL", true) << ";\n"
 				//##JMB Get RID
-				<< "const uint CENTER=" << CfgApp->m_PipeCenter << ";\n"
-				<< "const float RADIUS=" << CfgApp->m_PipeRadius << ";\n"
+				<< "const uint CENTER=" << 0.0 << ";\n"
+				<< "const float RADIUS=" << 0.0 << ";\n"
 
 				<< "const uint MAX_ARY=" << CfgTst->GetInt("ColArySize", true) << ";\n"
 				<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
@@ -168,7 +106,7 @@ void  ShaderObj::WriteShaderHeaderV2()
 				<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
 				<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
 				<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
-				<< "const uint doMotion =" << CfgApp->m_DoMotion << ";\n"
+				<< "const uint doMotion = " << 0 << ";\n"
 				<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
 				<< "const float dt =" << m_VPO->m_dt << ";\n"
 				//##JMBDont know what this is
@@ -184,11 +122,11 @@ void  ShaderObj::WriteShaderHeaderV2()
 int ShaderObj::CompileShader(std::string ShaderGLSLName, 
 		std::string ShaderSPVFileName, std::vector<char> &SPVBuffer, uint32_t type)
 {
-	ConfigObj* cfg = CfgApp;
+	
 	std::vector<std::string> InputArgs;
 
 	//std::cout << cfg->m_CompileShaders << std::endl;
-	if (cfg->m_CompileShaders == true)
+	if (CfgTemp->m_CompileShaders == true)
 	{
 		InputArgs.push_back("ParticleOnly.exe");
 		InputArgs.push_back("--target-env=vulkan1.3");
