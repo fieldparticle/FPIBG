@@ -29,11 +29,11 @@ void ConfigObj::GetSettings()
 	m_RequestedHeight = GetInt("application.window.size.h", true);
 	m_PhysDevice = GetString("application.phys_device", true);
 	m_dt = GetFloat("application.dt", true);
-	m_fragShaderParticle = GetString("application.frag_kernParticle", true);
-	m_vertShaderParticle = GetString("application.vert_kernParticle", true);
+	//m_fragShaderParticle = GetString("application.frag_kernParticle", true);
+	//m_vertShaderParticle = GetString("application.vert_kernParticle", true);
 	m_compShaderParticle = GetString("application.comp_kernParticle", true);
-	m_fragSPVParticle = GetString("application.frag_kernParticlespv", true);
-	m_vertSPVParticle = GetString("application.vert_kernParticlespv", true);
+	//m_fragSPVParticle = GetString("application.frag_kernParticlespv", true);
+	//m_vertSPVParticle = GetString("application.vert_kernParticlespv", true);
 	m_compSPVParticle = GetString("application.comp_kernParticlespv", true);
 	m_FramesBuffered = GetUInt("application.framesBuffered", true);
 	//m_AppName = GetString("name", true);
