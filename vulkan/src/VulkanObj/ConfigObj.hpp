@@ -91,7 +91,7 @@ public:
 
 	std::string					m_Name;
 	uint32_t					m_View;
-	std::string					m_AppName;
+	//std::string					m_AppName;
 	std::string					m_StudyName;
 	std::string					m_Version;
 	std::string					m_Boundary;
@@ -126,8 +126,8 @@ public:
 	
 	//std::vector<const char*>	m_InstanceExtensions;
 	//std::vector<const char*>	m_ValidationLayers;
-	bool						m_SaveExtensions = false;
-	bool						m_SaveDevLimits = false;
+	//bool						m_SaveExtensions = false;
+	
 	bool						m_EnableValidationLayers = false;
 	uint32_t					m_reportCompFramesLessThan = 0;
 	uint32_t					m_reportGraphFramesLessThan = 0;

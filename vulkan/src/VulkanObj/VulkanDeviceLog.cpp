@@ -122,7 +122,7 @@ void VulkanObj::CreateLogicalDevice() {
             mout << "DEVICE EXTENSION:" << m_DeviceExtensions[i] << ende;
         }
 
-        if (m_CFG->m_SaveExtensions)
+        if (m_SaveExtensions)
         {
             std::ofstream file("ActiveDeviceExtensions.log", std::ios::out | std::ios::binary);
             for (uint32_t i = 0; i < m_DeviceExtensions.size(); i++)

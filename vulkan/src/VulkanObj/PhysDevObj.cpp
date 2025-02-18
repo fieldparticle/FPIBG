@@ -241,7 +241,7 @@ void PhysDevObj::CheckPhysDevExtensionSupport(VkPhysicalDevice PhysDev)
 	vkEnumerateDeviceExtensionProperties(PhysDev, nullptr, &m_ExtensionCount, nullptr);
 	m_AvailableExtensions.resize(m_ExtensionCount);
 	vkEnumerateDeviceExtensionProperties(PhysDev, nullptr, &m_ExtensionCount, m_AvailableExtensions.data());
-	if (m_CO->m_SaveExtensions)
+	if (m_App->m_SaveExtensions)
 	{
 		std::ofstream file("DeviceExtensions.log", std::ios::out | std::ios::binary);
 		for (uint32_t i = 0; i < m_AvailableExtensions.size(); i++)
@@ -398,7 +398,7 @@ void PhysDevObj::GetPhysDeviceLimits()
 	
 	m_App->m_DevProp.limits.timestampPeriod;
 
-	if (m_CO->m_SaveDevLimits)
+	if (m_App->m_SaveDevLimits)
 	{
 
 		std::ofstream file("DeviceLimits.log", std::ios::out | std::ios::binary);

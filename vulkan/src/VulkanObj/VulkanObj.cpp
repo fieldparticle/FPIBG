@@ -43,6 +43,8 @@ void VulkanObj::Create(ConfigObj* CFG)
 	m_InstanceExtensions = CfgTemp->GetArray("application.instance_extensions");
 	m_ValidationLayers = CfgTemp->GetArray("application.validation_layers");
 	m_DeviceExtensions = CfgTemp->GetArray("application.device_extensions");
+	m_SaveDevLimits = CfgTemp->GetBool("application.printDevLimtits", true);
+	m_AppName = CfgTemp->GetString("name", true);
 }
 //
 //

@@ -109,6 +109,9 @@ class VulkanObj
 	std::vector<const char*>	m_InstanceExtensions;
 	std::vector<const char*>	m_ValidationLayers;
 	std::vector<const char*>	m_DeviceExtensions;
+	bool						m_SaveExtensions = false;
+	bool						m_SaveDevLimits = false;
+
 
 	VkDebugUtilsMessengerEXT 				m_DebugMessenger;
 	VkDebugReportCallbackEXT  				m_ReportMessenger;

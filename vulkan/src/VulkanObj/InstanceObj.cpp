@@ -209,7 +209,7 @@ std::vector<const char*> InstanceObj::GetRequiredInstanceExtensions()
 	vkEnumerateInstanceExtensionProperties(nullptr,
 		&instanceExtensionCount, availableExtensions.data());
 
-	if (CfgApp->m_SaveExtensions)
+	if (m_App->m_SaveExtensions)
 	{
 		std::ofstream file("InstanceExtensions.log", std::ios::out | std::ios::binary);
 		for (uint32_t i = 0; i < availableExtensions.size(); i++)
@@ -228,7 +228,7 @@ std::vector<const char*> InstanceObj::GetRequiredInstanceExtensions()
 	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
 	m_App->m_InstanceExtensions.insert(m_App->m_InstanceExtensions.end(), extensions.begin(), extensions.end());
-	if (CfgApp->m_SaveExtensions)
+	if (m_App->m_SaveExtensions)
 	{
 		std::ofstream file("ActiveInstanceExtensions.log", std::ios::out | std::ios::binary);
 		for (uint32_t i = 0; i < m_App->m_InstanceExtensions.size(); i++)

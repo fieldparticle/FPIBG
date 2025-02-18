@@ -17,12 +17,12 @@ void ConfigObj::GetSettings()
 	//config_init(&m_cfg);
 	//ReadConfigFile(studyName);
 
-	m_AppName = GetString("name", true);
+	//m_AppName = GetString("name", true);
 	//m_InstanceExtensions = GetArray("application.instance_extensions");
 	//m_EnableValidationLayers = GetBool("application.enableValidationLayers", true);
 	//m_ValidationLayers = GetArray("application.validation_layers");
-	m_SaveExtensions = GetBool("application.printExtension", true);
-	m_SaveDevLimits = GetBool("application.printDevLimtits", true);
+	//m_SaveExtensions = GetBool("application.printExtension", true);
+	//m_SaveDevLimits = GetBool("application.printDevLimtits", true);
 	
 	//m_InstanceExtensions = GetArray("application.instance_extensions");
 	m_RequestedWidth = GetInt("application.window.size.w", true);
@@ -36,7 +36,7 @@ void ConfigObj::GetSettings()
 	m_vertSPVParticle = GetString("application.vert_kernParticlespv", true);
 	m_compSPVParticle = GetString("application.comp_kernParticlespv", true);
 	m_FramesBuffered = GetUInt("application.framesBuffered", true);
-	m_AppName = GetString("name", true);
+	//m_AppName = GetString("name", true);
 	m_Version = GetString("version", true);
 	m_CapFlName = GetString("application.cap_name", true);
 	m_FrameDelay = GetInt("application.frame_delay", true);
