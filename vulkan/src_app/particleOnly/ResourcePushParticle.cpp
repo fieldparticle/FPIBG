@@ -52,7 +52,7 @@ void ResourceParticlePush::PushMem(uint32_t currentBuffer)
 	//m_ShaderFlags.DrawInstance = 5.0;
 	m_ShaderFlags.SideLength = static_cast<float>(m_VertP->m_SideLength);
 	m_ShaderFlags.Ptot = static_cast<float>(m_App->m_Numparticles);
-	m_ShaderFlags.dt = CfgApp->m_dt;
+	m_ShaderFlags.dt = m_App->m_dt;
 	m_ShaderFlags.systemp = 250.0;
 	m_ShaderFlags.ColorMap = ColorMap;
 

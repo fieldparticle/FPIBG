@@ -157,7 +157,7 @@ public:
 	float						m_Radius = 0.0;
 
 
-	float						m_dt = 0.0;
+	
 	uint32_t					m_wkx = 0;
 	uint32_t					m_wky = 0;
 	uint32_t					m_wkz = 0;

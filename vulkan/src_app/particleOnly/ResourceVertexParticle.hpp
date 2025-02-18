@@ -39,7 +39,6 @@ class ResourceVertexParticle : public ResourceVertexObj
 		float					m_SideLength = 0;
 		float					m_Radius = 0.2f;
 		uint32_t				BoundaryParticleLimit = 0;
-		float					m_dt=0.0;
 		std::vector<Particle>	m_Particles;
 		uint32_t				m_NumParticles = 0;
 

@@ -108,7 +108,7 @@ void  ShaderObj::WriteShaderHeader()
 				<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
 				<< "const uint doMotion = " << 0 << ";\n"
 				<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
-				<< "const float dt =" << m_VPO->m_dt << ";\n"
+				<< "const float dt =" << m_App->m_dt << ";\n"
 				//##JMBDont know what this is
 				<< "const uint compflag =" << compflag << ";\n"
 				<< "const uint bbound =" << m_VPO->BoundaryParticleLimit << ";\n";

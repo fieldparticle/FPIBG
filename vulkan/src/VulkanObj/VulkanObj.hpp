@@ -75,8 +75,6 @@ class VulkanObj
 		PhysDevObj*			m_QA = nullptr;
 		uint16_t			m_SwapCount = 0;
 		VmaAllocator		m_vmaAllocator = {};
-		//float				m_dt=0;
-		//int					createSemaphores();
 		VkSemaphore s_imageAvailableSemaphore;
 		VkSemaphore s_renderFinishedSemaphore;
 		std::stack<BaseObj*> m_CleanupList;
@@ -111,6 +109,7 @@ class VulkanObj
 	std::vector<const char*>	m_DeviceExtensions;
 	bool						m_SaveExtensions = false;
 	bool						m_SaveDevLimits = false;
+	float						m_dt=0.0;
 
 
 	VkDebugUtilsMessengerEXT 				m_DebugMessenger;

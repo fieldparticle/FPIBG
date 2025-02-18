@@ -82,15 +82,12 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 	m_Particles.push_back(part0);
 	m_NumParticles = 1;
 
-	if (CfgApp->m_dt == 0.0)
+	if (m_App->m_dt == 0.0)
 	{
 		// Get dt from radious and temp speed.
-		m_dt = CalcSpeedLimit(0.5200f, m_Radius);
+		m_App->m_dt = CalcSpeedLimit(0.5200f, m_Radius);
 	}
-	else
-	{
-		m_dt = CfgApp->m_dt;
-	}
+	
 	uint32_t count = 0;
 	
 	while (input_file.peek() != EOF)
