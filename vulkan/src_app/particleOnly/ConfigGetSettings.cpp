@@ -14,13 +14,12 @@ void ConfigObj::GetSettings()
 	
 
 	
-	m_FramesBuffered = GetUInt("application.framesBuffered", true);
-	//m_AppName = GetString("name", true);
+	
 	m_Version = GetString("version", true);
-	m_CapFlName = GetString("application.cap_name", true);
+	
 	m_FrameDelay = GetInt("application.frame_delay", true);
-	m_CapFrmNum = GetInt("application.cap_num", true);
-	m_CapFrms = GetInt("application.cap_frames", true);
+	
+	
 	m_EndFrame = GetUInt("application.end_frame", true);
 	
 	m_Width = GetInt("application.window.size.w", true);
@@ -53,7 +52,6 @@ void ConfigObj::GetSettings()
 	}
 	//m_TestNumber = GetInt("application.testNum", true)-1;
 	m_NoCompute = GetBool("application.noCompute", true);
-	m_FramesBuffered = GetUInt("application.framesInFlight", true);
 	m_CompileShaders = GetBool("application.compileShaders", true);
 	
 	//##JMB 
@@ -78,25 +76,7 @@ void ConfigObj::GetSettings()
 }
 void ConfigObj::GetParticleSettings()
 {
-	config_init(&m_cfg);
-	ReadConfigFile(m_TestName);
-	// The genrating file uses the whole directoy eith drive.
-	m_AprFile =  GetString("aprFile", true);
-	m_DataFile = GetString("dataFile", true);
-	m_CfgSidelen = GetUInt("Sidelen", true);
-	m_PartPerCell = GetUInt("PartPerCell", true);
-	m_wky = GetInt("workGroupsy", true);
-	m_wkx = GetInt("workGroupsx", true);
-	m_wkz = GetInt("workGroupsz", true);
-	m_dkx = GetInt("dispatchx", true);
-	m_dky = GetInt("dispatchy", true);
-	m_dkz = GetInt("dispatchz", true);
-	m_colcount = GetInt("colcount", true);
-	m_radius = GetFloat("radius", true);
-	m_density = GetFloat("density", true);
-	m_partcount = GetInt("pcount", true);
-	m_MaxCollArray = GetInt("ColArySize", true);
-	m_MaxSingleCollisions = GetInt("MaxSingleCollisions", false);
+
 };
 
 void ConfigObj::GetParticleSettingsV2(std::string TestName)
@@ -105,10 +85,8 @@ void ConfigObj::GetParticleSettingsV2(std::string TestName)
 	ReadConfigFile(TestName);
 	m_AprFile =  GetString("aprFile", true);
 	m_DataFile = GetString("dataFile", true);
-	m_CellAryW = GetUInt("CellAryW", true);
-	m_CellAryH = GetUInt("CellAryH", true);
-	m_CellAryL = GetUInt("CellAryL", true);
-	m_PartPerCell = GetUInt("PartPerCell", true);
+
+	
 	m_wky = GetInt("workGroupsy", true);
 	m_wkx = GetInt("workGroupsx", true);
 	m_wkz = GetInt("workGroupsz", true);

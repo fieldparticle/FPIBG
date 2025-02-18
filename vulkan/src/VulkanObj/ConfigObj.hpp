@@ -45,32 +45,17 @@ public:
 	std::string					m_testCFBDir;
 	std::string					m_testPCDDir;
 	std::string					m_testDUPDir;
-
 	std::string					m_Version;
-	
-	std::string					m_SphereFile;
-	
-	std::string					m_CapFlName;
 	std::string					m_AprFile;
 	std::string					m_DataFile;
-	
-	uint32_t					m_CapFrmNum = 0;
-	uint32_t					m_CfgSidelen = 0;
-	float						m_PipeCenter = 0.0;
-	float						m_PipeRadius = 0.0;
-	uint32_t					m_PartPerCell = 0;
-	uint32_t					m_CapFrms = 0;
 	uint32_t					m_EndFrame = 0;
-	bool						m_BoundaryFlag = false;
-	bool						m_BoundaryOnly = false;
 	bool						m_NSight = false;
 	bool						m_NoCompute = false;
-	uint32_t					m_DoMotion = false;
-	uint32_t					m_FramesBuffered = 1;
-	uint32_t					m_WorkGroups = 0;
-	uint32_t					m_CellAryW	= 0;
-	uint32_t					m_CellAryH	= 0;
-	uint32_t					m_CellAryL	= 0;
+	
+	
+	
+	
+	
 	std::string					m_Compiler;
 	
 	std::string					m_Substance;
