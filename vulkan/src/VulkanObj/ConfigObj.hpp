@@ -51,61 +51,20 @@ public:
 	uint32_t					m_EndFrame = 0;
 	bool						m_NSight = false;
 	bool						m_NoCompute = false;
-	
-	
-	
-	
-	
-	std::string					m_Compiler;
-	
-	std::string					m_Substance;
-	
-	//std::vector<const char*>	m_InstanceExtensions;
-	//std::vector<const char*>	m_ValidationLayers;
-	//bool						m_SaveExtensions = false;
-	
-	
 	uint32_t					m_PopPerCell = 0;
 	bool						m_CompileShaders = true;
-	uint32_t					m_StartFrame = 0;
-	bool						m_WireFlag = false;
 	bool						m_DoAuto = false;
 	uint32_t					m_AutoTimeOut = 0;
-	uint32_t					m_StudyType = 0;
-	uint32_t					m_Width = 0;
-	uint32_t					m_Height = 0;
-	uint32_t					m_RequestedWidth = 0;
-	uint32_t					m_RequestedHeight = 0;
 	unsigned long				m_FrameDelay = 0;
 	uint32_t					m_startSideLength = 0;
-	int							m_TestNumber = 0;
 	uint32_t					m_colcount = 0;
 	uint32_t					m_MaxPopPerCell = 0;
-	float						m_radius = 0.0;
-	float						m_serialTime = 0;
 	float						m_density = 0;
-	float						m_TempHigh = 0.0;
-	float						m_TempLow = 0.0;
-	float						m_PDensity = 0.0;
-	float						m_CDensity = 0.0;
-	float						m_Radius = 0.0;
-
-
-	
-	uint32_t					m_wkx = 0;
-	uint32_t					m_wky = 0;
-	uint32_t					m_wkz = 0;
-	uint32_t					m_dkx = 0;
-	uint32_t					m_dky = 0;
-	uint32_t					m_dkz = 0;
-			
+		
 	//---------------------------- Read write used to record across instances
 	bool						m_Stopondata = false;
 	int							m_partcount = 0;
-	int							m_threadGroup = 0;
-	int							m_MaxCollArray = 0;
-	uint32_t					m_MaxSingleCollisions = 0;
-	uint32_t					m_BoundarySideLength = 0;
+	
 
 	int					_StructCount=0;
 	uint32_t			m_StructIdx=0;

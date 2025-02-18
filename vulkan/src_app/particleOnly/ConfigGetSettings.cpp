@@ -21,9 +21,6 @@ void ConfigObj::GetSettings()
 	
 	
 	m_EndFrame = GetUInt("application.end_frame", true);
-	
-	m_Width = GetInt("application.window.size.w", true);
-	m_Height = GetInt("application.window.size.h", true);
 	m_Stopondata = GetBool("application.stopondata", true);
 	m_DoAuto = GetBool("application.doAuto", true);
 	m_AutoTimeOut = GetUInt("application.doAutoWait", true);
@@ -87,17 +84,11 @@ void ConfigObj::GetParticleSettingsV2(std::string TestName)
 	m_DataFile = GetString("dataFile", true);
 
 	
-	m_wky = GetInt("workGroupsy", true);
-	m_wkx = GetInt("workGroupsx", true);
-	m_wkz = GetInt("workGroupsz", true);
-	m_dkx = GetInt("dispatchx", true);
-	m_dky = GetInt("dispatchy", true);
-	m_dkz = GetInt("dispatchz", true);
+	
 	m_colcount = GetInt("colcount", true);
-	m_radius = GetFloat("radius", true);
+	
 	m_density = GetFloat("density", true);
 	m_partcount = GetInt("pcount", true);
-	m_MaxCollArray = GetInt("ColArySize", true);
-	m_MaxSingleCollisions = GetInt("MaxSingleCollisions", false);
+
 };
 
