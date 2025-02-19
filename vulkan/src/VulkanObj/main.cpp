@@ -34,10 +34,9 @@
 #include "VulkanObj/VulkanApp.hpp"
 #include "windows.h"
 MsgStream			mout;
-ConfigObj*			CfgApp;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
-ConfigObj*			CfgTemp;
+ConfigObj*			CfgApp;
 
 int main() try
 {
@@ -45,10 +44,10 @@ int main() try
 	mout.Init("particle.log", "Particle");
 	MpsApp = new ConfigObj;
 	MpsApp->Create("mps.cfg");
-	CfgTemp = new ConfigObj;
-	CfgTemp->Create(MpsApp->GetString("studyFile", true));
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
+	//CfgApp = new ConfigObj;
+	//CfgApp->Create(MpsApp->GetString("studyFile", true));
 	CfgTst = new ConfigObj;
 	
 	PerfObj* pf = new PerfObj();
@@ -65,7 +64,7 @@ int main() try
 	}
 	else
 	{
-		CfgTst->Create(CfgTemp->GetString("application.testfile", true));	
+		CfgTst->Create(CfgApp->GetString("application.testfile", true));	
 		if (ParticleOnly(pf))
 			return 1;
 	}

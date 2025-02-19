@@ -35,13 +35,13 @@
 #include "VulkanObj/VulkanApp.hpp"
 void PerfObj::Create()
 {
-	m_SeriesLength = CfgTemp->GetUInt("application.seriesLength", true);
-	m_TestName = CfgTemp->GetString("application.testfile", true);
-	m_TestCFG = CfgTemp->GetString("application.perfTest", true);
-	m_testPQBDir= CfgTemp->GetString("application.testdirPQB", true);
-	m_testCFBDir= CfgTemp->GetString("application.testdirCFB", true);
-	m_testPCDDir= CfgTemp->GetString("application.testdirPCD", true);
-	m_testDUPDir= CfgTemp->GetString("application.testdirDUP", true);
+	m_SeriesLength = CfgApp->GetUInt("application.seriesLength", true);
+	m_TestName = CfgApp->GetString("application.testfile", true);
+	m_TestCFG = CfgApp->GetString("application.perfTest", true);
+	m_testPQBDir= CfgApp->GetString("application.testdirPQB", true);
+	m_testCFBDir= CfgApp->GetString("application.testdirCFB", true);
+	m_testPCDDir= CfgApp->GetString("application.testdirPCD", true);
+	m_testDUPDir= CfgApp->GetString("application.testdirDUP", true);
 	if(!m_TestCFG.compare("testdirPQB"))
 	{
 		m_TestDir = m_testPQBDir;

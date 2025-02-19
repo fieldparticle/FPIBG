@@ -38,15 +38,15 @@
 void VulkanObj::Create(ConfigObj* CFG)
 {
 	
-	m_FramesBuffered = CfgTemp->GetUInt("application.framesBuffered", true);
-	m_EnableValidationLayers = CfgTemp->GetBool("application.enableValidationLayers", true);
-	m_InstanceExtensions = CfgTemp->GetArray("application.instance_extensions");
-	m_ValidationLayers = CfgTemp->GetArray("application.validation_layers");
-	m_DeviceExtensions = CfgTemp->GetArray("application.device_extensions");
-	m_SaveDevLimits = CfgTemp->GetBool("application.printDevLimtits", true);
-	m_AppName = CfgTemp->GetString("name", true);
-	m_dt = CfgTemp->GetFloat("application.dt", true);
-	m_PhysDevice = CfgTemp->GetString("application.phys_device", true);
+	m_FramesBuffered = CfgApp->GetUInt("application.framesBuffered", true);
+	m_EnableValidationLayers = CfgApp->GetBool("application.enableValidationLayers", true);
+	m_InstanceExtensions = CfgApp->GetArray("application.instance_extensions");
+	m_ValidationLayers = CfgApp->GetArray("application.validation_layers");
+	m_DeviceExtensions = CfgApp->GetArray("application.device_extensions");
+	m_SaveDevLimits = CfgApp->GetBool("application.printDevLimtits", true);
+	m_AppName = CfgApp->GetString("name", true);
+	m_dt = CfgApp->GetFloat("application.dt", true);
+	m_PhysDevice = CfgApp->GetString("application.phys_device", true);
 
 	//##JMB 
 	/*if (m_NSight == true)

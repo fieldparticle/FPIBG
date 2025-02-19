@@ -42,7 +42,7 @@ void ResourceAtomicCompute::Create(uint32_t BindPoint, PerfObj* perfObj)
 	m_thisFramesBuffered = m_App->m_FramesBuffered;
 	createLayout();
 	createBuffers();
-	m_ReportCompFramesLessThan = CfgTemp->GetInt("application.reportCompFramesLessThan", true);
+	m_ReportCompFramesLessThan = CfgApp->GetInt("application.reportCompFramesLessThan", true);
 	
 }
 

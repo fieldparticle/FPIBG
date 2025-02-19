@@ -36,9 +36,9 @@
 int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
 {
 	TimerObj* timerstep;
-	uint32_t			endFrame    = CfgTemp->GetUInt("application.end_frame", true);
-	bool				stopondata  = CfgTemp->GetBool("application.stopondata", true);
-	uint32_t			frameDelay  = CfgTemp->GetInt("application.frame_delay", true);
+	uint32_t			endFrame    = CfgApp->GetUInt("application.end_frame", true);
+	bool				stopondata  = CfgApp->GetBool("application.stopondata", true);
+	uint32_t			frameDelay  = CfgApp->GetInt("application.frame_delay", true);
 	float				deltaTime	= 0.0f;
 	float				lastFrame	= 0.0f;
 	uint32_t			quit_event	= 0;

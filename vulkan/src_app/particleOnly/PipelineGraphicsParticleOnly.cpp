@@ -37,11 +37,11 @@
 void PipelineGraphicsParticleOnly::CreatePipeline()
 {
     m_RenderPassName = "SubpassParticle";
-    std::string fshader_spv = CfgTemp->GetString("application.frag_kernParticlespv", true);
-    std::string fshader_glsl = CfgTemp->GetString("application.frag_kernParticle", true);
+    std::string fshader_spv = CfgApp->GetString("application.frag_kernParticlespv", true);
+    std::string fshader_glsl = CfgApp->GetString("application.frag_kernParticle", true);
 
-    std::string vshader_spv = CfgTemp->GetString("application.vert_kernParticlespv", true);
-    std::string vshader_glsl = CfgTemp->GetString("application.vert_kernParticle", true);
+    std::string vshader_spv = CfgApp->GetString("application.vert_kernParticlespv", true);
+    std::string vshader_glsl = CfgApp->GetString("application.vert_kernParticle", true);
 
     std::vector<char>  fragShaderCode;
     m_SHO->CompileShader(fshader_glsl, fshader_spv, fragShaderCode, m_SHO->SH_FRAG);

@@ -44,7 +44,7 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 void ShaderObj::GenWorkGroups()
 {
 
-	std::string fildir = CfgTemp->GetString("application.gen_glsl_dir", true);
+	std::string fildir = CfgApp->GetString("application.gen_glsl_dir", true);
 	std::string filename = fildir + "/workgroups.glsl";
 	{
 		std::ofstream ostrm(filename);
@@ -65,7 +65,7 @@ void  ShaderObj::WriteShaderHeader()
 	
 	uint32_t compflag=0;
 	
-   std::string fildir = CfgTemp->GetString("application.gen_glsl_dir", true);
+   std::string fildir = CfgApp->GetString("application.gen_glsl_dir", true);
 	std::string filename = fildir + "/params.glsl";;
     {
 		std::string dbgflag = {};
@@ -126,7 +126,7 @@ int ShaderObj::CompileShader(std::string ShaderGLSLName,
 	std::vector<std::string> InputArgs;
 
 	//std::cout << cfg->m_CompileShaders << std::endl;
-	if (CfgTemp->GetBool("application.compileShaders", true) == true)
+	if (CfgApp->GetBool("application.compileShaders", true) == true)
 	{
 		InputArgs.push_back("ParticleOnly.exe");
 		InputArgs.push_back("--target-env=vulkan1.3");

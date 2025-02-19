@@ -38,7 +38,7 @@ using namespace std;
 void ResourceAtomicGraphics::Create(uint32_t BindPoint,PerfObj*	perfObj)
 {
 	m_PerfObj = perfObj;
-	m_ReportGraphFramesLessThan = CfgTemp->GetInt("application.reportGraphFramesLessThan", true);
+	m_ReportGraphFramesLessThan = CfgApp->GetInt("application.reportGraphFramesLessThan", true);
 	Resource::CheckBindPoint(BindPoint);
 	m_thisFramesBuffered = m_App->m_FramesBuffered;
 	createLayout();
@@ -105,7 +105,7 @@ void ResourceAtomicGraphics::PushMem(uint32_t currentBuffer)
 void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 {
 #ifndef NDEBUG
-	if (CfgTemp->GetBool("application.enableValidationLayers", true) == false)
+	if (CfgApp->GetBool("application.enableValidationLayers", true) == false)
 		return;
 
 	void* mappedData = {};
