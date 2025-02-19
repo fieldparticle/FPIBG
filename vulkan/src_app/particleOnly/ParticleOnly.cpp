@@ -172,7 +172,7 @@ int ParticleOnly(PerfObj* perObj)
 	vulkanObj->CleanAll();
 	vulkanObj->Cleanup();
 #if 1 // ##JMB## MAKE THIS A config item
-	if (CfgApp->m_DoAuto)
+	if (CfgApp->GetBool("application.doAuto", true))
 		Sleep(1000);
 #endif	
 	return ret;

@@ -35,24 +35,28 @@
 
 int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
 {
-	float				deltaTime = 0.0f;
-	float				lastFrame = 0.0f;
-	uint32_t			quit_event = 0;
 	TimerObj* timerstep;
+	uint32_t			endFrame    = CfgTemp->GetUInt("application.end_frame", true);
+	bool				stopondata  = CfgTemp->GetBool("application.stopondata", true);
+	uint32_t			frameDelay  = CfgTemp->GetInt("application.frame_delay", true);
+	float				deltaTime	= 0.0f;
+	float				lastFrame	= 0.0f;
+	uint32_t			quit_event	= 0;
+	uint32_t			AutoWait	= 0;
+	size_t				aprCount	= 0;
+	double				lastTime	= glfwGetTime();
+	int					nbFrames	= 0;
 
-	ConfigObj* cfg = CfgTemp;
-	uint32_t AutoWait = 0;
-	if (cfg->m_SeriesLength != 0)
-		AutoWait = cfg->m_SeriesLength;
+	timerstep = new TimerObj;
+	
+	if (perfObj->m_SeriesLength != 0)
+		AutoWait = perfObj->m_SeriesLength;
 	else
 		AutoWait = 61;
+
 	perfObj->m_ReportBuffer.resize(AutoWait);
 	
 
-	size_t aprCount = 0;
-	double lastTime = glfwGetTime();
-	int nbFrames = 0;
-	timerstep = new TimerObj;
 	
 	SetCallBacks(VulkanWin);
 
@@ -86,9 +90,9 @@ int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, Resource
 
 			
 			// Test for frame number end.
-			if (cfg->m_EndFrame != 0)
+			if (endFrame != 0)
 			{
-				if (VulkanWin->m_FrameNumber >= cfg->m_EndFrame)
+				if (VulkanWin->m_FrameNumber >= endFrame)
 					break;
 
 			};
@@ -138,9 +142,8 @@ int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, Resource
 				{
 					aprCount++;
 					perfObj->Doperf(DrawInstance, VulkanWin, aprCount);
-					if (cfg->m_Stopondata)
+					if (stopondata)
 					{
-						
 						break;
 					}
 					
@@ -151,7 +154,7 @@ int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, Resource
 				nbFrames = 0;
 				lastTime += 1.0;
 			}
-			Sleep(cfg->m_FrameDelay);
+			Sleep(frameDelay);
 			vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
 		}
 

@@ -47,6 +47,24 @@ void VulkanObj::Create(ConfigObj* CFG)
 	m_AppName = CfgTemp->GetString("name", true);
 	m_dt = CfgTemp->GetFloat("application.dt", true);
 	m_PhysDevice = CfgTemp->GetString("application.phys_device", true);
+
+	//##JMB 
+	/*if (m_NSight == true)
+	{
+		m_CompileShaders = false;
+		m_AutoTimeOut = 0;
+		m_DoAuto = false;
+		m_Stopondata = false;
+		m_EnableValidationLayers = false;
+
+	}*/
+#ifdef NDEBUG
+	//m_CompileShaders = true;
+	//m_EnableValidationLayers = false;
+	
+#endif
+
+
 }
 //
 //

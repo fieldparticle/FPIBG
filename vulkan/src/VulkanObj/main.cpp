@@ -47,26 +47,25 @@ int main() try
 	MpsApp->Create("mps.cfg");
 	CfgTemp = new ConfigObj;
 	CfgTemp->Create(MpsApp->GetString("studyFile", true));
-	CfgTemp->GetSettings();
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
-	CfgApp->GetSettings();
 	CfgTst = new ConfigObj;
-	CfgTst->GetParticleSettingsV2(CfgApp->m_TestName);
-
+	
+	PerfObj* pf = new PerfObj();
+	pf->Create();
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
-	PerfObj* pf = new PerfObj();
 	
-	if (CfgApp->m_DoAuto == true)
+	
+	if (CfgApp->GetBool("application.doAuto", true) == true)
 	{
 		
-		if (pf->DoStudy(CfgApp))
+		if (pf->DoStudy())
 			return 1;
 	}
 	else
 	{
-		CfgApp->GetParticleSettingsV2(CfgApp->m_TestName);
+		CfgTst->Create(CfgTemp->GetString("application.testfile", true));	
 		if (ParticleOnly(pf))
 			return 1;
 	}

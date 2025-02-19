@@ -37,47 +37,23 @@ class ConfigObj
 {
 public:
 
-
-	std::string					m_TestName;
-	std::string					m_TestDir;
-	std::string					m_TestCFG;
-	std::string					m_testPQBDir;
-	std::string					m_testCFBDir;
-	std::string					m_testPCDDir;
-	std::string					m_testDUPDir;
-	
-	std::string					m_AprFile;
-	std::string					m_DataFile;
-	uint32_t					m_EndFrame = 0;
 	bool						m_NSight = false;
 	bool						m_NoCompute = false;
-	uint32_t					m_PopPerCell = 0;
-	bool						m_CompileShaders = true;
-	bool						m_DoAuto = false;
-	uint32_t					m_SeriesLength = 0;
-	unsigned long				m_FrameDelay = 0;
-	uint32_t					m_startSideLength = 0;
-	uint32_t					m_colcount = 0;
-	uint32_t					m_MaxPopPerCell = 0;
-	float						m_density = 0;
-		
+			
 	//---------------------------- Read write used to record across instances
-	bool						m_Stopondata = false;
-	int							m_partcount = 0;
-	
-
-	int					_StructCount=0;
-	uint32_t			m_StructIdx=0;
+	int					_StructCount	= 0;
+	uint32_t			m_StructIdx		= 0;
 	std::string			m_cfg_file;
 	config_t 			m_cfg;
-	config_setting_t* m_setting;
-	int 				int_temp=0;
-	const char* str_temp;
-	double				float_temp = 0.0;
+	config_setting_t*	m_setting;
+	int 				int_temp		= 0;
+	const char*			str_temp;
+	double				float_temp		= 0.0;
 	std::string			lookup;
 	std::string			util;
 	config_setting_t*	setting;
-	int m_Count=0;
+	int					m_Count=0;
+
 	struct pair
 	{
 		std::string Name;
@@ -93,7 +69,6 @@ public:
 	
 
 	int GetInt(std::string lookup, bool failFlag)	;
-
 	uint32_t GetUInt(std::string lookup, bool failFlag);
 	const char* GetString(std::string lookup, bool failFlag);
 	bool GetBool(std::string lookup, bool failFlag);
@@ -109,16 +84,13 @@ public:
 	void GetArrayElementFloats(config_setting_t* setting, std::string Name, float *Ary, uint32_t Max,int index);
 
 	VulkanObj* m_App;
-	//ConfigObj(VulkanObj* App, std::string Name, uint32_t VTType=0) 
-	//	: BaseObj(Name, VTType, App) { };
-
 	ConfigObj() {};
 	virtual void Create(std::string cfg_file);
 	void SetVulkanObj(VulkanObj* app)
 	{
 		m_App = app;
 	}
-	virtual void GetSettings();
+	
 
 };
 

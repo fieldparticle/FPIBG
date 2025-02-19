@@ -126,7 +126,7 @@ int ShaderObj::CompileShader(std::string ShaderGLSLName,
 	std::vector<std::string> InputArgs;
 
 	//std::cout << cfg->m_CompileShaders << std::endl;
-	if (CfgTemp->m_CompileShaders == true)
+	if (CfgTemp->GetBool("application.compileShaders", true) == true)
 	{
 		InputArgs.push_back("ParticleOnly.exe");
 		InputArgs.push_back("--target-env=vulkan1.3");
