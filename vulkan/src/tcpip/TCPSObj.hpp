@@ -33,10 +33,11 @@
 #pragma once
 
 #undef UNICODE
-#define WIN32_LEAN_AND_MEAN
+
 #include <iostream>
-#include <windows.h>
+
 #include <winsock2.h>
+#include <windows.h>
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -66,6 +67,8 @@ class TCPObj
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     std::string m_RecvBuf;
+    std::string m_PortAddress;
+
     TCPObj(){};
     int Create();
     int ReadPort();
@@ -78,6 +81,21 @@ class TCPObj
         iSendResult = 0;
         m_RecvBuf = "";
     };
+
+	void SetServerPort(std::string PortAddress)
+	{
+		m_PortAddress = PortAddress;
+	};
+    std::string GetServerPort()
+	{
+		return m_PortAddress;
+	};
+	void SetBufSize(uint32_t BufSize)
+	{
+
+
+
+	}
     std::string GetMessage()
     {
         return m_RecvBuf;

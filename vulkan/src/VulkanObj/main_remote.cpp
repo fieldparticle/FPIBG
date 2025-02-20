@@ -30,12 +30,13 @@
 %*
 %*
 %******************************************************************/
-
+#define WIN32_LEAN_AND_MEAN
 #include <iostream>
 #include <thread>
 
 #include "VulkanObj/VulkanApp.hpp"
 #include "windows.h"
+#include "TCPSObj.hpp"
 MsgStream			mout;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
@@ -44,34 +45,65 @@ ConfigObj*			CfgApp;
 int main() try
 {
 	mout.Init("particle.log", "Particle");
+	std::filesystem::path cwd = std::filesystem::current_path();
+	std::cout << "Working Directory :" << cwd.string().c_str() << std::endl;
+	mout << "Working Directory :" << cwd.string().c_str() << ende;
+	
+	
 	MpsApp = new ConfigObj;
 	MpsApp->Create("mps.cfg");
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
-	//CfgApp = new ConfigObj;
-	//CfgApp->Create(MpsApp->GetString("studyFile", true));
 	CfgTst = new ConfigObj;
-	
+
+	TCPObj* tcps = new TCPObj;
+	tcps->SetServerPort(MpsApp->GetString("ipport",true));
+	std::cout << "FPIBG Server Listening on port:" << tcps->GetServerPort() << std::endl;
+
 	PerfObj* pf = new PerfObj();
 	pf->Create();
-	std::filesystem::path cwd = std::filesystem::current_path();
-	mout << "Working Directory :" << cwd.string().c_str() << ende;
+
+	bool autoFlag = CfgApp->GetBool("application.doAuto", true);
 	
 	
-	if (CfgApp->GetBool("application.doAuto", true) == true)
-	{
-		
-		if (pf->DoStudy())
-			return 1;
-	}
-	else
-	{
-		CfgTst->Create(CfgApp->GetString("application.testfile", true));	
-		if (ParticleOnly(pf))
-			return 1;
-	}
-	return 0;
+	tcps->Create();
+
+	
+    int ret = 0;
+    while (ret == 0)
+    {
+        tcps->ReadPort();
+        if(tcps->GetMessage().compare("quit")==0)
+        {
+            tcps->Close();
+            return 0;
+        }
+
+		if(tcps->GetMessage().compare("runseries")==0)
+        {
+			if (pf->DoStudy())
+				return 1;
+			return 0;
+        }
+
+		if(tcps->GetMessage().compare("runsingle")==0)
+        {
+			CfgTst->Create(CfgApp->GetString("application.testfile", true));	
+			if (ParticleOnly(pf))
+				return 1;
+
+			return 0;
+        }
+        if(tcps->iResult > 0)
+            tcps->WritePort();
+        tcps->Reset();
+        std::cout << "Sleep" << std::endl;
+    }
+
+    tcps->Close();
+
 }
+
 #if 1
 catch (const std::exception& e)
 {
