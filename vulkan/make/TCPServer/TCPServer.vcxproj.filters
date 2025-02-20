@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\tcpip\TCPObj.cpp">
+    <ClCompile Include="..\..\src_app\tcpip\TCPSMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_app\tcpip\TCPSMain.cpp">
+    <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\tcpip\TCPObj.hpp">
+    <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

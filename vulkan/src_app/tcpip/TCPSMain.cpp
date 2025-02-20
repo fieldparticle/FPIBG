@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include "TCPObj.hpp"
+#include "TCPSObj.hpp"
 
 int main()
 {
@@ -11,7 +11,8 @@ int main()
     int ret = 0;
     while (ret == 0)
     {
-        tcps->ReadPort();
+        if(tcps->ReadPort());
+        
         if(tcps->GetMessage().compare("quit")==0)
         {
             tcps->Close();

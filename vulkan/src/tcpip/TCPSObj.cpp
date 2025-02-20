@@ -29,7 +29,7 @@
 %*
 %*
 %******************************************************************/
-#include "TCPObj.hpp"
+#include "TCPSObj.hpp"
 int TCPObj::WritePort()
 {
     iSendResult = send( ClientSocket, recvbuf, iResult,0);

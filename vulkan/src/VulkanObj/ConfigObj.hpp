@@ -32,6 +32,11 @@
 
 #ifndef CONFIGOBJ_HPP
 #define CONFIGOBJ_HPP
+#include <iostream>
+#include <vector>
+#include <sstream>
+#include "mout2_0/mout.hpp"
+extern MsgStream			mout;   
 class VulkanObj;
 class ConfigObj 
 {

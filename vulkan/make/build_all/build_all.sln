@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleOnlyRemote", "..\Pa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TCPServer", "..\TCPServer\TCPServer.vcxproj", "{AE31FFAA-7993-449B-A5A6-FC8BE6BCAA6D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TCPClient", "..\TCPClient\TCPClient.vcxproj", "{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{AE31FFAA-7993-449B-A5A6-FC8BE6BCAA6D}.Release|x64.Build.0 = Release|x64
 		{AE31FFAA-7993-449B-A5A6-FC8BE6BCAA6D}.Release|x86.ActiveCfg = Release|Win32
 		{AE31FFAA-7993-449B-A5A6-FC8BE6BCAA6D}.Release|x86.Build.0 = Release|Win32
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Debug|x64.ActiveCfg = Debug|x64
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Debug|x64.Build.0 = Debug|x64
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Debug|x86.ActiveCfg = Debug|Win32
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Debug|x86.Build.0 = Debug|Win32
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Release|x64.ActiveCfg = Release|x64
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Release|x64.Build.0 = Release|x64
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Release|x86.ActiveCfg = Release|Win32
+		{EFDCE2F6-9309-40CE-8AF9-3C51AB4FDACA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

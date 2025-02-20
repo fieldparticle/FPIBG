@@ -30,7 +30,16 @@
 %*
 %******************************************************************/
 #include "libconfig.h"
-#include "VulkanObj/VulkanApp.hpp"
+//#include "VulkanObj/VulkanApp.hpp"
+#include "ConfigObj.hpp"
+void ConfigObj::Create(std::string CfgName)
+{
+		
+	// Intialize libconfig
+	config_init(&m_cfg);
+	ReadConfigFile(CfgName);
+}
+
 //#define DEBUG_LIBC
 int ConfigObj::GetInt(std::string lookup, bool failFlag)
 {
