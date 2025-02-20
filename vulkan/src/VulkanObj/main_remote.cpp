@@ -40,10 +40,44 @@ MsgStream			mout;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
 ConfigObj*			CfgApp;
+void init_buf(char *buf, size_t len)
+{
+    for(size_t i=0; i<len; i++)
+    {
+        buf[i] = i & 0xFF;
+    }
+}
+
+void print_error(const char* msg)
+{
+    printf("error message: %s", msg);
+    perror(msg);
+    //printf("%s: %s\n", msg, strerror(errno));
+    fflush(stderr);
+    errno = 0;
+}
+void abort(const char *a_msg, const char *add_msg = nullptr)
+{
+    if(a_msg != nullptr) printf("Aborting: %s\n", a_msg);
+    if(add_msg != nullptr) printf("Additional message: %s\n", add_msg);
+    std::cout << "Aborting..." << std::endl;
+    std::cout << "=====================================================" << std::endl;
+    std::cout << "cppsock test failed" << std::endl << std::endl;
+    exit(EXIT_FAILURE);
+}
+
+void check_errno(const char *s_msg, const char *add_msg = nullptr)
+{
+    if(errno != 0)
+    {
+        print_error(s_msg);
+        if(add_msg != nullptr) printf("Additional message: %s\n", add_msg);
+        abort("Errno check failed");
+    }
+}
 
 int main() try
 {
-	
 	mout.Init("particle.log", "Particle");
 	MpsApp = new ConfigObj;
 	MpsApp->Create("mps.cfg");
