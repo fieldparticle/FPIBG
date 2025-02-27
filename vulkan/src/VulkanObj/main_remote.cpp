@@ -57,51 +57,53 @@ int main() try
 	CfgTst = new ConfigObj;
 
 	TCPObj* tcps = new TCPObj;
-	tcps->SetServerPort(MpsApp->GetString("ipport",true));
+	tcps->SetServerPort(MpsApp->GetString("server_port",true));
 	std::cout << "FPIBG Server Listening on port:" << tcps->GetServerPort() << std::endl;
-
+	tcps->SetBufSize(MpsApp->GetInt("buffer_size",true));
 	PerfObj* pf = new PerfObj();
 	pf->Create();
 
 	bool autoFlag = CfgApp->GetBool("application.doAuto", true);
-	
-	
 	tcps->Create();
-
-	
+	tcps->Connect();
     int ret = 0;
     while (ret == 0)
     {
         tcps->ReadPort();
-        if(tcps->GetMessage().compare("quit")==0)
+        if(tcps->GetBuffer().compare("quit")==0)
         {
-            tcps->Close();
-            return 0;
+			ret = 1;
+			break;
+		}
+
+		if(tcps->GetBuffer().compare("runseries")==0)
+        {
+			ret = pf->DoStudy(tcps);
+			break;
         }
 
-		if(tcps->GetMessage().compare("runseries")==0)
-        {
-			if (pf->DoStudy())
-				return 1;
-			return 0;
-        }
-
-		if(tcps->GetMessage().compare("runsingle")==0)
+		if(tcps->GetBuffer().compare("runsingle")==0)
         {
 			CfgTst->Create(CfgApp->GetString("application.testfile", true));	
-			if (ParticleOnly(pf))
-				return 1;
-
-			return 0;
+			ret=ParticleOnly(pf,tcps);
+			break;
         }
-        if(tcps->iResult > 0)
-            tcps->WritePort();
-        tcps->Reset();
-        std::cout << "Sleep" << std::endl;
+		if(tcps->GetBuffer().compare("sendfile")==0)
+		{
+			tcps->ReadFileByBlocks("Particle.cfg");
+			break;
+		}
+		if(tcps->GetBuffer().compare("test")==0)
+		{
+			std::cout << "Recieved Test" << std::endl;
+			std::string outbuf = "Test OK";
+			tcps->WritePort(outbuf);
+		}
+		
+
     }
-
-    tcps->Close();
-
+	tcps->Close();
+	return ret;
 }
 
 #if 1

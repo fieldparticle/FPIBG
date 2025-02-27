@@ -201,6 +201,9 @@
     <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\VulkanObj\ControlObj.hpp">
+      <Filter>vulkanobj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\libconfig\scanctx.c">
@@ -384,6 +387,9 @@
       <Filter>vulkanobj</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VulkanObj\FileIO.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

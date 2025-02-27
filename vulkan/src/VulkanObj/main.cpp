@@ -59,13 +59,13 @@ int main() try
 	if (CfgApp->GetBool("application.doAuto", true) == true)
 	{
 		
-		if (pf->DoStudy())
+		if (pf->DoStudy(tcps))
 			return 1;
 	}
 	else
 	{
 		CfgTst->Create(CfgApp->GetString("application.testfile", true));	
-		if (ParticleOnly(pf))
+		if (ParticleOnly(pf,tcps))
 			return 1;
 	}
 	return 0;

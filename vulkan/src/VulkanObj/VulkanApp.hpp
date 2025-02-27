@@ -30,6 +30,7 @@
 %*
 %******************************************************************/
 #include "VulkanObj/TimerObj.hpp"
+#include <winsock2.h>
 #include "VulkanObj/Core.hpp"
 #include "VulkanObj/VulkanDefines.hpp"
 #include "VulkanObj/ConfigObj.hpp"
@@ -52,8 +53,10 @@ extern ConfigObj* CfgApp;
 #include "VulkanObj/PhysDevObj.hpp"
 #include "VulkanObj/InstanceObj.hpp"
 #include "VulkanObj/ResourceVertexObj.hpp"
+#include "TCPIP/TCPSObj.hpp"
 #include "VulkanObj/PerfObj.hpp"
 #include "particleOnly/ParticleOnly.hpp"
+
 
 void MemStats(VulkanObj* vulkanObj);
 
@@ -68,8 +71,9 @@ void MemStats(VulkanObj* vulkanObj);
 
 
 extern bool Extflg;
-int Loop(PerfObj* pf, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
-int ParticleOnly(PerfObj* pf);
+std::vector<std::string> ReadFileByBlocks(const char* filename, TCPObj* tcps);
+int Loop(PerfObj* pf, TCPObj* tcp,DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
+int ParticleOnly(PerfObj* pf, TCPObj* tcp);
 int ParticleBoundary(ConfigObj* configVCube);
 int ParticleBoundaryV2(ConfigObj* configVCube);
 int glsl(std::vector<std::string>& InputArgs, std::vector<char>& OutPutSPV);

@@ -4,8 +4,8 @@
 % $Author: jb $
 %
 % $Date: 2023-06-12 16:17:58 -0400 (Mon, 12 Jun 2023) $
-% $HeadURL: https://jbworkstation/svn/svnrootr5/svnvulcan/run/mfpm/mfpm.cfg $
-% $Id: mfpm.cfg 31 2023-06-12 20:17:58Z jb $
+% $HeadURL: https://jbworkstation/svn/svnrootr5/svnvulcan/src/vulkan/CommandObj.hpp $
+% $Id: CommandObj.hpp 31 2023-06-12 20:17:58Z jb $
 %*******************************************************************
 %***                         DESCRIPTION                         ***
 %*******************************************************************
@@ -30,10 +30,23 @@
 %*
 %******************************************************************/
 
-// Multiple particle in a box to study/test reflection
+#include "VulkanObj/VulkanApp.hpp"
+#include "TCPIP/TCPSObj.hpp"
+#pragma once
+class ControlObj
+{
 
-	studyFile	= "Particle.cfg";
-	ipaddress = "10.228.15.207";
-	ipport = "50004";
-	ipbuffsize = 512;
-	
+		public:
+		TCPObj* m_TCPObj;
+		uint32_t m_ExitFlag;
+			
+
+		ControlObj(){};
+
+		Create
+
+
+
+
+
+}

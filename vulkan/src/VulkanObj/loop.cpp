@@ -33,7 +33,7 @@
 
 
 
-int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
+int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
 {
 	TimerObj* timerstep;
 	uint32_t			endFrame    = CfgApp->GetUInt("application.end_frame", true);
@@ -69,6 +69,11 @@ int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, Resource
 		while (!glfwWindowShouldClose(VulkanWin->GetGLFWWindow())
 			&& glfwGetKey(VulkanWin->GetGLFWWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS)
 		{
+			
+			if(tcp != nullptr)
+				if(tcp->ReadPort() > 1)
+					return 1;
+
 			perfObj->m_ReportBuffer[aprCount].SecondPerFrame = timerstep->elapsed();
 			timerstep->reset();
 			//Esc normal termination
@@ -100,6 +105,7 @@ int Loop(PerfObj* perfObj, DrawObj* DrawInstance, VulkanObj* VulkanWin, Resource
 			glfwPollEvents();
 			// Draw frame.
 			DrawInstance->DrawFrame();
+
 			if(Extflg == true)
 				throw std::runtime_error("External Flag Exit.");
 

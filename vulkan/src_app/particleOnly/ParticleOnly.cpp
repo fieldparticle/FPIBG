@@ -30,10 +30,10 @@
 %*
 %******************************************************************/
 #include "VulkanObj/VulkanApp.hpp"
+#include "TCPIP/TCPSObj.hpp"
 
 
-
-int ParticleOnly(PerfObj* perObj)
+int ParticleOnly(PerfObj* perObj, TCPObj* tcp)
 {
 	
 	VulkanObj* vulkanObj = new VulkanObj;
@@ -167,7 +167,7 @@ int ParticleOnly(PerfObj* perObj)
 	int ret = 0;
 
 
-	ret = Loop(perObj, drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
+	ret = Loop(perObj, tcp, drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
 	
 	vulkanObj->CleanAll();
 	vulkanObj->Cleanup();

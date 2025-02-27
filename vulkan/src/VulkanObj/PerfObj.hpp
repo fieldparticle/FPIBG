@@ -73,7 +73,7 @@ class PerfObj
 
 	void Create();
 	PerfObj(){};
-	uint32_t DoStudy();
+	uint32_t DoStudy(TCPObj* tcps);
 	void Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, size_t aprCount);
 
 };

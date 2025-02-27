@@ -29,10 +29,11 @@
 %*
 %*
 %******************************************************************/
-#include "TCPSObj.hpp"
+#include "VulkanObj/VulkanApp.hpp"
+
 int TCPObj::WritePort()
 {
-    iSendResult = send( ClientSocket, recvbuf, iResult,0);
+    iSendResult = send( ClientSocket, m_Recvbuf, iResult,0);
     if (iSendResult == SOCKET_ERROR) 
     {
         printf("send failed with error: %d\n", WSAGetLastError());
@@ -41,10 +42,47 @@ int TCPObj::WritePort()
         return 1;
     }
     printf("Bytes sent: %d\n", iSendResult);
-    m_RecvBuf = "";
     return 0;
 
 }
+int TCPObj::WritePort(std::string Message)
+{
+    iSendResult = send( ClientSocket, Message.c_str(), iResult,0);
+    if (iSendResult == SOCKET_ERROR) 
+    {
+        printf("send failed with error: %d\n", WSAGetLastError());
+        closesocket(ClientSocket);
+        WSACleanup();
+        return 1;
+    }
+    printf("Bytes sent: %d\n", iSendResult);
+    return 0;
+
+}
+int TCPObj::WritePort(const char* Block)
+{
+    iSendResult = send( ClientSocket, Block, iResult,0);
+    if (iSendResult == SOCKET_ERROR) 
+    {
+        printf("send failed with error: %d\n", WSAGetLastError());
+        closesocket(ClientSocket);
+        WSACleanup();
+        return 1;
+    }
+    printf("Bytes sent: %d\n", iSendResult);
+    return 0;
+
+}
+
+int TCPObj::CompareCommand()
+{
+    if(m_SRecvBuf.compare("quit") == 0)
+        return 1;
+    else if(m_SRecvBuf.compare("stop") == 0)
+        return 2;
+    return 0;
+}
+
 int TCPObj::ReadPort()
 {
     fd_set ReadFDs;
@@ -59,17 +97,15 @@ int TCPObj::ReadPort()
     if (select(0, &ReadFDs, NULL, NULL, &tm) > 0)
     {
     
-        memset(recvbuf,0,recvbuflen);
+        memset(m_Recvbuf,0,m_Recvbuflen);
         if (FD_ISSET(ClientSocket, &ReadFDs))
         {
-            iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+            iResult = recv(ClientSocket, m_Recvbuf, m_Recvbuflen, 0);
             if (iResult > 0) 
             {
-                //recv(ClientSocket, recvbuf, recvbuflen, 0);
-                printf("Bytes received: %d\n", iResult);
-                //printf("%s\n",recvbuf, iResult);
-                std::cout << recvbuf << std::endl;
-                m_RecvBuf = recvbuf;
+                std::cout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << std::endl;
+                m_SRecvBuf = m_Recvbuf;
+                return CompareCommand();
                 // Echo the buffer back to the sender
             }
             else  
@@ -82,8 +118,33 @@ int TCPObj::ReadPort()
         }
     }
 
-
+    std::cout << "TimeOut" << std::endl;
     return 0;
+}
+int TCPObj::Connect()
+{
+
+    
+    iResult = listen(ListenSocket, SOMAXCONN);
+    if (iResult == SOCKET_ERROR) {
+        printf("listen failed with error: %d\n", WSAGetLastError());
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    }
+    std::cout << "Client connected" << std::endl;
+    // Accept a client socket
+    ClientSocket = accept(ListenSocket, NULL, NULL);
+    if (ClientSocket == INVALID_SOCKET) {
+        printf("accept failed with error: %d\n", WSAGetLastError());
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    }
+    std::cout << "Client Accepted" << std::endl;
+    return 0;
+
+
 }
 
 int TCPObj::Create()
@@ -103,7 +164,7 @@ int TCPObj::Create()
     hints.ai_flags = AI_PASSIVE;
 
     // Resolve the server address and port
-    iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo(NULL, m_PortAddress.c_str(), &hints, &result);
     if ( iResult != 0 ) {
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
@@ -131,22 +192,6 @@ int TCPObj::Create()
 
     freeaddrinfo(result);
 
-    iResult = listen(ListenSocket, SOMAXCONN);
-    if (iResult == SOCKET_ERROR) {
-        printf("listen failed with error: %d\n", WSAGetLastError());
-        closesocket(ListenSocket);
-        WSACleanup();
-        return 1;
-    }
-
-    // Accept a client socket
-    ClientSocket = accept(ListenSocket, NULL, NULL);
-    if (ClientSocket == INVALID_SOCKET) {
-        printf("accept failed with error: %d\n", WSAGetLastError());
-        closesocket(ListenSocket);
-        WSACleanup();
-        return 1;
-    }
     return 0;
 }
 int TCPObj::Close()
@@ -163,4 +208,42 @@ int TCPObj::Close()
     closesocket(ClientSocket);
     WSACleanup();
     return 0;
+}
+
+std::vector<std::string> TCPObj::ReadFileByBlocks(const char* filename)
+{
+    std::vector<std::string> vecstr;
+
+    std::ifstream fin(filename, std::ios_base::in);
+    if (fin.is_open())
+    {
+        uint32_t size = fin.tellg();
+        double numblocks = size/m_Recvbuflen;
+        numblocks = std::ceil(numblocks);
+
+        char* buffer = new char[m_Recvbuflen];
+        snprintf(buffer, sizeof(buffer), "%d", static_cast<int>(numblocks));
+        WritePort(buffer);
+
+        //while (fin.read(buffer, recvbuflen))
+        //{
+            
+         //   WritePort(buffer);
+        //}/
+
+       // if the bytes of the block are less than 1024,
+       // use fin.gcount() calculate the number, put the va
+       // into var s
+       //std::string s(buffer, fin.gcount());
+       //vecstr.push_back(s);
+
+       //delete[] buffer;
+       fin.close();
+   }
+   else
+   {
+        std::cerr << "Cannot open file:" << filename << std::endl;
+   }
+
+   return vecstr;
 }

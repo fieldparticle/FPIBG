@@ -59,6 +59,7 @@
 #include <string>
 #include <array>
 #include <chrono>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <filesystem>
 #include <queue>
