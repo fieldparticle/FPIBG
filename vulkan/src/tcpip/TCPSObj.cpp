@@ -218,10 +218,14 @@ std::vector<std::string> TCPObj::ReadFileByBlocks(const char* filename)
     if (fin.is_open())
     {
         uint32_t size = fin.tellg();
+        fin.seekg( 0, std::ios::end );
+        size = fin.tellg();
         double numblocks = size/m_Recvbuflen;
         numblocks = std::ceil(numblocks);
 
+
         char* buffer = new char[m_Recvbuflen];
+        memset(buffer,0,m_Recvbuflen);
         snprintf(buffer, sizeof(buffer), "%d", static_cast<int>(numblocks));
         WritePort(buffer);
 

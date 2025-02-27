@@ -88,7 +88,7 @@ int main() try
 			ret=ParticleOnly(pf,tcps);
 			break;
         }
-		if(tcps->GetBuffer().compare("sendfile")==0)
+		if(tcps->GetBuffer().compare("send")==0)
 		{
 			tcps->ReadFileByBlocks("Particle.cfg");
 			break;
