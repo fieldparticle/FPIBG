@@ -90,8 +90,8 @@ int main() try
         }
 		if(tcps->GetBuffer().compare("send")==0)
 		{
+			tcps->m_SRecvBuf = "";
 			tcps->ReadFileByBlocks("Particle.cfg");
-			break;
 		}
 		if(tcps->GetBuffer().compare("test")==0)
 		{

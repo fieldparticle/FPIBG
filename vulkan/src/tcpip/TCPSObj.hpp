@@ -65,9 +65,9 @@ class TCPObj
     int Close();
     std::vector<std::string> ReadFileByBlocks(const char* filename);
     int Connect();
-    int WritePort();
+    
     int WritePort(std::string Message);
-    int WritePort(const char* Block);
+    int WritePort(const char* Block,uint32_t Len);
     void Reset()
     {
         iResult = 0;

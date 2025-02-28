@@ -31,23 +31,10 @@
 %******************************************************************/
 #include "VulkanObj/VulkanApp.hpp"
 
-int TCPObj::WritePort()
-{
-    iSendResult = send( ClientSocket, m_Recvbuf, iResult,0);
-    if (iSendResult == SOCKET_ERROR) 
-    {
-        printf("send failed with error: %d\n", WSAGetLastError());
-        closesocket(ClientSocket);
-        WSACleanup();
-        return 1;
-    }
-    printf("Bytes sent: %d\n", iSendResult);
-    return 0;
 
-}
 int TCPObj::WritePort(std::string Message)
 {
-    iSendResult = send( ClientSocket, Message.c_str(), iResult,0);
+    iSendResult = send( ClientSocket, Message.c_str(),  Message.size(),0);
     if (iSendResult == SOCKET_ERROR) 
     {
         printf("send failed with error: %d\n", WSAGetLastError());
@@ -59,9 +46,9 @@ int TCPObj::WritePort(std::string Message)
     return 0;
 
 }
-int TCPObj::WritePort(const char* Block)
+int TCPObj::WritePort(const char* Block,uint32_t Len)
 {
-    iSendResult = send( ClientSocket, Block, iResult,0);
+    iSendResult = send( ClientSocket, Block, Len,0);
     if (iSendResult == SOCKET_ERROR) 
     {
         printf("send failed with error: %d\n", WSAGetLastError());
@@ -132,7 +119,7 @@ int TCPObj::Connect()
         WSACleanup();
         return 1;
     }
-    std::cout << "Client connected" << std::endl;
+    std::cout << "Listening for Client" << std::endl;
     // Accept a client socket
     ClientSocket = accept(ListenSocket, NULL, NULL);
     if (ClientSocket == INVALID_SOCKET) {
@@ -217,23 +204,33 @@ std::vector<std::string> TCPObj::ReadFileByBlocks(const char* filename)
     std::ifstream fin(filename, std::ios_base::in);
     if (fin.is_open())
     {
+        fin.seekg( 0, std::ios::beg );
         uint32_t size = fin.tellg();
         fin.seekg( 0, std::ios::end );
         size = fin.tellg();
-        double numblocks = size/m_Recvbuflen;
+        float numblocks = static_cast<float>(size)/m_Recvbuflen;
         numblocks = std::ceil(numblocks);
-
+        fin.seekg( 0, std::ios::beg );
 
         char* buffer = new char[m_Recvbuflen];
         memset(buffer,0,m_Recvbuflen);
-        snprintf(buffer, sizeof(buffer), "%d", static_cast<int>(numblocks));
-        WritePort(buffer);
+        //snprintf(buffer, sizeof(buffer), "%d", static_cast<int>(numblocks));
+        buffer[0] = static_cast<int>(numblocks);
+        // 1 for cfg file
+        // 2 for report file
+        // 3 for image
+        buffer[1] = 1;     
+        WritePort(buffer,4);
+        memset(buffer,0,m_Recvbuflen);
 
-        //while (fin.read(buffer, recvbuflen))
-        //{
-            
-         //   WritePort(buffer);
-        //}/
+        while (true)
+        {
+           fin.read(buffer, m_Recvbuflen);
+           WritePort(buffer,m_Recvbuflen);
+           memset(buffer,0,m_Recvbuflen);
+           if (fin.eof())
+                break;
+        }
 
        // if the bytes of the block are less than 1024,
        // use fin.gcount() calculate the number, put the va
@@ -241,7 +238,7 @@ std::vector<std::string> TCPObj::ReadFileByBlocks(const char* filename)
        //std::string s(buffer, fin.gcount());
        //vecstr.push_back(s);
 
-       //delete[] buffer;
+       delete[] buffer;
        fin.close();
    }
    else
