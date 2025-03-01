@@ -70,6 +70,42 @@ int TCPObj::CompareCommand()
     return 0;
 }
 
+int TCPObj::ReadPortN()
+{
+    fd_set ReadFDs;
+    FD_ZERO(&ReadFDs);
+    FD_SET(ClientSocket, &ReadFDs);
+    // No longer need server socket
+    closesocket(ListenSocket);
+    timeval tm;
+    tm.tv_sec = 0;
+    tm.tv_usec = 0.0011;
+
+    // Receive until the peer shuts down the connection
+    if (select(0, &ReadFDs, NULL, NULL, &tm) > 0)
+    {
+    
+        memset(m_Recvbuf,0,m_Recvbuflen);
+        if (FD_ISSET(ClientSocket, &ReadFDs))
+        {
+            iResult = recv(ClientSocket, m_Recvbuf, m_Recvbuflen, 0);
+            if (iResult > 0) 
+            {
+                std::cout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << std::endl;
+                m_SRecvBuf = m_Recvbuf;
+                return 0;
+                // Echo the buffer back to the sender
+            }
+            else  
+            {
+                printf("recv failed with error: %d\n", WSAGetLastError());
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 int TCPObj::ReadPort()
 {
     fd_set ReadFDs;
@@ -92,14 +128,12 @@ int TCPObj::ReadPort()
             {
                 std::cout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << std::endl;
                 m_SRecvBuf = m_Recvbuf;
-                return CompareCommand();
+                return 0;
                 // Echo the buffer back to the sender
             }
             else  
             {
                 printf("recv failed with error: %d\n", WSAGetLastError());
-                closesocket(ClientSocket);
-                WSACleanup();
                 return 1;
             }
         }
@@ -201,7 +235,7 @@ std::vector<std::string> TCPObj::ReadFileByBlocks(const char* filename)
 {
     std::vector<std::string> vecstr;
 
-    std::ifstream fin(filename, std::ios_base::in);
+    std::ifstream fin(filename, std::ios_base::in|std::ios::binary );
     if (fin.is_open())
     {
         fin.seekg( 0, std::ios::beg );

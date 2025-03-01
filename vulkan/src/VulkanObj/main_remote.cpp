@@ -69,7 +69,14 @@ int main() try
     int ret = 0;
     while (ret == 0)
     {
-        tcps->ReadPort();
+        ret = tcps->ReadPort();
+		if(ret == 1)
+		{
+			tcps->Create();
+			tcps->Connect();
+			ret = 0;
+		}
+
         if(tcps->GetBuffer().compare("quit")==0)
         {
 			ret = 1;
@@ -78,20 +85,26 @@ int main() try
 
 		if(tcps->GetBuffer().compare("runseries")==0)
         {
+			tcps->m_SRecvBuf = "";
 			ret = pf->DoStudy(tcps);
-			break;
         }
 
 		if(tcps->GetBuffer().compare("runsingle")==0)
         {
+			tcps->m_SRecvBuf = "";
 			CfgTst->Create(CfgApp->GetString("application.testfile", true));	
 			ret=ParticleOnly(pf,tcps);
-			break;
+
         }
-		if(tcps->GetBuffer().compare("send")==0)
+		if(tcps->GetBuffer().compare("sendcsv")==0)
 		{
 			tcps->m_SRecvBuf = "";
 			tcps->ReadFileByBlocks("Particle.cfg");
+		}
+		if(tcps->GetBuffer().compare("sendimg")==0)
+		{
+			tcps->m_SRecvBuf = "";
+			tcps->ReadFileByBlocks("logo.png");
 		}
 		if(tcps->GetBuffer().compare("test")==0)
 		{

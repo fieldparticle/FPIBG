@@ -268,7 +268,6 @@
     <ClCompile Include="..\..\src\VulkanObj\ConfigObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\ContainerObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\DrawObj.cpp" />
-    <ClCompile Include="..\..\src\VulkanObj\FileIO.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\FrameBufferObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\ImageObject.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\Input.cpp" />

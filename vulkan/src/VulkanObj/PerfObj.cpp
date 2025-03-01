@@ -125,7 +125,7 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps)
 			
 
 			if (QuitEvent == 1)
-			return 0;
+				return 0;
 			
 			
 
@@ -140,7 +140,7 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps)
 	return 0;
 }
 
-void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, size_t aprCount)
+void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, size_t aprCount)
 {
 	
 	std::string filename =m_AprFile;
@@ -188,6 +188,17 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, size_t aprCoun
 					<< partErr << ","
 					<< colErr 
 					<< std::endl;
+
+			if(tcp != nullptr)
+			{
+
+
+
+
+
+			}
+
+
 #ifndef NDEBUG
 				if(m_ReportBuffer[ii].NumParticlesComputeCount != VulkanWin->m_Numparticles-1)
 				{

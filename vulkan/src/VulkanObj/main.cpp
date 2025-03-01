@@ -55,7 +55,7 @@ int main() try
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
-	
+	TCPObj* tcps = nullptr;
 	if (CfgApp->GetBool("application.doAuto", true) == true)
 	{
 		

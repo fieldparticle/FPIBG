@@ -42,7 +42,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 	float				deltaTime	= 0.0f;
 	float				lastFrame	= 0.0f;
 	uint32_t			quit_event	= 0;
-	uint32_t			AutoWait	= 0;
+	uint32_t			AutoWait	=  CfgApp->GetInt("application.seriesLength", true);;
 	size_t				aprCount	= 0;
 	double				lastTime	= glfwGetTime();
 	int					nbFrames	= 0;
@@ -70,9 +70,9 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			&& glfwGetKey(VulkanWin->GetGLFWWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS)
 		{
 			
-			if(tcp != nullptr)
-				if(tcp->ReadPort() > 1)
-					return 1;
+			//if(tcp != nullptr)
+			//	if(tcp->ReadPortN() == 1)
+			//		return 1;
 
 			perfObj->m_ReportBuffer[aprCount].SecondPerFrame = timerstep->elapsed();
 			timerstep->reset();
@@ -130,8 +130,19 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 					for (int ii = 0; ii < rcc->m_DRList.size(); ii++)
 						rcc->m_DRList[ii]->AskObject(aprCount);
 
+					if(tcp != nullptr)
+					{
+						std::ostringstream tcpbuf;
+
+						tcpbuf << "perfline,"	<< "File:" << perfObj->m_AprFile << "," 
+												<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
+												<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate;
+						tcp->WritePort(tcpbuf.str());
+					}
 					aprCount++;
 				}
+				
+				
 #if 0
 				if (AutoWait == 0 && cfg->m_DoAuto )
 				{
@@ -147,7 +158,14 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 				if (aprCount == AutoWait && AutoWait != 0)
 				{
 					aprCount++;
-					perfObj->Doperf(DrawInstance, VulkanWin, aprCount);
+					if(tcp != nullptr)
+					{
+						std::ostringstream tcpbuf;
+
+						tcpbuf << "endline,";	
+						tcp->WritePort(tcpbuf.str());
+					}
+					perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
 					if (stopondata)
 					{
 						break;
