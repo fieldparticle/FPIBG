@@ -34,7 +34,8 @@
 
 int TCPObj::WritePort(std::string Message)
 {
-    iSendResult = send( ClientSocket, Message.c_str(),  Message.size(),0);
+    
+    iSendResult = send( ClientSocket, Message.c_str(),  static_cast<int>(Message.size()),0);
     if (iSendResult == SOCKET_ERROR) 
     {
         printf("send failed with error: %d\n", WSAGetLastError());
@@ -79,7 +80,7 @@ int TCPObj::ReadPortN()
     closesocket(ListenSocket);
     timeval tm;
     tm.tv_sec = 0;
-    tm.tv_usec = 0.0011;
+    tm.tv_usec = static_cast<long>(0.0011);
 
     // Receive until the peer shuts down the connection
     if (select(0, &ReadFDs, NULL, NULL, &tm) > 0)
@@ -231,7 +232,7 @@ int TCPObj::Close()
     return 0;
 }
 
-std::vector<std::string> TCPObj::ReadFileByBlocks(const char* filename)
+std::vector<std::string> TCPObj::SendPerfFile(const char* filename, uint32_t Type)
 {
     std::vector<std::string> vecstr;
 
@@ -239,22 +240,75 @@ std::vector<std::string> TCPObj::ReadFileByBlocks(const char* filename)
     if (fin.is_open())
     {
         fin.seekg( 0, std::ios::beg );
-        uint32_t size = fin.tellg();
+        std::streamoff size = fin.tellg();
         fin.seekg( 0, std::ios::end );
         size = fin.tellg();
         float numblocks = static_cast<float>(size)/m_Recvbuflen;
         numblocks = std::ceil(numblocks);
         fin.seekg( 0, std::ios::beg );
-
+        std::ostringstream tcpbuf;
+              
+        
+        tcpbuf << static_cast<int>(numblocks) << "," << Type << "," << filename;
+        // 1 for pqb
+        // 2 for report file
+        // 3 for image
+        
+        WritePort(tcpbuf.str().c_str());
+        tcpbuf.clear();
         char* buffer = new char[m_Recvbuflen];
         memset(buffer,0,m_Recvbuflen);
-        //snprintf(buffer, sizeof(buffer), "%d", static_cast<int>(numblocks));
-        buffer[0] = static_cast<int>(numblocks);
+
+        while (true)
+        {
+           fin.read(buffer, m_Recvbuflen);
+           WritePort(buffer,m_Recvbuflen);
+           memset(buffer,0,m_Recvbuflen);
+           if (fin.eof())
+                break;
+        }
+
+       // if the bytes of the block are less than 1024,
+       // use fin.gcount() calculate the number, put the va
+       // into var s
+       //std::string s(buffer, fin.gcount());
+       //vecstr.push_back(s);
+
+       delete[] buffer;
+       fin.close();
+   }
+   else
+   {
+        std::cerr << "Cannot open file:" << filename << std::endl;
+   }
+
+   return vecstr;
+}
+std::vector<std::string> TCPObj::SendImgFile(const char* filename)
+{
+    std::vector<std::string> vecstr;
+
+    std::ifstream fin(filename, std::ios_base::in|std::ios::binary );
+    if (fin.is_open())
+    {
+        fin.seekg( 0, std::ios::beg );
+        std::streamoff size = fin.tellg();
+        fin.seekg( 0, std::ios::end );
+        size = fin.tellg();
+        float numblocks = static_cast<float>(size)/m_Recvbuflen;
+        numblocks = std::ceil(numblocks);
+        fin.seekg( 0, std::ios::beg );
+        std::ostringstream tcpbuf;
+              
+        
+        tcpbuf << static_cast<int>(numblocks) << "," << filename;
         // 1 for cfg file
         // 2 for report file
         // 3 for image
-        buffer[1] = 1;     
-        WritePort(buffer,4);
+        
+        WritePort(tcpbuf.str().c_str());
+
+        char* buffer = new char[m_Recvbuflen];
         memset(buffer,0,m_Recvbuflen);
 
         while (true)

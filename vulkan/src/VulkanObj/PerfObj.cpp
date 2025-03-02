@@ -33,6 +33,7 @@
 #include <iostream>
 #include <filesystem>
 #include "VulkanObj/VulkanApp.hpp"
+namespace fs = std::filesystem;
 void PerfObj::Create()
 {
 	m_SeriesLength = CfgApp->GetUInt("application.seriesLength", true);
@@ -161,7 +162,7 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 			std::string rpt = "Failed to open report file:" + filename;
 			throw std::runtime_error(rpt.c_str());
 		}
-
+		
 		//
 		ostrm << "time,fps,cpums,cms,gms,expectedp,loadedp,shaderp_comp,shaderp_grph, expectedc,shaderc,threadcount, sidelen,density,PERR,CERR" << std::endl;
 		for (size_t ii = 0; ii < aprCount-1; ii++)
@@ -189,14 +190,7 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 					<< colErr 
 					<< std::endl;
 
-			if(tcp != nullptr)
-			{
-
-
-
-
-
-			}
+			
 
 
 #ifndef NDEBUG
@@ -223,6 +217,11 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 		}
 		ostrm.flush();
 		ostrm.close();
+		if(tcp != nullptr)
+		{
+			std::string stripflnm =  fs::path(m_AprFile).filename().string();
+			tcp->SendPerfFile(filename.c_str(),1);
+		}
 
 	std::cout << "\n\n\n\n================= Done Perf ======================= \n\n\n\n" << std::endl;
 

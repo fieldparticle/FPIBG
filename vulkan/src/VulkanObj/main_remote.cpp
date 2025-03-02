@@ -87,6 +87,7 @@ int main() try
         {
 			tcps->m_SRecvBuf = "";
 			ret = pf->DoStudy(tcps);
+			tcps->WritePort("perfdone");
         }
 
 		if(tcps->GetBuffer().compare("runsingle")==0)
@@ -99,12 +100,12 @@ int main() try
 		if(tcps->GetBuffer().compare("sendcsv")==0)
 		{
 			tcps->m_SRecvBuf = "";
-			tcps->ReadFileByBlocks("Particle.cfg");
+			tcps->SendPerfFile("Particle.cfg",1);
 		}
 		if(tcps->GetBuffer().compare("sendimg")==0)
 		{
 			tcps->m_SRecvBuf = "";
-			tcps->ReadFileByBlocks("logo.png");
+			tcps->SendImgFile("logo.png");
 		}
 		if(tcps->GetBuffer().compare("test")==0)
 		{

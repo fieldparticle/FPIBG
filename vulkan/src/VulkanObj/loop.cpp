@@ -30,8 +30,9 @@
 %*
 %******************************************************************/
 #include "VulkanObj/VulkanApp.hpp"
+#include <filesystem>
 
-
+namespace fs = std::filesystem;
 
 int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
 {
@@ -130,13 +131,26 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 					for (int ii = 0; ii < rcc->m_DRList.size(); ii++)
 						rcc->m_DRList[ii]->AskObject(aprCount);
 
+					
+
 					if(tcp != nullptr)
 					{
 						std::ostringstream tcpbuf;
+						std::string stripflnm =  fs::path(perfObj->m_AprFile).filename().string();
+						#ifndef NDEBUG
+							stripflnm = stripflnm + "D.csv";
+						#else
+							stripflnm = stripflnm + "R.csv";
+						#endif
 
-						tcpbuf << "perfline,"	<< "File:" << perfObj->m_AprFile << "," 
-												<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
-												<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate;
+						if(aprCount < AutoWait-1)
+							tcpbuf << "perfline,"	<< "File:" << stripflnm << "," 
+													<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
+									<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate << ",continue";
+						else
+							tcpbuf << "perfline,"	<< "File:" << stripflnm << "," 
+													<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
+									<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate << ",endline";
 						tcp->WritePort(tcpbuf.str());
 					}
 					aprCount++;
@@ -147,7 +161,6 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 				if (AutoWait == 0 && cfg->m_DoAuto )
 				{
 					aprCount++;
-					
 					Doperf(DrawInstance, VulkanWin, rgc,rcc,aprCount);
 					if (VulkanWin->m_FrameNumber >= AutoWait)
 					{
@@ -158,13 +171,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 				if (aprCount == AutoWait && AutoWait != 0)
 				{
 					aprCount++;
-					if(tcp != nullptr)
-					{
-						std::ostringstream tcpbuf;
-
-						tcpbuf << "endline,";	
-						tcp->WritePort(tcpbuf.str());
-					}
+				
 					perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
 					if (stopondata)
 					{

@@ -63,7 +63,8 @@ class TCPObj
     int ReadPort();
     int CompareCommand();
     int Close();
-    std::vector<std::string> ReadFileByBlocks(const char* filename);
+    std::vector<std::string> SendPerfFile(const char* filename, uint32_t Type);
+    std::vector<std::string> SendImgFile(const char* filename);
     int Connect();
     int ReadPortN();
     int WritePort(std::string Message);
