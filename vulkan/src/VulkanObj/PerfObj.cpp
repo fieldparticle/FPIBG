@@ -33,7 +33,7 @@
 #include <iostream>
 #include <filesystem>
 #include "VulkanObj/VulkanApp.hpp"
-namespace fs = std::filesystem;
+
 void PerfObj::Create()
 {
 	m_SeriesLength = CfgApp->GetUInt("application.seriesLength", true);
@@ -219,7 +219,7 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 		ostrm.close();
 		if(tcp != nullptr)
 		{
-			std::string stripflnm =  fs::path(m_AprFile).filename().string();
+		
 			tcp->SendPerfFile(filename.c_str(),1);
 		}
 

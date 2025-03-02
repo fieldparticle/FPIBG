@@ -42,6 +42,7 @@ int main() try
 {
 	
 	mout.Init("particle.log", "Particle");
+	mout << "Starting FPIBG\r\n" << ende;
 	MpsApp = new ConfigObj;
 	MpsApp->Create("mps.cfg");
 	CfgApp = new ConfigObj;
@@ -58,7 +59,7 @@ int main() try
 	TCPObj* tcps = nullptr;
 	if (CfgApp->GetBool("application.doAuto", true) == true)
 	{
-		
+		mout << "Do study :" << ende;
 		if (pf->DoStudy(tcps))
 			return 1;
 	}

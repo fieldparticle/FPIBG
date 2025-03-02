@@ -30,7 +30,7 @@
 %*
 %******************************************************************/
 #include "VulkanObj/VulkanApp.hpp"
-
+namespace fs = std::filesystem;
 
 int TCPObj::WritePort(std::string Message)
 {
@@ -248,8 +248,8 @@ std::vector<std::string> TCPObj::SendPerfFile(const char* filename, uint32_t Typ
         fin.seekg( 0, std::ios::beg );
         std::ostringstream tcpbuf;
               
-        
-        tcpbuf << static_cast<int>(numblocks) << "," << Type << "," << filename;
+     	std::string stripflnm =  fs::path(filename).filename().string();   
+        tcpbuf << static_cast<int>(numblocks) << "," << Type << "," << stripflnm;
         // 1 for pqb
         // 2 for report file
         // 3 for image

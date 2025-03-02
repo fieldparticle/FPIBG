@@ -44,18 +44,22 @@ ConfigObj*			CfgApp;
 
 int main() try
 {
+	std::cout << "Starting" << std::endl;
 	mout.Init("particle.log", "Particle");
 	std::filesystem::path cwd = std::filesystem::current_path();
 	std::cout << "Working Directory :" << cwd.string().c_str() << std::endl;
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
-	
+	mout << "Create mps" << ende;
 	MpsApp = new ConfigObj;
 	MpsApp->Create("mps.cfg");
+	mout << "Open mps" << ende;
+
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
-	CfgTst = new ConfigObj;
+	mout << "Study File Config" << ende;
 
+	CfgTst = new ConfigObj;
 	TCPObj* tcps = new TCPObj;
 	tcps->SetServerPort(MpsApp->GetString("server_port",true));
 	std::cout << "FPIBG Server Listening on port:" << tcps->GetServerPort() << std::endl;
@@ -125,7 +129,7 @@ catch (const std::exception& e)
 {
 
 	mout << "EXITING| TYPE:" << typeid(e).name() << " MSG:" << e.what() << ende;
-	
+	std::cout << "EXITING| TYPE:" << typeid(e).name() << " MSG:" << e.what() << std::endl;
 	exit(1);
 }
 #endif

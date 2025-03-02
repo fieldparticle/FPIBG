@@ -198,7 +198,7 @@ void MsgStream::CallStartTag(
 )
 {
 
-#ifdef MOUT_DBG
+//#ifdef MOUT_DBG
 	std::cout << "Starting  :" << m_ModuleName  << "mout configuration is.." << std::endl;
 	std::cout << "QueueSize :" << m_QueueSize   << std::endl;
 	std::cout << "DebugLevel:" << m_DebugLevel  << std::endl;
@@ -208,7 +208,7 @@ void MsgStream::CallStartTag(
 	else
 		std::cout << "Logging?  :false" << std::endl;
 	std::cout << "SysId     :" <<  m_SysidBuf << std::endl;
-#endif
+//#endif
 
 };
 /*************************************************************************
@@ -367,8 +367,8 @@ MsgStream& e	//@parm pointer to the parent class.
 	
 
 	size_t len=strlen(e.m_Buffer) + strlen(e.m_ModuleName)+ 32 + strlen(e.m_SysidBuf);
-	tmp	= new char[len+2048];
-	memset(tmp,0,len+2048);
+	tmp	= new char[len+16384];
+	memset(tmp,0,len+16384);
 
 	
 	struct 	tm*	tm;	
