@@ -73,6 +73,8 @@ void MemStats(VulkanObj* vulkanObj);
 extern bool Extflg;
 std::vector<std::string> ReadFileByBlocks(const char* filename, TCPObj* tcps);
 int Loop(PerfObj* pf, TCPObj* tcp,DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
+int Capture(uint32_t ImgNum);
+int SetupCapture();
 int ParticleOnly(PerfObj* pf, TCPObj* tcp);
 int ParticleBoundary(ConfigObj* configVCube);
 int ParticleBoundaryV2(ConfigObj* configVCube);

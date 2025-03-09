@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="libconfig">
-      <UniqueIdentifier>{d7723a19-4de4-462c-815b-c8bb562a1841}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source">
       <UniqueIdentifier>{f1ce9b4c-7b13-4cdf-91eb-4efda68ec5eb}</UniqueIdentifier>
     </Filter>
@@ -24,6 +21,9 @@
     </Filter>
     <Filter Include="logfiles">
       <UniqueIdentifier>{8c12aa8c-eadb-4f20-b59b-d278eae8cfec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libconfig">
+      <UniqueIdentifier>{d7723a19-4de4-462c-815b-c8bb562a1841}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -386,6 +386,7 @@
     <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sccp\Capture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\run\particle\Particle.cfg" />

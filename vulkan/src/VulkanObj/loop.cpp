@@ -47,6 +47,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 	size_t				aprCount	= 0;
 	double				lastTime	= glfwGetTime();
 	int					nbFrames	= 0;
+	uint32_t imgNum=0;
 
 	timerstep = new TimerObj;
 	
@@ -57,10 +58,9 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 
 	perfObj->m_ReportBuffer.resize(AutoWait);
 	
-
-	
+	SetupCapture();
 	SetCallBacks(VulkanWin);
-
+	
 
 	try
 	{
@@ -102,16 +102,24 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 					break;
 
 			};
+
 			// Poll window events.
 			glfwPollEvents();
 			// Draw frame.
+			double currentTime = glfwGetTime();
 			DrawInstance->DrawFrame();
+			
+			if (currentTime - lastTime >= 0.5)
+			{
+				imgNum++;
+				Capture(imgNum);
+			}
 
 			if(Extflg == true)
 				throw std::runtime_error("External Flag Exit.");
 
 			VulkanWin->m_FrameNumber++;
-			double currentTime = glfwGetTime();
+			
 			nbFrames++;
 			if (currentTime - lastTime >= 1.0)
 			{
