@@ -182,6 +182,7 @@ VkFormat ImageObject::findSupportedFormat(const std::vector<VkFormat>& candidate
 				(props.optimalTilingFeatures & features) == features) {
 			return format;
 		}
+
 	}
 
 	throw std::runtime_error("ImageObject::createImageView failed at findSupportedFormat");

@@ -177,6 +177,33 @@ void PhysDevObj::CheckSubGroupProperties(VkPhysicalDevice PhysDev)
 		<< ende;
 		
 };
+
+VkBool32 VulkanObj::IsDepthFormatSupported(VkPhysicalDevice physicalDevice, VkFormat *depthFormat,VkFormatFeatureFlagBits formatFeature)
+{
+	// Since all depth formats may be optional, we need to find a suitable depth format to use
+	// Start with the highest precision packed format
+	std::vector<VkFormat> formatList = {
+		VK_FORMAT_D32_SFLOAT_S8_UINT,
+		VK_FORMAT_D32_SFLOAT,
+		VK_FORMAT_D24_UNORM_S8_UINT,
+		VK_FORMAT_D16_UNORM_S8_UINT,
+		VK_FORMAT_D16_UNORM
+	};
+
+	for (auto& format : formatList)
+	{
+		VkFormatProperties formatProps;
+		vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProps);
+		if (formatProps.optimalTilingFeatures & formatFeature)
+		{
+			*depthFormat = format;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void PhysDevObj::CheckPhysDevFeatureSupport(VkPhysicalDevice PhysDev)
 {
 

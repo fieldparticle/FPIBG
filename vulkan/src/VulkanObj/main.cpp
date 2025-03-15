@@ -47,12 +47,13 @@ int main() try
 	MpsApp->Create("mps.cfg");
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
-	//CfgApp = new ConfigObj;
-	//CfgApp->Create(MpsApp->GetString("studyFile", true));
+	std::string app = CfgApp->GetString("application.app",true);
+
 	CfgTst = new ConfigObj;
 	
 	PerfObj* pf = new PerfObj();
 	pf->Create();
+	
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
@@ -66,8 +67,16 @@ int main() try
 	else
 	{
 		CfgTst->Create(CfgApp->GetString("application.testfile", true));	
-		if (ParticleOnly(pf,tcps))
-			return 1;
+		if( app.compare("ParticleOnly") == 0)
+			if (ParticleOnly(pf,tcps))
+				return 0;
+
+		if( app.compare("ParticleHeadless") == 0)
+			if (ParticleHeadless(pf,tcps))
+				return 0;
+		
+		throw std::runtime_error("application.app confgiuration not found.");
+        
 	}
 	return 0;
 }

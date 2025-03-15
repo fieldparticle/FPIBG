@@ -359,9 +359,6 @@
     <ClCompile Include="..\..\src\VulkanObj\VulkanDeviceLog.cpp">
       <Filter>vulkanobj</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\VulkanObj\VulkanDevicePhy.cpp">
-      <Filter>vulkanobj</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\VulkanObj\VulkanObj.cpp">
       <Filter>vulkanobj</Filter>
     </ClCompile>

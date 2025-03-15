@@ -46,7 +46,7 @@ void ResourceLockMatrix::Create(uint32_t BindPoint, ResourceVertexParticle* part
     m_BindPoint = BindPoint;
  
     // Remember the size is goes from 0 to length thats why the +1
-        m_MaxLoc = static_cast<uint32_t>((CfgTst->GetUInt("CellAryW", true)+1) 
+    m_MaxLoc = static_cast<uint32_t>((CfgTst->GetUInt("CellAryW", true)+1) 
                                     * (CfgTst->GetUInt("CellAryH", true)+1) 
                                     * (CfgTst->GetUInt("CellAryL", true)+1));
     m_BufSize = m_MaxLoc*sizeof(uint32_t);

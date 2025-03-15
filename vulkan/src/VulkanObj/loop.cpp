@@ -57,8 +57,9 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 		AutoWait = 61;
 
 	perfObj->m_ReportBuffer.resize(AutoWait);
-	
+#ifdef DOCAP				
 	SetupCapture();
+#endif
 	SetCallBacks(VulkanWin);
 	
 
@@ -108,13 +109,13 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			// Draw frame.
 			double currentTime = glfwGetTime();
 			DrawInstance->DrawFrame();
-			
+#ifdef DOCAP			
 			if (currentTime - lastTime >= 0.5)
 			{
 				imgNum++;
 				Capture(imgNum);
 			}
-
+#endif
 			if(Extflg == true)
 				throw std::runtime_error("External Flag Exit.");
 

@@ -54,8 +54,8 @@ extern ConfigObj* CfgApp;
 #include "VulkanObj/InstanceObj.hpp"
 #include "VulkanObj/ResourceVertexObj.hpp"
 #include "TCPIP/TCPSObj.hpp"
-#include "VulkanObj/PerfObj.hpp"
 #include "particleOnly/ParticleOnly.hpp"
+#include "particleHeadless/ParticleHeadless.hpp"
 
 
 void MemStats(VulkanObj* vulkanObj);

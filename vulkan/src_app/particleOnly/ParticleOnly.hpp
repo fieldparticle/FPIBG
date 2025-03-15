@@ -31,8 +31,10 @@
 %******************************************************************/
 
 #include "VulkanObj/pdata.hpp"
+#include "VulkanObj/PerfObj.hpp"
 #include "particleOnly/SwapChain.hpp"
 #include "particleOnly/FrameBuffer.hpp"
+#include "particleHeadless/FrameBufferHeadless.hpp"
 #include "particleOnly/RenderPassParticleOnly.hpp"
 #include "particleOnly/ParticleStruct.hpp"
 #include "VulkanObj/ObjLoader.hpp"

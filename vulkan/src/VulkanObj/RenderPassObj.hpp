@@ -51,7 +51,7 @@ class  RenderPassObj : public BaseObj
         BaseObj(Name,0,App){};
 
     virtual void createRenderPass()=0;
-
+    virtual void Create(SwapChainObj* SCO,std::vector<ImageObject*> IMO );
     virtual void Create(SwapChainObj* SCO, std::vector<ImageObject*> IMO,  std::vector<Resource*> SubPassItem);
     virtual void Create(SwapChainObj* SCO) ;
 

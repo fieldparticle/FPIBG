@@ -46,13 +46,14 @@ class FrameBufferObj : public BaseObj{
         BaseObj(Name, 0, App) {};
 
 
-    void Create(RenderPassObj* RPO,SwapChainObj* SCO) {
+    virtual void Create(RenderPassObj* RPO,SwapChainObj* SCO) 
+    {
         m_RPO = RPO;
         m_SCO = SCO;
         
         createFramebuffers();
 	};
-    void Cleanup(){
+    virtual void Cleanup(){
        for (auto framebuffer : m_SwapChainFramebuffers) {
             vkDestroyFramebuffer(m_App->GetLogicalDevice(), framebuffer, nullptr);
        }
@@ -61,6 +62,6 @@ class FrameBufferObj : public BaseObj{
    
 
 
- FrameBufferObj() = default;
+ //FrameBufferObj() = default;
 };
 #endif

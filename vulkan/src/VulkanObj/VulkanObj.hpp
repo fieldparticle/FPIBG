@@ -122,7 +122,7 @@ class VulkanObj
 					m_QA = QA;
 					Create(CFG);
 				}
-
+	VkBool32 IsDepthFormatSupported(VkPhysicalDevice physicalDevice, VkFormat *depthFormat,VkFormatFeatureFlagBits featureFlag);
 	void		Cleanup(); 
     
 	void		SetupDebugMessenger() ;

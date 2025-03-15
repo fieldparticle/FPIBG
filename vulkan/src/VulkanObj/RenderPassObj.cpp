@@ -41,12 +41,21 @@ void RenderPassObj::Create(SwapChainObj* SCO,
     
     createRenderPass();
 };
+void RenderPassObj::Create(SwapChainObj* SCO,
+    std::vector<ImageObject*> IMO )
+{
+
+    m_IMO = IMO;
+    m_SCO = SCO;
+    createRenderPass();
+};
 void RenderPassObj::Create(SwapChainObj* SCO )
 {
     m_SCO = SCO;
     
     createRenderPass();
 };
+
 void RenderPassObj::RenderPassObj::Cleanup()
 {
     vkDestroyRenderPass(m_App->GetLogicalDevice(),
