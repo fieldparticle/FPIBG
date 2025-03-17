@@ -37,8 +37,8 @@
 class DrawParticleOnly : public DrawObj
 {
     public:
-    
-	 void flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, VkCommandPool pool, bool free);
+		std::string m_ImageDir;
+	void flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, VkCommandPool pool, bool free);
 	void flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
 
 	void insertImageMemoryBarrier(
@@ -55,7 +55,7 @@ class DrawParticleOnly : public DrawObj
 	VkCommandPool createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags);
 	uint32_t getMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32 *memTypeFound = nullptr);
 	VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
-	void SaveImage();
+	void SaveImage(uint32_t ImgNum);
 
     virtual void DrawFrame(); 
 	void Create(CommandPoolObj* CPL,

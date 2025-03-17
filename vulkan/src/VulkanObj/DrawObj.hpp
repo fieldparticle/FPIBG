@@ -51,7 +51,7 @@ class DrawObj : public BaseObj
 	
 
 
-	virtual void SaveImage(){};
+	virtual void SaveImage(uint32_t ImgNum){};
     virtual void DrawFrame()=0; 
 	void Create(CommandPoolObj* CPL,
 		SwapChainObj* SCO,

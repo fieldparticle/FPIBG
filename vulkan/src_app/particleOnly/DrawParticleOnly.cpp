@@ -45,7 +45,7 @@ void DrawParticleOnly::Create(CommandPoolObj* CPL,
 	m_GraphicsCommandObj = m_CPL->GetCommandObjByName("CommandObjParticleGraphics");
 	m_Graphicslst = m_GraphicsCommandObj->m_RCO->m_DRList;
 	m_Computelst = m_ComputeCommandObj->m_RCO->m_DRList;
-	
+	m_ImageDir = CfgApp->GetString("application.imageDir", true);
 }
 
 void DrawParticleOnly::DrawFrame()
@@ -312,7 +312,7 @@ void DrawParticleOnly::DrawFrame()
 
 }
 
-void DrawParticleOnly::SaveImage()
+void DrawParticleOnly::SaveImage(uint32_t ImgNum)
 {
 	
 	
@@ -324,14 +324,14 @@ void DrawParticleOnly::SaveImage()
 	// Check if the device supports blitting from optimal images (the swapchain images are in optimal format)
 	vkGetPhysicalDeviceFormatProperties(m_App->GetPhysicalDevice(), m_SCO->m_SwapChainImageFormat, &formatProps);
 	if (!(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT)) {
-		std::cerr << "Device does not support blitting from optimal tiled images, using copy instead of blit!" << std::endl;
+		//std::cerr << "Device does not support blitting from optimal tiled images, using copy instead of blit!" << std::endl;
 		supportsBlit = false;
 	}
 
 	// Check if the device supports blitting to linear images
 	vkGetPhysicalDeviceFormatProperties(m_App->GetPhysicalDevice(), VK_FORMAT_R8G8B8A8_UNORM, &formatProps);
 	if (!(formatProps.linearTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT)) {
-		std::cerr << "Device does not support blitting to linear tiled images, using copy instead of blit!" << std::endl;
+		//std::cerr << "Device does not support blitting to linear tiled images, using copy instead of blit!" << std::endl;
 		supportsBlit = false;
 	}
 
@@ -356,6 +356,7 @@ void DrawParticleOnly::SaveImage()
 	imageCreateCI.pNext = nullptr;
 	imageCreateCI.flags = 0;
 	imageCreateCI.pQueueFamilyIndices = 0;
+	imageCreateCI.sharingMode = VK_SHARING_MODE_EXCLUSIVE ;
 	
 
 	// Create the image
@@ -512,8 +513,10 @@ void DrawParticleOnly::SaveImage()
 	vkMapMemory(m_App->GetLogicalDevice(), dstImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&data);
 	data += subResourceLayout.offset;
 
-	std::string filename = "capture.ppm";
-	std::ofstream file(filename, std::ios::out | std::ios::binary);
+	std::ostringstream  objtxt;
+	objtxt << m_ImageDir << "/capture" << std::setfill('0') << std::setw(5) << ImgNum << ".ppm";
+	
+	std::ofstream file(objtxt.str(), std::ios::out | std::ios::binary);
 
 	// ppm header
 	file << "P6\n" << m_SCO->GetSwapWidth() << "\n" << m_SCO->GetSwapHeight() << "\n" << 255 << "\n";
@@ -550,7 +553,7 @@ void DrawParticleOnly::SaveImage()
 	}
 	file.close();
 
-	std::cout << "Screenshot saved to disk" << std::endl;
+	//std::cout << "Screenshot saved to disk" << std::endl;
 
 	// Clean up resources
 	vkUnmapMemory(m_App->GetLogicalDevice(), dstImageMemory);

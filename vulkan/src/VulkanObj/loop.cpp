@@ -47,6 +47,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 	size_t				aprCount	= 0;
 	double				lastTime	= glfwGetTime();
 	int					nbFrames	= 0;
+	bool				doAuto		= CfgApp->GetBool("application.doAuto", true);
 	uint32_t imgNum=0;
 
 	timerstep = new TimerObj;
@@ -123,7 +124,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			if (currentTime - lastTime >= 0.5)
 			{
 				imgNum++;
-				DrawInstance->SaveImage();
+				DrawInstance->SaveImage(imgNum);
 			}
 #endif
 			if(Extflg == true)
@@ -191,7 +192,8 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 				{
 					aprCount++;
 				
-					perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
+					if(doAuto)
+						perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
 					if (stopondata)
 					{
 						break;

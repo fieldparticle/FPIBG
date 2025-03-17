@@ -73,7 +73,7 @@ int main() try
 
 		
 		
-		throw std::runtime_error("application.app confgiuration not found.");
+		
         
 	}
 	return 0;

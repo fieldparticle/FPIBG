@@ -56,7 +56,7 @@
 	createInfo.imageArrayLayers = 1;
 	
 	// VK_IMAGE_USAGE_TRANSFER_SRC_BIT is need to transfer in Media::Save()
-	createInfo.imageUsage 		= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT ;
+	createInfo.imageUsage 		= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT ;
 
 	uint32_t queueFamilyIndices[] 	= { m_CO->m_QFIndices.graphicsFamily.value(), m_CO->m_QFIndices.presentFamily.value()};
 

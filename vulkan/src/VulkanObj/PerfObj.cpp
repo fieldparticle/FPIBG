@@ -60,10 +60,6 @@ void PerfObj::Create()
 	{
 		m_TestDir = m_testDUPDir;
 	}
-	
-		
-	
-
 
 }
 uint32_t PerfObj::DoStudy(TCPObj* tcps)
