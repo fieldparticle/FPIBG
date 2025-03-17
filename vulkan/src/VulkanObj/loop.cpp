@@ -60,6 +60,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 #ifdef DOCAP				
 	SetupCapture();
 #endif
+
 	SetCallBacks(VulkanWin);
 	
 
@@ -114,6 +115,15 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			{
 				imgNum++;
 				Capture(imgNum);
+			}
+#endif
+
+#define DOCOPY
+#ifdef DOCOPY
+			if (currentTime - lastTime >= 0.5)
+			{
+				imgNum++;
+				DrawInstance->SaveImage();
 			}
 #endif
 			if(Extflg == true)

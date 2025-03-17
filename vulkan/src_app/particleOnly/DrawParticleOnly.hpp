@@ -38,7 +38,25 @@ class DrawParticleOnly : public DrawObj
 {
     public:
     
-	
+	 void flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, VkCommandPool pool, bool free);
+	void flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
+
+	void insertImageMemoryBarrier(
+	VkCommandBuffer cmdbuffer,
+	VkImage image,
+	VkAccessFlags srcAccessMask,
+	VkAccessFlags dstAccessMask,
+	VkImageLayout oldImageLayout,
+	VkImageLayout newImageLayout,
+	VkPipelineStageFlags srcStageMask,
+	VkPipelineStageFlags dstStageMask,
+	VkImageSubresourceRange subresourceRange);
+	VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, VkCommandPool pool, bool begin=false);
+	VkCommandPool createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags);
+	uint32_t getMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32 *memTypeFound = nullptr);
+	VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
+	void SaveImage();
+
     virtual void DrawFrame(); 
 	void Create(CommandPoolObj* CPL,
 		SwapChainObj* SCO,

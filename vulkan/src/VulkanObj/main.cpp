@@ -71,9 +71,7 @@ int main() try
 			if (ParticleOnly(pf,tcps))
 				return 0;
 
-		if( app.compare("ParticleHeadless") == 0)
-			if (ParticleHeadless(pf,tcps))
-				return 0;
+		
 		
 		throw std::runtime_error("application.app confgiuration not found.");
         
