@@ -41,11 +41,12 @@ void DrawParticleOnly::Create(CommandPoolObj* CPL,
 	m_SCO = SCO;
 	m_FBO = FBO; 
 	m_SO = SO;
-	m_ComputeCommandObj = m_CPL->GetCommandObjByName("CommandParticleCompute");
-	m_GraphicsCommandObj = m_CPL->GetCommandObjByName("CommandObjParticleGraphics");
-	m_Graphicslst = m_GraphicsCommandObj->m_RCO->m_DRList;
-	m_Computelst = m_ComputeCommandObj->m_RCO->m_DRList;
-	m_ImageDir = CfgApp->GetString("application.imageDir", true);
+	m_ComputeCommandObj		= m_CPL->GetCommandObjByName("CommandParticleCompute");
+	m_GraphicsCommandObj	= m_CPL->GetCommandObjByName("CommandObjParticleGraphics");
+	m_Graphicslst			= m_GraphicsCommandObj->m_RCO->m_DRList;
+	m_Computelst			= m_ComputeCommandObj->m_RCO->m_DRList;
+	m_ImageDir				= CfgApp->GetString("application.imageDir", true);
+	m_ImagePrefix			= CfgApp->GetString("application.imagePrefix", true);
 }
 
 void DrawParticleOnly::DrawFrame()
@@ -514,7 +515,7 @@ void DrawParticleOnly::SaveImage(uint32_t ImgNum)
 	data += subResourceLayout.offset;
 
 	std::ostringstream  objtxt;
-	objtxt << m_ImageDir << "/capture" << std::setfill('0') << std::setw(5) << ImgNum << ".ppm";
+	objtxt << m_ImageDir << "/" << m_ImagePrefix << std::setfill('0') << std::setw(5) << ImgNum << ".ppm";
 	
 	std::ofstream file(objtxt.str(), std::ios::out | std::ios::binary);
 

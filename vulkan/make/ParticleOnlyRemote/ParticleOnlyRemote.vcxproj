@@ -287,7 +287,6 @@
     <ClCompile Include="..\..\src\VulkanObj\SyncObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\VulkanApp.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\VulkanDeviceLog.cpp" />
-    <ClCompile Include="..\..\src\VulkanObj\VulkanDevicePhy.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\VulkanObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\VulkanObjDebug.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\VulkanObjMemory.cpp" />

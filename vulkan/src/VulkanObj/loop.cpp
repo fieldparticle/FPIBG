@@ -37,17 +37,20 @@ namespace fs = std::filesystem;
 int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
 {
 	TimerObj* timerstep;
-	uint32_t			endFrame    = CfgApp->GetUInt("application.end_frame", true);
-	bool				stopondata  = CfgApp->GetBool("application.stopondata", true);
-	uint32_t			frameDelay  = CfgApp->GetInt("application.frame_delay", true);
-	float				deltaTime	= 0.0f;
-	float				lastFrame	= 0.0f;
-	uint32_t			quit_event	= 0;
-	uint32_t			AutoWait	=  CfgApp->GetInt("application.seriesLength", true);;
-	size_t				aprCount	= 0;
-	double				lastTime	= glfwGetTime();
-	int					nbFrames	= 0;
-	bool				doAuto		= CfgApp->GetBool("application.doAuto", true);
+	uint32_t			endFrame		= CfgApp->GetUInt("application.end_frame", true);
+	bool				stopondata		= CfgApp->GetBool("application.stopondata", true);
+	uint32_t			frameDelay		= CfgApp->GetInt("application.frame_delay", true);
+	float				deltaTime		= 0.0f;
+	float				lastFrame		= 0.0f;
+	uint32_t			quit_event		= 0;
+	uint32_t			AutoWait		=  CfgApp->GetInt("application.seriesLength", true);;
+	size_t				aprCount		= 0;
+	double				lastTime		= glfwGetTime();
+	int					nbFrames		= 0;
+	bool				doAuto			= CfgApp->GetBool("application.doAuto", true);
+	bool				captureFrame	= CfgApp->GetBool("application.captureFrame", true);
+	bool				copyFrame		= CfgApp->GetBool("application.copyFrame", true);
+		
 	uint32_t imgNum=0;
 
 	timerstep = new TimerObj;
@@ -58,9 +61,9 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 		AutoWait = 61;
 
 	perfObj->m_ReportBuffer.resize(AutoWait);
-#ifdef DOCAP				
+if(captureFrame	== true)
 	SetupCapture();
-#endif
+
 
 	SetCallBacks(VulkanWin);
 	
@@ -111,22 +114,26 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			// Draw frame.
 			double currentTime = glfwGetTime();
 			DrawInstance->DrawFrame();
-#ifdef DOCAP			
+		if(captureFrame	== true)
+		{
 			if (currentTime - lastTime >= 0.5)
 			{
 				imgNum++;
 				Capture(imgNum);
 			}
-#endif
+		}
 
-#define DOCOPY
-#ifdef DOCOPY
+
+
+		if(copyFrame	== true)
+		{
 			if (currentTime - lastTime >= 0.5)
 			{
 				imgNum++;
 				DrawInstance->SaveImage(imgNum);
 			}
-#endif
+		}
+
 			if(Extflg == true)
 				throw std::runtime_error("External Flag Exit.");
 

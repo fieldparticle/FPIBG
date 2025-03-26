@@ -38,6 +38,7 @@ class DrawParticleOnly : public DrawObj
 {
     public:
 		std::string m_ImageDir;
+		std::string m_ImagePrefix;
 	void flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, VkCommandPool pool, bool free);
 	void flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
 

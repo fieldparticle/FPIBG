@@ -201,6 +201,9 @@
     <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sccp\Capture.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\libconfig\scanctx.c">

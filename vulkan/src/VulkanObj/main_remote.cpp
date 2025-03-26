@@ -60,6 +60,7 @@ int main() try
 	mout << "Study File Config" << ende;
 
 	CfgTst = new ConfigObj;
+
 	TCPObj* tcps = new TCPObj;
 	tcps->SetServerPort(MpsApp->GetString("server_port",true));
 	std::cout << "FPIBG Server Listening on port:" << tcps->GetServerPort() << std::endl;

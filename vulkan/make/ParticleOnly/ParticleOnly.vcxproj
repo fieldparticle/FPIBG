@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\src\libconfig\util.h" />
     <ClInclude Include="..\..\src\libconfig\wincompat.h" />
     <ClInclude Include="..\..\src\mout2_0\mout.hpp" />
+    <ClInclude Include="..\..\src\sccp\Capture.hpp" />
     <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\BaseObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\CommandObj.hpp" />

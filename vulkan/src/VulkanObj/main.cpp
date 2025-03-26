@@ -57,6 +57,8 @@ int main() try
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
+	
+
 	TCPObj* tcps = nullptr;
 	if (CfgApp->GetBool("application.doAuto", true) == true)
 	{
@@ -70,11 +72,6 @@ int main() try
 		if( app.compare("ParticleOnly") == 0)
 			if (ParticleOnly(pf,tcps))
 				return 0;
-
-		
-		
-		
-        
 	}
 	return 0;
 }
