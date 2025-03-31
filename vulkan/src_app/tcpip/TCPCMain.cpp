@@ -20,7 +20,7 @@ int __cdecl main(int argc, char **argv)
 	MpsApp->Create("mpsclient.cfg");
     tcpc->SetServerIP(MpsApp->GetString("ipaddress",true));
     tcpc->SetServerPort(MpsApp->GetString("ipport",true));
-    
+   
     while(1) 
     {
         std::cout << "Enter Command:";
@@ -32,7 +32,7 @@ int __cdecl main(int argc, char **argv)
             break;
         }
        tcpc->WritePort(cmd);     
-        tcpc->ReadPort();
+       tcpc->ReadPort();
     }
   
 

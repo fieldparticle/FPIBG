@@ -32,6 +32,7 @@
 
 #ifndef CONFIGOBJ_HPP
 #define CONFIGOBJ_HPP
+#include "libconfig/libconfig.h"
 #include <iostream>
 #include <vector>
 #include <sstream>
@@ -56,7 +57,6 @@ public:
 	double				float_temp		= 0.0;
 	std::string			lookup;
 	std::string			util;
-	config_setting_t*	setting;
 	int					m_Count=0;
 
 	struct pair

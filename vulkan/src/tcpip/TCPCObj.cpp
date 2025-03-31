@@ -31,16 +31,19 @@
 %******************************************************************/
 
 #pragma once
+
 #include "TCPCObj.hpp"
+#include "mout2_0/mout.hpp"
+extern MsgStream			mout;
 int TCPCObj::ReadPort()
 {
-    iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+    iResult = recv(ConnectSocket, recvbuf, m_Recvbuflen, 0);
     if ( iResult > 0 )
-        printf("Bytes received: %d\n", iResult);
+        mout << "Bytes received" << iResult << ende;
     else if ( iResult == 0 )
-        printf("Connection closed\n");
+         mout << "Connection closed" << ende;
     else
-        printf("recv failed with error: %d\n", WSAGetLastError());
+        mout << "recv failed with error:" << WSAGetLastError() << ende;
     return 0;
 }
 
@@ -49,7 +52,7 @@ int TCPCObj::Close()
       // shutdown the connection since no more data will be sent
     iResult = shutdown(ConnectSocket, SD_SEND);
     if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
+        mout << "shutdown failed with error:"<<  WSAGetLastError() << ende;
         closesocket(ConnectSocket);
         WSACleanup();
         return 1;
@@ -67,13 +70,28 @@ int TCPCObj::WritePort(std::string Command)
     iResult = send( ConnectSocket, Command.c_str(), (int)Command.size(), 0 );
     if (iResult == SOCKET_ERROR) 
     {
-        printf("send failed with error: %d\n", WSAGetLastError());
+        mout << "send failed with error:" << WSAGetLastError() << ende;
         closesocket(ConnectSocket);
         WSACleanup();
         return 1;
     }
 
-    printf("Bytes Sent: %ld\n", iResult);
+    mout << "Bytes Sent:" <<  iResult << ende;
+    return 0;
+}
+int TCPCObj::WritePort(char* Buf, int Size)
+{
+    
+    iResult = send( ConnectSocket, Buf, Size, 0 );
+    if (iResult == SOCKET_ERROR) 
+    {
+        mout << "send failed with error:" << WSAGetLastError() << ende;
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    mout << "Bytes Sent:" <<  iResult << ende;
     return 0;
 }
 
@@ -84,7 +102,7 @@ int TCPCObj::Create()
 	 // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (iResult != 0) {
-        printf("WSAStartup failed with error: %d\n", iResult);
+        mout << "WSAStartup failed with error:" <<  iResult << ende;
         return 1;
     }
 
@@ -96,7 +114,7 @@ int TCPCObj::Create()
     // Resolve the server address and port
     iResult = getaddrinfo(m_Server.c_str(), m_PortAddress.c_str(), &hints, &result);
     if ( iResult != 0 ) {
-        printf("getaddrinfo failed with error: %d\n", iResult);
+        mout << "getaddrinfo failed with error" <<  iResult << ende;
         WSACleanup();
         return 1;
     }
@@ -108,7 +126,7 @@ int TCPCObj::Create()
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, 
             ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
-            printf("socket failed with error: %ld\n", WSAGetLastError());
+            mout << "socket failed with error:" <<  WSAGetLastError() << ende;
             WSACleanup();
             return 1;
         }
@@ -121,19 +139,72 @@ int TCPCObj::Create()
             continue;
         }
         break;
+
     }
+
+    mout << "Conected to server at :" << m_Server <<  " Port:" <<  m_PortAddress << ende;
 
     freeaddrinfo(result);
 
     if (ConnectSocket == INVALID_SOCKET) {
-        printf("Unable to connect to server!\n");
+        mout << "Unable to connect to server!" << ende;
         WSACleanup();
         return 1;
     }
 
     return 0;
+}
 
+uint32_t TCPCObj::SendImgFile()
+{
+    /*
+    ReadPort();
 
+    std::ifstream fin(filename, std::ios_base::in|std::ios::binary );
+    if (fin.is_open())
+    {
+        fin.seekg( 0, std::ios::beg );
+        std::streamoff size = fin.tellg();
+        fin.seekg( 0, std::ios::end );
+        size = fin.tellg();
+        float numblocks = static_cast<float>(size)/m_Recvbuflen;
+        numblocks = std::ceil(numblocks);
+        fin.seekg( 0, std::ios::beg );
+        std::ostringstream tcpbuf;
+              
+        
+        tcpbuf << static_cast<int>(numblocks) << "," << filename;
+        // 1 for cfg file
+        // 2 for report file
+        // 3 for image
+        
+        WritePort(tcpbuf.str().c_str());
 
+        char* buffer = new char[m_Recvbuflen];
+        memset(buffer,0,m_Recvbuflen);
 
+        while (true)
+        {
+           fin.read(buffer, m_Recvbuflen);
+           WritePort(buffer,m_Recvbuflen);
+           memset(buffer,0,m_Recvbuflen);
+           if (fin.eof())
+                break;
+        }
+
+       // if the bytes of the block are less than 1024,
+       // use fin.gcount() calculate the number, put the va
+       // into var s
+       //std::string s(buffer, fin.gcount());
+       //vecstr.push_back(s);
+
+       delete[] buffer;
+       fin.close();
+   }
+   else
+   {
+        std::cerr << "Cannot open file:" << filename << std::endl;
+   }
+   */
+   return 0;
 }

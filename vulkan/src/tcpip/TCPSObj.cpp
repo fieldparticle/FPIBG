@@ -30,6 +30,7 @@
 %*
 %******************************************************************/
 #include "VulkanObj/VulkanApp.hpp"
+#include "TCPSObj.hpp"
 namespace fs = std::filesystem;
 
 int TCPObj::WritePort(std::string Message)

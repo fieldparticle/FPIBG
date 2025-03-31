@@ -380,10 +380,10 @@
     <ClCompile Include="..\..\src\VulkanObj\PerfObj.cpp">
       <Filter>vulkanobj</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\VulkanObj\main_remote.cpp">
-      <Filter>vulkanobj</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VulkanObj\main_remote.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -61,12 +61,8 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 		AutoWait = 61;
 
 	perfObj->m_ReportBuffer.resize(AutoWait);
-if(captureFrame	== true)
-	SetupCapture();
-
 
 	SetCallBacks(VulkanWin);
-	
 
 	try
 	{
@@ -114,16 +110,6 @@ if(captureFrame	== true)
 			// Draw frame.
 			double currentTime = glfwGetTime();
 			DrawInstance->DrawFrame();
-		if(captureFrame	== true)
-		{
-			if (currentTime - lastTime >= 0.5)
-			{
-				imgNum++;
-				Capture(imgNum);
-			}
-		}
-
-
 
 		if(copyFrame	== true)
 		{
@@ -142,6 +128,8 @@ if(captureFrame	== true)
 			nbFrames++;
 			if (currentTime - lastTime >= 1.0)
 			{
+				perfObj->m_ReportBuffer[aprCount].FrameRate = static_cast<float>(nbFrames);
+
 				if (aprCount < AutoWait )
 				{
 					perfObj->m_ReportBuffer[aprCount].Second = aprCount;
@@ -160,26 +148,7 @@ if(captureFrame	== true)
 
 					
 
-					if(tcp != nullptr)
-					{
-						std::ostringstream tcpbuf;
-						std::string stripflnm =  fs::path(perfObj->m_AprFile).filename().string();
-						#ifndef NDEBUG
-							stripflnm = stripflnm + "D.csv";
-						#else
-							stripflnm = stripflnm + "R.csv";
-						#endif
-
-						if(aprCount < AutoWait-1)
-							tcpbuf << "perfline,"	<< "File:" << stripflnm << "," 
-													<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
-									<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate << ",continue";
-						else
-							tcpbuf << "perfline,"	<< "File:" << stripflnm << "," 
-													<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
-									<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate << ",endline";
-						tcp->WritePort(tcpbuf.str());
-					}
+			
 					aprCount++;
 				}
 				
@@ -208,8 +177,34 @@ if(captureFrame	== true)
 					
 				}
 				
+			if(tcp != nullptr)
+			{
+				
+				std::string stripflnm =  fs::path(perfObj->m_AprFile).filename().string();
+				#ifndef NDEBUG
+					stripflnm = stripflnm + "D.csv";
+				#else
+					stripflnm = stripflnm + "R.csv";
+				#endif
 
+				
+			}
+				std::ostringstream tcpbuf;
+				tcpbuf << "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << "," << " FPS:" << nbFrames
+							<< " SPF:" << 1000.0 / double(nbFrames) ;
+
+				/*if(aprCount < AutoWait-1)
+					tcpbuf << "perfline,"	<< "File:" << stripflnm << "," 
+											<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
+							<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate << ",continue";
+				else
+					tcpbuf << "perfline,"	<< "File:" << stripflnm << "," 
+											<< "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << ","
+							<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate << ",endline";*/
+					
+				tcp->WritePort(tcpbuf.str());
 				std::cout << "Seconds:" << aprCount << " FrameNumber:" << VulkanWin->m_FrameNumber << " FRate:" << 1000.0 / double(nbFrames) << " ms/F, " << " FPS:" << nbFrames << " F/s." << std::endl;
+
 				nbFrames = 0;
 				lastTime += 1.0;
 			}

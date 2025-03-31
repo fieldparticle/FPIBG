@@ -216,7 +216,7 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 		if(tcp != nullptr)
 		{
 		
-			tcp->SendPerfFile(filename.c_str(),1);
+			///tcp->SendPerfFile(filename.c_str(),1);
 		}
 
 	std::cout << "\n\n\n\n================= Done Perf ======================= \n\n\n\n" << std::endl;

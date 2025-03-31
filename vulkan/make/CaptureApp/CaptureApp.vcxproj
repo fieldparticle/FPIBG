@@ -19,7 +19,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\libconfig\grammar.c" />
+    <ClCompile Include="..\..\src\libconfig\libconfig.c" />
+    <ClCompile Include="..\..\src\libconfig\scanctx.c" />
+    <ClCompile Include="..\..\src\libconfig\scanner.c" />
+    <ClCompile Include="..\..\src\libconfig\strbuf.c" />
+    <ClCompile Include="..\..\src\libconfig\strvec.c" />
+    <ClCompile Include="..\..\src\libconfig\util.c" />
+    <ClCompile Include="..\..\src\libconfig\wincompat.c" />
+    <ClCompile Include="..\..\src\mout2_0\mout.cpp" />
     <ClCompile Include="..\..\src\sccp\sccpw.cpp" />
+    <ClCompile Include="..\..\src\tcpip\TCPCObj.cpp" />
+    <ClCompile Include="..\..\src\VulkanObj\ConfigObj.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\libconfig\grammar.h" />
+    <ClInclude Include="..\..\src\libconfig\libconfig.h" />
+    <ClInclude Include="..\..\src\libconfig\parsectx.h" />
+    <ClInclude Include="..\..\src\libconfig\scanctx.h" />
+    <ClInclude Include="..\..\src\libconfig\scanner.h" />
+    <ClInclude Include="..\..\src\libconfig\strbuf.h" />
+    <ClInclude Include="..\..\src\libconfig\strvec.h" />
+    <ClInclude Include="..\..\src\libconfig\util.h" />
+    <ClInclude Include="..\..\src\libconfig\wincompat.h" />
+    <ClInclude Include="..\..\src\mout2_0\mout.hpp" />
+    <ClInclude Include="..\..\src\tcpip\TCPCObj.hpp" />
+    <ClInclude Include="..\..\src\VulkanObj\ConfigObj.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -74,8 +99,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>J:\FPIBG\vulkan\src\sccp;$(IncludePath)</IncludePath>
-    <OutDir>..\..\run\CaptureApp\</OutDir>
+    <IncludePath>J:\FPIBG\vulkan\src;J:\FPIBG\vulkan\src\sccp;$(IncludePath)</IncludePath>
+    <OutDir>..\..\run\particleOnly\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,8 +134,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;PARTICLE_ONLY;GLFW_INCLUDE_VULKAN;VK_VERSION_1_3;YY_USE_CONST;WIN32;WIN64;YY_NO_UNISTD_H;LIBCONFIG_EXPORTS;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

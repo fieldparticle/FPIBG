@@ -90,6 +90,7 @@ int main() try
 
 		if(tcps->GetBuffer().compare("runseries")==0)
         {
+			std::cout << "Recieved Run" << std::endl;
 			tcps->m_SRecvBuf = "";
 			ret = pf->DoStudy(tcps);
 			tcps->WritePort("perfdone");
@@ -102,7 +103,12 @@ int main() try
 			ret=ParticleOnly(pf,tcps);
 
         }
-		if(tcps->GetBuffer().compare("sendcsv")==0)
+		if(tcps->GetBuffer().compare("sndcsv")==0)
+		{
+			tcps->m_SRecvBuf = "";
+			tcps->SendPerfFile("Particle.cfg",1);
+		}
+		if(tcps->GetBuffer().compare("rcvcsv")==0)
 		{
 			tcps->m_SRecvBuf = "";
 			tcps->SendPerfFile("Particle.cfg",1);
@@ -115,8 +121,9 @@ int main() try
 		if(tcps->GetBuffer().compare("test")==0)
 		{
 			std::cout << "Recieved Test" << std::endl;
-			std::string outbuf = "Test OK";
+			std::string outbuf = "Recieved Test : OK";
 			tcps->WritePort(outbuf);
+			outbuf.clear();
 		}
 		
 

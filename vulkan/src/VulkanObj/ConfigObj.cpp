@@ -29,7 +29,7 @@
 %*
 %*
 %******************************************************************/
-#include "libconfig.h"
+#include "libconfig/libconfig.h"
 //#include "VulkanObj/VulkanApp.hpp"
 #include "ConfigObj.hpp"
 void ConfigObj::Create(std::string CfgName)
@@ -174,17 +174,17 @@ std::vector<const char*> ConfigObj::GetArray(std::string Name)
 config_setting_t* ConfigObj::StartStructure(std::string Name, int& Count)
 {
 
-	setting = config_lookup(&m_cfg, Name.c_str());
-	if (setting == NULL)
+	m_setting = config_lookup(&m_cfg, Name.c_str());
+	if (m_setting == NULL)
 	{
 		
 		std::string err = "Start Structure Failed:" ;
 		throw std::runtime_error(err.c_str());
 	}
-	m_Count = config_setting_length(setting);
+	m_Count = config_setting_length(m_setting);
 	Count = m_Count;
 
-	return setting;
+	return m_setting;
 }
 config_setting_t* ConfigObj::GetSubStructAddress(config_setting_t* setting, int index)
 {

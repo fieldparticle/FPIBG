@@ -38,6 +38,10 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <vector>
+#include <fstream>
+#include <strstream>
+#include <sstream>
 
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
@@ -62,7 +66,7 @@ class TCPCObj
 	 const char *sendbuf = "quit";
 	 char recvbuf[DEFAULT_BUFLEN];
 	 int iResult;
-	 int recvbuflen = DEFAULT_BUFLEN;
+	 int m_Recvbuflen = DEFAULT_BUFLEN;
 	 std::string m_Server = "127.0.0.1";
 	 std::string m_PortAddress = "50004";
 	
@@ -75,6 +79,7 @@ class TCPCObj
 	{
 		m_PortAddress = PortAddress;
 	};
+	uint32_t SendImgFile();
 	void SetBufSize(uint32_t BufSize)
 	{
 
@@ -84,5 +89,6 @@ class TCPCObj
 	int Create();
 	int ReadPort();
 	int WritePort(std::string Command);
+	int WritePort(char* buf, int Size);
 	int Close();
 };
