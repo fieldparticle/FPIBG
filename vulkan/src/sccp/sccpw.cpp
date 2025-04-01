@@ -323,10 +323,6 @@ void CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
     DWORD dwTmp; 
     uint32_t                    fileSize = 0;
 
-    
-    
-
-
     pbih = (PBITMAPINFOHEADER) pbi; 
     lpBits = (LPBYTE) GlobalAlloc(GMEM_FIXED, pbih->biSizeImage);
     fileSize = pbih->biSizeImage;
@@ -341,19 +337,6 @@ void CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
     {
         mout << "GetDIBits" << ende;
     }
-    
-
-    // Create the .BMP file.  
- //   hf = CreateFile(path_wstr.c_str(), 
-  //                 GENERIC_READ | GENERIC_WRITE, 
- //                  (DWORD) 0, 
- //                   NULL, 
- //                  CREATE_ALWAYS, 
- //                  FILE_ATTRIBUTE_NORMAL, 
- //                  (HANDLE) NULL); 
- //   if (hf == INVALID_HANDLE_VALUE) 
- //         mout << "CreateFile" << ende;
-
 
     hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M"  
     // Compute the size of the entire file.  
@@ -368,38 +351,18 @@ void CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
                     pbih->biSize + pbih->biClrUsed 
                     * sizeof (RGBQUAD); 
 
-    // Copy the BITMAPFILEHEADER into the .BMP file.  
-//    if (!WriteFile(hf, (LPVOID) &hdr, sizeof(BITMAPFILEHEADER), 
-//        (LPDWORD) &dwTmp,  NULL)) 
-//    {
-//       mout << "WriteFile" << ende;
-//    }
     fileSize += sizeof(BITMAPFILEHEADER);
 
-    // Copy the BITMAPINFOHEADER and RGBQUAD array into the file.  
-//    if (!WriteFile(hf, (LPVOID) pbih, sizeof(BITMAPINFOHEADER) 
- //                 + pbih->biClrUsed * sizeof (RGBQUAD), 
-  //                (LPDWORD) &dwTmp, ( NULL)))
-  //      mout << "WriteFile" << ende;
-//
     fileSize += sizeof(BITMAPINFOHEADER) + pbih->biClrUsed * sizeof (RGBQUAD);
 
     // Copy the array of color indices into the .BMP file.  
     dwTotal = cb = pbih->biSizeImage; 
     hp = lpBits; 
- //   if (!WriteFile(hf, (LPSTR) hp, (int) cb, (LPDWORD) &dwTmp,NULL)) 
- //          mout << "WriteFile" << ende;
-
-    //fileSize += cb;
-
-    // Close the .BMP file.  
- //    if (!CloseHandle(hf)) 
-  //         mout << "CloseHandle" << ende;
 
     
     std::ofstream outFile(FileName, std::ios::binary);
 
-//    char* bmpmem = new char[fileSize];
+
     std::ostringstream  header;
     header << TcpFileName.str() << "," 
                                 << sizeof(BITMAPFILEHEADER) 

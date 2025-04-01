@@ -176,7 +176,6 @@
     <ClInclude Include="..\..\src\libconfig\util.h" />
     <ClInclude Include="..\..\src\libconfig\wincompat.h" />
     <ClInclude Include="..\..\src\mout2_0\mout.hpp" />
-    <ClInclude Include="..\..\src\sccp\Capture.hpp" />
     <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\BaseObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\CommandObj.hpp" />
@@ -261,7 +260,6 @@
     <ClCompile Include="..\..\src\mout2_0\mout.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\src\sccp\Capture.cpp" />
     <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\BaseObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\CommandObj.cpp" />

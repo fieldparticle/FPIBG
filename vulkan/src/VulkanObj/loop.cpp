@@ -188,7 +188,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 				#endif
 
 				
-			}
+			
 				std::ostringstream tcpbuf;
 				tcpbuf << "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << "," << " FPS:" << nbFrames
 							<< " SPF:" << 1000.0 / double(nbFrames) ;
@@ -203,8 +203,9 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 							<< "FrameRate:" << perfObj->m_ReportBuffer[aprCount].FrameRate << ",endline";*/
 					
 				tcp->WritePort(tcpbuf.str());
-				std::cout << "Seconds:" << aprCount << " FrameNumber:" << VulkanWin->m_FrameNumber << " FRate:" << 1000.0 / double(nbFrames) << " ms/F, " << " FPS:" << nbFrames << " F/s." << std::endl;
-
+				
+			}
+			std::cout << "Seconds:" << aprCount << " FrameNumber:" << VulkanWin->m_FrameNumber << " FRate:" << 1000.0 / double(nbFrames) << " ms/F, " << " FPS:" << nbFrames << " F/s." << std::endl;
 				nbFrames = 0;
 				lastTime += 1.0;
 			}

@@ -201,9 +201,6 @@
     <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\sccp\Capture.hpp">
-      <Filter>source</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\libconfig\scanctx.c">
@@ -386,7 +383,6 @@
     <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\sccp\Capture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\run\particle\Particle.cfg" />
