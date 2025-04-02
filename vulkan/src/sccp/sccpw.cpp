@@ -24,7 +24,7 @@
 #include <cstdlib>
 #include <fstream>
 #include "tcpip/TCPCObj.hpp"
-void CreateBMPFile(HWND hwnd, std::string pszFile, PBITMAPINFO pbi, 
+int CreateBMPFile(HWND hwnd, std::string pszFile, PBITMAPINFO pbi, 
                   HBITMAP hBMP, HDC hDC) ;
 TCPCObj* tcpc;
 namespace fs = std::filesystem;
@@ -46,14 +46,14 @@ std::vector< DISPLAY_DEVICE> dispVec;
 using namespace Gdiplus;
 using namespace std;
 
-fstream err("errormul.txt",ios::app);
-fstream log_error_file("log_error.txt",ios::app);
+//fstream err("errormul.txt",ios::app);
+//fstream log_error_file("log_error.txt",ios::app);
 
 #pragma comment(lib, "user32.lib") 
 #pragma comment(lib,"Wininet.lib")
 #pragma comment (lib,"gdiplus.lib")
 #pragma comment (lib,"Shlwapi.lib")
-void screenshot(string file)
+int screenshot(string file)
 {
 	ULONG_PTR gdiplustoken;
 	RECT rc0kno;  // rectangle  Object
@@ -80,6 +80,7 @@ void screenshot(string file)
 	if(0 == GetDIBits(dc2, hbitmap, 0, 0, NULL, &MyBMInfo, DIB_RGB_COLORS)) 
 	{
         cout << "error" << endl;
+        return 1;
     }
 
 
@@ -89,10 +90,12 @@ void screenshot(string file)
     if(0 == GetDIBits(dc2, hbitmap, 0, MyBMInfo.bmiHeader.biHeight, (LPVOID)lpPixels, &MyBMInfo, DIB_RGB_COLORS)) 
 	{
         cout << "error2" << endl;
+        return 1;
     }
     std::ostringstream  fileName;
 	wstring path_wstr( file.begin(), file.end() );
-	CreateBMPFile(GetDesktopWindow(), file, &MyBMInfo, hbitmap, dc2) ;
+	if(CreateBMPFile(GetDesktopWindow(), file, &MyBMInfo, hbitmap, dc2) != 0)
+        return 1;
 	UINT num;
 	UINT size;
 
@@ -123,6 +126,7 @@ void screenshot(string file)
 	ReleaseDC(GetDesktopWindow(),dc);
 	//ReleaseDC(WindowFromDC(dc),dc);
 	GdiplusShutdown(gdiplustoken);
+    return 0;
 
 }
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int CmdShow)
@@ -132,8 +136,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	DWORD device = 0;
 	std::string imageDir;
 	std::string imagePrefix;
-	
-
+	uint32_t capFrames;
+    uint32_t capFrameDelay;
+     
 	try {
 		std::cout << "Starting" << std::endl;
 		mout.Init("CaptureApp.log", "CaptureApp");
@@ -155,6 +160,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		height = CfgApp->GetInt("application.window.size.h", true);
 		xpos = CfgApp->GetInt("application.window.size.x", true);
 		ypos = CfgApp->GetInt("application.window.size.y", true);
+        capFrames = CfgApp->GetInt("application.cap_frames", true);
+        capFrameDelay = CfgApp->GetInt("application.cap_frame_delay", true);
 		tcpc = new TCPCObj;
 		tcpc->SetServerIP(CfgApp->GetString("application.image_server_ip",true));
 		tcpc->SetServerPort(CfgApp->GetString("application.image_server_port",true));
@@ -209,18 +216,34 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	while(true)
 	{
 		imgNum++;
+        TcpFileName.str("");
+        TcpFileName.str().clear();
         TcpFileName << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".bmp";
 		std::ostringstream  fileName;
 		fileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".bmp";
-		screenshot(fileName.str());   // send string to screenshot function
+		if(screenshot(fileName.str()) != 0)
+            return 1;   // send string to screenshot function
 		std::ostringstream  rawFileName;
 		rawFileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".raw";
 		std::ofstream file(rawFileName.str(), std::ios::out | std::ios::binary);
 	
-		//Sleep(1000);  // delay execution of function 60 Seconds
-        return 0;
+		Sleep(capFrameDelay);  // delay execution of function 60 Seconds
+        if(imgNum > capFrames)
+        {
+            std::ostringstream  header;
+            header << "end" << "," 
+                                << 0 
+                                << ","
+                                << 0
+                                << ","
+                                << "";
+            tcpc->WritePort(header.str());
+
+            return 2;
+        }
 
 	}
+    return 0;
 }
 //Returns the last Win32 error, in string format. Returns an empty string if there is no error.
 std::string GetLastErrorAsString()
@@ -310,7 +333,7 @@ PBITMAPINFO CreateBitmapInfoStruct(HWND hwnd, HBITMAP hBmp)
      return pbmi; 
  } 
 
-void CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi, 
+int CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi, 
                   HBITMAP hBMP, HDC hDC) 
  { 
      HANDLE hf;                 // file handle  
@@ -363,24 +386,32 @@ void CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
     std::ofstream outFile(FileName, std::ios::binary);
 
 
-    std::ostringstream  header;
+    std::ostringstream  header = {};
     header << TcpFileName.str() << "," 
                                 << sizeof(BITMAPFILEHEADER) 
                                 << ","
                                 << sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD) 
                                 << ","
                                 << cb;
-
-    tcpc->WritePort(header.str());
+    tcpc->m_Recvbuflen = 32;
+    if(tcpc->ReadPort() == 0)
+        return 1;
+    if(tcpc->WritePort(header.str()) != 0)
+        return 1;
+    if(tcpc->ReadPort() == 0)
+        return 1;
     tcpc->WritePort((char*)&hdr,sizeof(BITMAPFILEHEADER));
+    tcpc->ReadPort();
     tcpc->WritePort((char*)pbih,sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
+    tcpc->ReadPort();
     tcpc->WritePort((char*)hp,cb);
-   
-    outFile.write(reinterpret_cast<char*>(&hdr),sizeof(BITMAPFILEHEADER));
-    outFile.write(reinterpret_cast<char*>(pbih),sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
-    outFile.write(reinterpret_cast<char*>(hp),cb);
-    outFile.close();
+    tcpc->ReadPort();
+    //outFile.write(reinterpret_cast<char*>(&hdr),sizeof(BITMAPFILEHEADER));
+    //outFile.write(reinterpret_cast<char*>(pbih),sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
+   // outFile.write(reinterpret_cast<char*>(hp),cb);
+    //outFile.close();
     
     // Free memory.  
     GlobalFree((HGLOBAL)lpBits);
+    return 0;
 }

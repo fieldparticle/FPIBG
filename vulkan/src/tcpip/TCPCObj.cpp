@@ -39,7 +39,10 @@ int TCPCObj::ReadPort()
 {
     iResult = recv(ConnectSocket, recvbuf, m_Recvbuflen, 0);
     if ( iResult > 0 )
+    {
         mout << "Bytes received" << iResult << ende;
+        return iResult;
+    }
     else if ( iResult == 0 )
          mout << "Connection closed" << ende;
     else
