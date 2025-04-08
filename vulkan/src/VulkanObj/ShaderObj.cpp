@@ -64,7 +64,10 @@ void  ShaderObj::WriteShaderHeader()
 {
 	
 	uint32_t compflag=0;
-	
+	uint32_t motion_str = 0;
+	if(CfgApp->GetBool("application.doMotion", true) == true)
+		motion_str = 1;
+
    std::string fildir = CfgApp->GetString("application.gen_glsl_dir", true);
 	std::string filename = fildir + "/params.glsl";;
     {
@@ -106,7 +109,7 @@ void  ShaderObj::WriteShaderHeader()
 				<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
 				<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
 				<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
-				<< "const uint doMotion = " << 0 << ";\n"
+				<< "const uint doMotion = " << motion_str << ";\n"
 				<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
 				<< "const float dt =" << m_App->m_dt << ";\n"
 				//##JMBDont know what this is

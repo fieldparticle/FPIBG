@@ -34,7 +34,7 @@
 
 namespace fs = std::filesystem;
 
-int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
+int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
 {
 	TimerObj* timerstep;
 	uint32_t			endFrame		= CfgApp->GetUInt("application.end_frame", true);
@@ -73,12 +73,8 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			&& glfwGetKey(VulkanWin->GetGLFWWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS)
 		{
 			
-			//if(tcp != nullptr)
-			//	if(tcp->ReadPortN() == 1)
-			//		return 1;
-			if(doAuto)
-				perfObj->m_ReportBuffer[aprCount].SecondPerFrame = timerstep->elapsed();
 			timerstep->reset();
+			
 			//Esc normal termination
 			if (QuitEvent)
 			{
@@ -128,51 +124,9 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			nbFrames++;
 			if (currentTime - lastTime >= 1.0)
 			{
-				perfObj->m_ReportBuffer[aprCount].FrameRate = static_cast<float>(nbFrames);
-
-				if (aprCount < AutoWait )
-				{
-					perfObj->m_ReportBuffer[aprCount].Second = aprCount;
-					perfObj->m_ReportBuffer[aprCount].FrameRate = static_cast<float>(nbFrames);
-					perfObj->m_ReportBuffer[aprCount].SecondPerFrame = static_cast<float>(aprCount);
-					perfObj->m_ReportBuffer[aprCount].ComputeExecutionTime =
-						DrawInstance->m_ComputeCommandObj->m_ExecutionTime;
-					perfObj->m_ReportBuffer[aprCount].GraphicsExecutionTime =
-						DrawInstance->m_GraphicsCommandObj->m_ExecutionTime;
-
-					for (int ii = 0; ii < rgc->m_DRList.size(); ii++)
-						rgc->m_DRList[ii]->AskObject(aprCount);
-
-					for (int ii = 0; ii < rcc->m_DRList.size(); ii++)
-						rcc->m_DRList[ii]->AskObject(aprCount);
-
-					
-
 			
-					aprCount++;
-				}
-				
-				
-
-				if (aprCount == AutoWait && AutoWait != 0)
-				{
-					aprCount++;
-				
-					if(doAuto)
-						perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
-				}
-			/*	
-			if(tcp != nullptr && aprCount == 1)
-			{
-				std::ostringstream tcpbuf;
-				tcpbuf << "Sec:" << perfObj->m_ReportBuffer[aprCount].Second << "," << " FPS:" << nbFrames
-							<< " SPF:" << 1000.0 / double(nbFrames) ;
-
-		
-				tcp->WritePort(tcpbuf.str());
-				
-			}*/
-			std::cout << "Seconds:" << aprCount << " FrameNumber:" << VulkanWin->m_FrameNumber << " FRate:" << 1000.0 / double(nbFrames) << " ms/F, " << " FPS:" << nbFrames << " F/s." << std::endl;
+				aprCount++;
+				std::cout << "Seconds:" << aprCount << " FrameNumber:" << VulkanWin->m_FrameNumber << " FRate:" << 1000.0 / double(nbFrames) << " ms/F, " << " FPS:" << nbFrames << " F/s." << std::endl;
 				nbFrames = 0;
 				lastTime += 1.0;
 			}

@@ -296,6 +296,7 @@
     <ClCompile Include="..\..\src_app\particleOnly\ContainerGraphics.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\DrawParticleOnly.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\FrameBuffer.cpp" />
+    <ClCompile Include="..\..\src_app\particleOnly\NoPerfLoop.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\ParticleOnly.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\PipelineComputeParticle.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\PipelineGraphicsParticleOnly.cpp" />

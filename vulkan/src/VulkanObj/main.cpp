@@ -58,22 +58,40 @@ int main() try
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
 	
-
+	// Get test type
+	std::string testtype = CfgApp->GetString("application.testtype", true);
 	TCPObj* tcps = nullptr;
-	if (CfgApp->GetBool("application.doAuto", true) == true)
+	if(testtype.compare("bcd") == 0)
 	{
-		mout << "Do study :" << ende;
-		if (pf->DoStudy(tcps))
-			return 1;
-	}
-	else
-	{
-		CfgTst->Create(CfgApp->GetString("application.testfile", true));	
-		if( app.compare("ParticleOnly") == 0)
+
+		
+		if (CfgApp->GetBool("application.doAuto", true) == true)
+		{
+			mout << "Do study :" << ende;
+			if (pf->DoStudy(tcps))
+				return 1;
+		}
+		else
+		{
+			std::string testfile = "application." + testtype + ".testfile";
+			CfgTst->Create(CfgApp->GetString(testfile, true));	
 			if (ParticleOnly(pf,tcps))
 				return 0;
+		}
+		return 0;
 	}
-	return 0;
+	if(testtype.compare("cdn") == 0)
+	{
+
+		mout << "Performing CD Nozzle Simulation :" << ende;
+		std::string testfile = "application." + testtype + ".testfile";
+		CfgTst->Create(CfgApp->GetString(testfile, true));	
+		if (ParticleOnly(pf,tcps))
+			return 0;
+
+
+
+	}
 }
 #if 1
 catch (const std::exception& e)

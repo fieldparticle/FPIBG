@@ -37,7 +37,6 @@
 void PerfObj::Create()
 {
 	m_SeriesLength = CfgApp->GetUInt("application.seriesLength", true);
-	m_TestName = CfgApp->GetString("application.testfile", true);
 	m_TestCFG = CfgApp->GetString("application.perfTest", true);
 	m_testPQBDir= CfgApp->GetString("application.testdirPQB", true);
 	m_testCFBDir= CfgApp->GetString("application.testdirCFB", true);
@@ -132,7 +131,12 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps)
 			return 0;
 		}
 	}
+	if(tcps != nullptr)
+	{
 	
+		tcps->SendPerfFile("perfdone", 1);
+	}
+
 
 	return 0;
 }
@@ -216,7 +220,7 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 		if(tcp != nullptr)
 		{
 		
-			///tcp->SendPerfFile(filename.c_str(),1);
+			tcp->SendPerfFile(filename.c_str(),1);
 		}
 
 	std::cout << "\n\n\n\n================= Done Perf ======================= \n\n\n\n" << std::endl;

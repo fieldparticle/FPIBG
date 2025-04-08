@@ -250,7 +250,7 @@ std::vector<std::string> TCPObj::SendPerfFile(const char* filename, uint32_t Typ
         std::ostringstream tcpbuf;
               
      	std::string stripflnm =  fs::path(filename).filename().string();   
-        tcpbuf << static_cast<int>(numblocks) << "," << Type << "," << stripflnm;
+        tcpbuf << Type << "," << static_cast<int>(numblocks) << "," << stripflnm;
         // 1 for pqb
         // 2 for report file
         // 3 for image

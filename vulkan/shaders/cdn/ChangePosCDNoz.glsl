@@ -32,7 +32,7 @@
 uint ChangePosCDNoz(uint index)	
 {		
 	vec3 ps = P[index].PosLoc.xyz;
-	if( uint(ShaderFlags.actualFrame) == 100 && index == 6000)
+	if( uint(ShaderFlags.frameNum) == 100)
 	{
 		debugPrintfEXT("MXBVCDNOZ:F:%d,P:%d P[0].PosLoc.w:%u",
 			uint(ShaderFlags.frameNum),index,uint(P[0].PosLoc.w));
@@ -56,13 +56,14 @@ uint ChangePosCDNoz(uint index)
 	if(psq > dsq && uint(P[index].prvvel.w) == 0)
 	{
 		float pradius = sqrt(psq);
+	#if 0
 		debugPrintfEXT("MXBVCDNOZ:F:%d,P:%d cdrad:%0.4f prad:%0.4f dsq:%0.3f psq:%0.3f, cur<%0.5f,%0.5f,%0.5f>,cell<%u,%u,%u>",
 			uint(ShaderFlags.frameNum),
 			index,radius,pradius,
 			dsq,psq,
 			P[index].PosLoc.x,P[index].PosLoc.y,P[index].PosLoc.z,
 			uint(round(ps.x)),uint(round(ps.y)),uint(round(ps.z)));
-			
+	#endif
 		P[index].prvvel.w = 1.0;
 			//debugPrintfEXT("--->,prev<%0.5f,%0.5f,%0.5f>diff<%0.5f,%0.5f,%0.5f>",
 			//ps.x,ps.y,ps.z,P[index].PosLoc.x-ps.x,P[index].PosLoc.y-ps.y,P[index].PosLoc.z-ps.z,
@@ -81,8 +82,8 @@ uint ChangePosCDNoz(uint index)
 	vec2 angnorm = normalize(P[index].VelRad.zy);			
 	float angletmp = atan2piPt(angnorm); 
 	P[index].FrcAng.w = atan2piPt(angnorm)/(2*PI);
-#if 0
-	if( uint(ShaderFlags.frameNum) >= 9017 && uint(ShaderFlags.frameNum) < 9020 && index == 6000)
+#if 1
+	if( uint(ShaderFlags.frameNum) >= 1000 && uint(ShaderFlags.frameNum) < 1002 && index == 5)
 		debugPrintfEXT("MXBVCDNOZ:F:%d,P:%d vang:%0.4f, hsv:%0.5f, V<%0.3f,%0.3f,%0.3f>", 
 			uint(ShaderFlags.frameNum),index,angletmp,P[index].FrcAng.w,
 			P[index].VelRad.x,P[index].VelRad.y,P[index].VelRad.z);
