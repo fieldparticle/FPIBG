@@ -13,14 +13,18 @@ int __cdecl main(int argc, char **argv)
     
     ConfigObj*			MpsApp;   
     TCPCObj* tcpc = new TCPCObj;
-    tcpc->Create();
     std::string cmd;
     mout.Init("particle.log", "Particle");
-	MpsApp = new ConfigObj;
-	MpsApp->Create("mpsclient.cfg");
-    tcpc->SetServerIP(MpsApp->GetString("ipaddress",true));
-    tcpc->SetServerPort(MpsApp->GetString("ipport",true));
-   
+    MpsApp = new ConfigObj;
+	MpsApp->Create("mps.cfg");
+    
+    std::cout << "Press enter to connect";
+    std::cin >> cmd;
+	tcpc->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
+	tcpc->SetServerIP(MpsApp->GetString("capture_cmd_ip",true));
+	tcpc->SetBufSize(MpsApp->GetInt("buffer_size",true));
+	tcpc->Create();
+
     while(1) 
     {
         std::cout << "Enter Command:";

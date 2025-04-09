@@ -48,8 +48,8 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* 
 	double				lastTime		= glfwGetTime();
 	int					nbFrames		= 0;
 	bool				doAuto			= CfgApp->GetBool("application.doAuto", true);
-	bool				captureFrame	= CfgApp->GetBool("application.captureFrame", true);
-	bool				copyFrame		= CfgApp->GetBool("application.copyFrame", true);
+	bool				captureFrame	= MpsApp->GetBool("captureFrame", true);
+	bool				copyFrame		= MpsApp->GetBool("copyFrame", true);
 		
 	uint32_t imgNum=0;
 

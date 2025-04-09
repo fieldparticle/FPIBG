@@ -5,7 +5,7 @@
 #extension GL_EXT_scalar_block_layout :enable
 
 
-#include "../params.glsl"
+
 #include "../common/constants.glsl"
 #include "../common/util.glsl"
 #include "../common/push.glsl"

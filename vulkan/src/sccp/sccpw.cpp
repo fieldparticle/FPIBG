@@ -24,6 +24,8 @@
 #include <cstdlib>
 #include <fstream>
 #include "tcpip/TCPCObj.hpp"
+#include "tcpip/TCPSObj.hpp"
+
 int CreateBMPFile(HWND hwnd, std::string pszFile, PBITMAPINFO pbi, 
                   HBITMAP hBMP, HDC hDC) ;
 TCPCObj* tcpc;
@@ -45,10 +47,11 @@ HDC globalhDC = NULL;
 std::vector< DISPLAY_DEVICE> dispVec;
 using namespace Gdiplus;
 using namespace std;
-
+bool capture_image_local = true;
 //fstream err("errormul.txt",ios::app);
 //fstream log_error_file("log_error.txt",ios::app);
 
+//#define NO_CMDTCP
 #pragma comment(lib, "user32.lib") 
 #pragma comment(lib,"Wininet.lib")
 #pragma comment (lib,"gdiplus.lib")
@@ -146,6 +149,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		std::cout << "Working Directory :" << cwd.string().c_str() << std::endl;
 		mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
+        
+
 		mout << "Create mps" << ende;
 		MpsApp = new ConfigObj;
 		MpsApp->Create("mps.cfg");
@@ -153,19 +158,18 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		CfgApp = new ConfigObj;
 		CfgApp->Create(MpsApp->GetString("studyFile", true));
 		mout << "StudyFile:" << MpsApp->GetString("studyFile", true) << ende;
-		imageDir = CfgApp->GetString("application.imageDir", true);
-		imagePrefix = CfgApp->GetString("application.imagePrefix", true);
+		imageDir = MpsApp->GetString("imageDir", true);
+		imagePrefix = MpsApp->GetString("imagePrefix", true);
 		mout << "imageDir:" << imageDir << " imagePrefix:" << imagePrefix << ende;
-		width = CfgApp->GetInt("application.window.size.w", true);
-		height = CfgApp->GetInt("application.window.size.h", true);
-		xpos = CfgApp->GetInt("application.window.size.x", true);
-		ypos = CfgApp->GetInt("application.window.size.y", true);
-        capFrames = CfgApp->GetInt("application.cap_frames", true);
-        capFrameDelay = CfgApp->GetInt("application.cap_frame_delay", true);
-		tcpc = new TCPCObj;
-		tcpc->SetServerIP(CfgApp->GetString("application.image_server_ip",true));
-		tcpc->SetServerPort(CfgApp->GetString("application.image_server_port",true));
-		tcpc->Create();
+		width = MpsApp->GetInt("window.size.w", true);
+		height = MpsApp->GetInt("window.size.h", true);
+		xpos = MpsApp->GetInt("window.size.x", true);
+		ypos = MpsApp->GetInt("window.size.y", true);
+        capFrames = MpsApp->GetInt("cap_frames", true);
+        capFrameDelay = MpsApp->GetInt("cap_frame_delay", true);
+        capture_image_local = MpsApp->GetBool("capture_image_local", true);
+       
+		
 	}
 	catch(const exception err)
 	{
@@ -173,21 +177,48 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		return 1;
 
 	}
-	do 
-	{
-		DISPLAY_DEVICE disp;
-		disp.cb = sizeof( DISPLAY_DEVICE );
-		bRet = EnumDisplayDevices(NULL,dwNum,&disp,0);
-		if( bRet)
-			dispVec.push_back(disp);
-		dwNum++;
-	} while(bRet);
-	
-	TCPObj* tcps = new TCPObj;
-	tcps->SetServerPort(MpsApp->GetString("server_port",true));
-	std::cout << "FPIBG Server Listening on port:" << tcps->GetServerPort() << std::endl;
-	tcps->SetBufSize(MpsApp->GetInt("buffer_size",true));
 
+	
+
+    if(capture_image_local == false)
+    {
+    
+        // This is a client to the FPIBGUtility application
+	    tcpc = new TCPCObj;
+	    tcpc->SetServerIP(MpsApp->GetString("image_server_ip",true));
+	    tcpc->SetServerPort(MpsApp->GetString("image_server_port",true));
+	    if(tcpc->Create() != 0)
+        {   
+            mout << "Could not get client" << ende;
+            return 1;
+        }
+    }
+    
+#ifndef NO_CMDTCP
+        // Create a new server port to accept commands from FPIBG.exe
+        TCPObj* tcps = new TCPObj;
+        tcps->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
+        tcps->SetBufSize(MpsApp->GetInt("buffer_size",true));
+        
+        // Set the server port to listen - will block here.
+        mout << "Capture Server Listening on port:" << tcps->GetServerPort().c_str() << ende;
+	    tcps->Create();
+	    // Set the server port to listen - will block here.
+        tcps->Connect();
+        int ret = 0;
+        if( (ret= tcps->ReadPort()) < 1)
+        {
+            mout << "Read Error." << ret << ende;
+            return 1;
+        }
+        std::string rcvtxt = tcps->m_Recvbuf;
+        if(tcps->GetBuffer().compare("quit")==0)
+        {
+            mout << "Got Quit Command." << ende;
+            return 0;
+        }
+
+#endif 
 
 	uint32_t imgNum = 0;
 	std::ostringstream  delName;
@@ -223,25 +254,27 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		fileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".bmp";
 		if(screenshot(fileName.str()) != 0)
             return 1;   // send string to screenshot function
-		std::ostringstream  rawFileName;
-		rawFileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".raw";
-		std::ofstream file(rawFileName.str(), std::ios::out | std::ios::binary);
+		//std::ostringstream  rawFileName;
+		//rawFileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".raw";
+		//std::ofstream file(rawFileName.str(), std::ios::out | std::ios::binary);
 	
 		Sleep(capFrameDelay);  // delay execution of function 60 Seconds
-        if(imgNum > capFrames)
+        if(capture_image_local == false)
         {
-            std::ostringstream  header;
-            header << "end" << "," 
-                                << 0 
-                                << ","
-                                << 0
-                                << ","
-                                << "";
-            tcpc->WritePort(header.str());
+            if(imgNum > capFrames)
+            {
+                std::ostringstream  header;
+                header << "end" << "," 
+                                    << 0 
+                                    << ","
+                                    << 0
+                                    << ","
+                                    << "";
+                tcpc->WritePort(header.str());
 
-            return 2;
+                return 2;
+            }
         }
-
 	}
     return 0;
 }
@@ -394,22 +427,30 @@ int CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
                                 << ","
                                 << cb;
     tcpc->m_Recvbuflen = 32;
-    if(tcpc->ReadPort() == 0)
-        return 1;
-    if(tcpc->WritePort(header.str()) != 0)
-        return 1;
-    if(tcpc->ReadPort() == 0)
-        return 1;
-    tcpc->WritePort((char*)&hdr,sizeof(BITMAPFILEHEADER));
-    tcpc->ReadPort();
-    tcpc->WritePort((char*)pbih,sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
-    tcpc->ReadPort();
-    tcpc->WritePort((char*)hp,cb);
-    tcpc->ReadPort();
-    //outFile.write(reinterpret_cast<char*>(&hdr),sizeof(BITMAPFILEHEADER));
-    //outFile.write(reinterpret_cast<char*>(pbih),sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
-   // outFile.write(reinterpret_cast<char*>(hp),cb);
-    //outFile.close();
+
+    if(capture_image_local == false)
+    {
+        if(tcpc->ReadPort() == 0)
+            return 1;
+        if(tcpc->WritePort(header.str()) != 0)
+            return 1;
+        if(tcpc->ReadPort() == 0)
+            return 1;
+        tcpc->WritePort((char*)&hdr,sizeof(BITMAPFILEHEADER));
+        tcpc->ReadPort();
+        tcpc->WritePort((char*)pbih,sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
+        tcpc->ReadPort();
+        tcpc->WritePort((char*)hp,cb);
+        tcpc->ReadPort();
+    }
+
+    if(capture_image_local == true)
+    {
+        outFile.write(reinterpret_cast<char*>(&hdr),sizeof(BITMAPFILEHEADER));
+        outFile.write(reinterpret_cast<char*>(pbih),sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
+        outFile.write(reinterpret_cast<char*>(hp),cb);
+        outFile.close();
+    }
     
     // Free memory.  
     GlobalFree((HGLOBAL)lpBits);

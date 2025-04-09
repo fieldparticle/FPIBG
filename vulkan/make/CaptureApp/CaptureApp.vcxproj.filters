@@ -54,6 +54,9 @@
     <ClCompile Include="..\..\src\tcpip\TCPCObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\libconfig\grammar.h">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\tcpip\TCPCObj.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\src\mout2_0\mout.cpp" />
     <ClCompile Include="..\..\src\sccp\sccpw.cpp" />
     <ClCompile Include="..\..\src\tcpip\TCPCObj.cpp" />
+    <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\ConfigObj.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +45,7 @@
     <ClInclude Include="..\..\src\libconfig\wincompat.h" />
     <ClInclude Include="..\..\src\mout2_0\mout.hpp" />
     <ClInclude Include="..\..\src\tcpip\TCPCObj.hpp" />
+    <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\ConfigObj.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -99,7 +101,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>J:\FPIBG\vulkan\src;J:\FPIBG\vulkan\src\sccp;$(IncludePath)</IncludePath>
+    <IncludePath>J:\FPIBG\vulkan\src;J:\FPIBG\vulkan\src\sccp;J:\FPIBG\vulkan\src\mout2_0;$(IncludePath)</IncludePath>
     <OutDir>..\..\run\particleOnly\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

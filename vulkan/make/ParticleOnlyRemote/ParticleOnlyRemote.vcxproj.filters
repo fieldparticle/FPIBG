@@ -204,6 +204,9 @@
     <ClInclude Include="..\..\src\VulkanObj\ControlObj.hpp">
       <Filter>vulkanobj</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\tcpip\TCPCObj.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\libconfig\scanctx.c">
@@ -320,9 +323,6 @@
     <ClCompile Include="..\..\src\VulkanObj\InstanceObj.cpp">
       <Filter>vulkanobj</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\VulkanObj\loop.cpp">
-      <Filter>vulkanobj</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\mout2_0\mout.cpp">
       <Filter>vulkanobj</Filter>
     </ClCompile>
@@ -384,6 +384,15 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\VulkanObj\main_remote.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_app\particleOnly\NoPerfLoop.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VulkanObj\loop.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tcpip\TCPCObj.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

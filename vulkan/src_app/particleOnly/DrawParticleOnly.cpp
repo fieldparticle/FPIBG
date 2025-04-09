@@ -45,8 +45,8 @@ void DrawParticleOnly::Create(CommandPoolObj* CPL,
 	m_GraphicsCommandObj	= m_CPL->GetCommandObjByName("CommandObjParticleGraphics");
 	m_Graphicslst			= m_GraphicsCommandObj->m_RCO->m_DRList;
 	m_Computelst			= m_ComputeCommandObj->m_RCO->m_DRList;
-	m_ImageDir				= CfgApp->GetString("application.imageDir", true);
-	m_ImagePrefix			= CfgApp->GetString("application.imagePrefix", true);
+	m_ImageDir				= MpsApp->GetString("imageDir", true);
+	m_ImagePrefix			= MpsApp->GetString("imagePrefix", true);
 }
 
 void DrawParticleOnly::DrawFrame()

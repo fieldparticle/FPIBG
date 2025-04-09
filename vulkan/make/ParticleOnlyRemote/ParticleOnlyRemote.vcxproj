@@ -77,7 +77,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\..\src\tcpip;..\..\..\..\FPIBG3rdPty\shaderc\third_party\glslang;../../../../FPIBG3rdPty/glfw/include/;..\..\..\..\FPIBG3rdPty\VMA\include;..\..\..\..\FPIBG3rdPty\tinyobjloader-release;..\..\src_app;..\..\src;..\..\..\..\FPIBG3rdPty\stb;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc_util\include;..\..\..\..\FPIBG3rdPty\shaderc\glslc\src;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc\include;..\..\..\..\FPIBG3rdPty\shaderc\third_party\SPIRV-Tools\include;..\..\..\..\FPIBG3rdPty\shaderc\build_vcc;..\..\..\..\FPIBG3rdPty\shaderc;..\..\..\..\FPIBG3rdPty\VulkanSDK\Include;..\..\..\..\FPIBG3rdPty\shaderc\libshaderc_util;..\..\..\..\FPIBG3rdPty\glm;..\..\src\libconfig;$(VK_SDK_PATH)\include;$(IncludePath)</IncludePath>
-    <OutDir>..\..\run\particleOnly</OutDir>
+    <OutDir>..\..\run\particleOnly\</OutDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <TargetName>ParticleRemoteD</TargetName>
   </PropertyGroup>
@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\src\libconfig\util.h" />
     <ClInclude Include="..\..\src\libconfig\wincompat.h" />
     <ClInclude Include="..\..\src\mout2_0\mout.hpp" />
+    <ClInclude Include="..\..\src\tcpip\TCPCObj.hpp" />
     <ClInclude Include="..\..\src\tcpip\TCPSObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\BaseObj.hpp" />
     <ClInclude Include="..\..\src\VulkanObj\CommandObj.hpp" />
@@ -261,6 +262,7 @@
     <ClCompile Include="..\..\src\mout2_0\mout.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\src\tcpip\TCPCObj.cpp" />
     <ClCompile Include="..\..\src\tcpip\TCPSObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\BaseObj.cpp" />
     <ClCompile Include="..\..\src\VulkanObj\CommandObj.cpp" />
@@ -297,6 +299,7 @@
     <ClCompile Include="..\..\src_app\particleOnly\ContainerGraphics.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\DrawParticleOnly.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\FrameBuffer.cpp" />
+    <ClCompile Include="..\..\src_app\particleOnly\NoPerfLoop.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\ParticleOnly.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\PipelineComputeParticle.cpp" />
     <ClCompile Include="..\..\src_app\particleOnly\PipelineGraphicsParticleOnly.cpp" />

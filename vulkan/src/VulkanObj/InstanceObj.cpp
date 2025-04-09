@@ -47,8 +47,21 @@ void InstanceObj::InitWindow()
 	glfwSetErrorCallback(GLFWError);
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	m_App->m_Window = glfwCreateWindow(CfgApp->GetInt("application.window.size.w", true),
-			CfgApp->GetInt("application.window.size.h", true), "Vulkan", nullptr, nullptr);
+	
+    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    uint32_t window_width = mode->width;
+    uint32_t window_height = mode->height;
+
+	int count;
+	GLFWmonitor** monitors = glfwGetMonitors(&count);
+
+	if(MpsApp->GetBool("window.usedefault",true) == true)
+		m_App->m_Window = glfwCreateWindow(mode->width,
+			mode->height, "Vulkan", nullptr, nullptr);
+	else
+		m_App->m_Window = glfwCreateWindow(MpsApp->GetInt("window.size.w", true),
+			MpsApp->GetInt("window.size.h", true), "Vulkan", nullptr, nullptr);
 	 glfwSetWindowPos(m_App->m_Window,
                  0,
                  0); 

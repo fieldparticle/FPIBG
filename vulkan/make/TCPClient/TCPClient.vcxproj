@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\run\TCPClient\</OutDir>
+    <OutDir>..\..\run\particleOnly\</OutDir>
     <IncludePath>J:\FPIBG\vulkan\src\libconfig;J:\FPIBG\vulkan\src;J:\FPIBG\vulkan\src\VulkanObj;J:\FPIBG\vulkan\src\tcpip;J:\FPIBG\vulkan\src_app\tcpip;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

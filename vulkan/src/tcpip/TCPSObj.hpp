@@ -32,11 +32,23 @@
 
 #pragma once
 
-#undef UNICODE
-// Need to link with Ws2_32.lib
-#pragma comment (lib, "Ws2_32.lib")
-// #pragma comment (lib, "Mswsock.lib")
+#define WIN32_LEAN_AND_MEAN
+#include <iostream>
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <vector>
+#include <fstream>
+#include <strstream>
+#include <sstream>
 
+
+// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
 class TCPObj
 {
 
@@ -67,6 +79,7 @@ class TCPObj
     std::vector<std::string> SendImgFile(const char* filename);
     int Connect();
     int ReadPortN();
+    std::string ReadPortString();
     int WritePort(std::string Message);
     int WritePort(const char* Block,uint32_t Len);
     void Reset()

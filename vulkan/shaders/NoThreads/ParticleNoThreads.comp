@@ -40,7 +40,7 @@
 #extension GL_KHR_shader_subgroup_basic:enable
 
 
-#include "../params.glsl"
+
 #include "../common/constants.glsl"
 #include "../common/util.glsl"
 #include "../common/push.glsl"

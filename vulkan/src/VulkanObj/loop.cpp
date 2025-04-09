@@ -43,24 +43,24 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 	float				deltaTime		= 0.0f;
 	float				lastFrame		= 0.0f;
 	uint32_t			quit_event		= 0;
-	uint32_t			AutoWait		=  CfgApp->GetInt("application.seriesLength", true);;
+	uint32_t			seriesLength		=  CfgApp->GetInt("application.seriesLength", true);;
 	size_t				aprCount		= 0;
 	double				lastTime		= glfwGetTime();
 	int					nbFrames		= 0;
 	bool				doAuto			= CfgApp->GetBool("application.doAuto", true);
-	bool				captureFrame	= CfgApp->GetBool("application.captureFrame", true);
-	bool				copyFrame		= CfgApp->GetBool("application.copyFrame", true);
+	bool				captureFrame	= MpsApp->GetBool("captureFrame", true);
+	bool				copyFrame		= MpsApp->GetBool("copyFrame", true);
 		
 	uint32_t imgNum=0;
 
 	timerstep = new TimerObj;
 	
 	if (perfObj->m_SeriesLength != 0)
-		AutoWait = perfObj->m_SeriesLength;
+		seriesLength = perfObj->m_SeriesLength;
 	else
-		AutoWait = 61;
+		seriesLength = 61;
 
-	perfObj->m_ReportBuffer.resize(AutoWait);
+	perfObj->m_ReportBuffer.resize(seriesLength);
 
 	SetCallBacks(VulkanWin);
 
@@ -73,11 +73,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			&& glfwGetKey(VulkanWin->GetGLFWWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS)
 		{
 			
-			//if(tcp != nullptr)
-			//	if(tcp->ReadPortN() == 1)
-			//		return 1;
-			if(doAuto)
-				perfObj->m_ReportBuffer[aprCount].SecondPerFrame = timerstep->elapsed();
+			perfObj->m_ReportBuffer[aprCount].SecondPerFrame = timerstep->elapsed();
 			timerstep->reset();
 			//Esc normal termination
 			if (QuitEvent)
@@ -96,29 +92,11 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			deltaTime = currentBuffer - lastFrame;
 			lastFrame = currentBuffer;
 
-			
-			// Test for frame number end.
-			if (endFrame != 0)
-			{
-				if (VulkanWin->m_FrameNumber >= endFrame)
-					break;
-
-			};
-
 			// Poll window events.
 			glfwPollEvents();
 			// Draw frame.
 			double currentTime = glfwGetTime();
 			DrawInstance->DrawFrame();
-
-		if(copyFrame	== true)
-		{
-			if (currentTime - lastTime >= 0.5)
-			{
-				imgNum++;
-				DrawInstance->SaveImage(imgNum);
-			}
-		}
 
 			if(Extflg == true)
 				throw std::runtime_error("External Flag Exit.");
@@ -126,11 +104,12 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 			VulkanWin->m_FrameNumber++;
 			
 			nbFrames++;
+			// Load the perf data if less than series length
 			if (currentTime - lastTime >= 1.0)
 			{
 				perfObj->m_ReportBuffer[aprCount].FrameRate = static_cast<float>(nbFrames);
 
-				if (aprCount < AutoWait )
+				if (aprCount < seriesLength )
 				{
 					perfObj->m_ReportBuffer[aprCount].Second = aprCount;
 					perfObj->m_ReportBuffer[aprCount].FrameRate = static_cast<float>(nbFrames);
@@ -145,21 +124,17 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 
 					for (int ii = 0; ii < rcc->m_DRList.size(); ii++)
 						rcc->m_DRList[ii]->AskObject(aprCount);
-
-					
-
-			
 					aprCount++;
 				}
-				
-				
 
-				if (aprCount == AutoWait && AutoWait != 0)
+				// If it has been 60 second or the amoint set in series length write the perf data
+				// and return.
+				if (aprCount == seriesLength && seriesLength != 0)
 				{
 					aprCount++;
-				
-					if(doAuto)
-						perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
+					perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
+					vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
+					return 0;
 				}
 			/*	
 			if(tcp != nullptr && aprCount == 1)
@@ -176,6 +151,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* Vulkan
 				nbFrames = 0;
 				lastTime += 1.0;
 			}
+			// Sleep if frame_delay is set
 			Sleep(frameDelay);
 			vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
 		}

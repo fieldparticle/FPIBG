@@ -37,6 +37,7 @@
 #include "VulkanObj/VulkanApp.hpp"
 #include "windows.h"
 #include "TCPSObj.hpp"
+#include "TCPCObj.hpp"
 MsgStream			mout;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
@@ -44,36 +45,72 @@ ConfigObj*			CfgApp;
 
 int main() try
 {
+	// Open mout log and report working directory
 	std::cout << "Starting" << std::endl;
 	mout.Init("particle.log", "Particle");
 	std::filesystem::path cwd = std::filesystem::current_path();
 	std::cout << "Working Directory :" << cwd.string().c_str() << std::endl;
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 	
+	// Read the configuration file from mps.cfg
 	mout << "Create mps" << ende;
 	MpsApp = new ConfigObj;
 	MpsApp->Create("mps.cfg");
 	mout << "Open mps" << ende;
 
+	//Open the cfg. file for this applcation
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
 	mout << "Study File Config" << ende;
 
+	// Create the global test file object to hold particlars about these tests
 	CfgTst = new ConfigObj;
 
+	// Create and open the server port for the FPIBGUtility application.
 	TCPObj* tcps = new TCPObj;
 	tcps->SetServerPort(MpsApp->GetString("server_port",true));
 	std::cout << "FPIBG Server Listening on port:" << tcps->GetServerPort() << std::endl;
 	tcps->SetBufSize(MpsApp->GetInt("buffer_size",true));
+
+
+	// Create a client to exchnage commands with the capture app.
+	TCPCObj* tcpc = new TCPCObj;
+	tcpc->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
+	tcpc->SetServerIP(MpsApp->GetString("capture_cmd_ip",true));
+	tcpc->SetBufSize(MpsApp->GetInt("buffer_size",true));
+
+
+	// Create a perf object to perform performance and verification.
 	PerfObj* pf = new PerfObj();
 	pf->Create();
 
+	// Find out if we are doing a series or a single test
 	bool autoFlag = CfgApp->GetBool("application.doAuto", true);
+	// Find out if we are doing a capture.
+	bool doCap = MpsApp->GetBool("do_cap", true);
+
+	//int result = system("CaptureApp.exe");
+	Sleep(2000);
+	if(tcpc->Create())
+		mout << "Create Failed:"<<  ende;;
+	std::string cmd = "quit";
+	for (int ii = 0; ii< 2;ii++)		
+	{
+		Sleep(2000);
+		if(tcpc->WritePort(cmd))
+			mout << "Write Failed:"<<  ende;;;
+	}
+	
+	//tcpc->Close();
+	return 12;
+	// Set the server port to listen - will block here.
 	tcps->Create();
 	tcps->Connect();
+
     int ret = 0;
     while (ret == 0)
     {
+		// read the command from the FPIBGUtility app.
         ret = tcps->ReadPort();
 		if(ret == 1)
 		{
@@ -87,11 +124,23 @@ int main() try
 			ret = 1;
 			break;
 		}
-
+		// Run series 
 		if(tcps->GetBuffer().compare("runseries")==0)
         {
 			std::cout << "Recieved Run" << std::endl;
 			tcps->m_SRecvBuf = "";
+			// If capture is enabled launch the app
+			if(doCap==true)
+			{
+				int result = system("CaptureApp.exe");
+				Sleep(2000);
+				tcpc->Create();
+				std::string cmd = "quit";
+				tcpc->WritePort(cmd);
+			
+
+
+			}
 			ret = pf->DoStudy(tcps);
 			tcps->WritePort("perfdone");
         }

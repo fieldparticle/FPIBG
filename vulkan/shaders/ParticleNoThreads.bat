@@ -5,24 +5,7 @@ echo %~dp0
 echo %cd%
 del %~dp0\*.spv
 cd %~dp0\
-set src=common/ParticleBoundaryInstance.vert
-set dst=vert1.spv
-echo Compiling vert shader %src% to %dst%
-	glslc.exe  --target-env=vulkan1.3 %src% -o  %dst% >> vert.log
-	IF %ERRORLEVEL% NEQ 0 ( 
-	  echo vert shader compile failed
-	  goto errexit
-	)
-	
-set src=common/ParticleBoundary.frag
-set dst=frag1.spv
-echo Compiling frag shader %src% to %dst%
-	glslc.exe --target-env=vulkan1.3 %src% -o  %dst% >> frg.log
-	IF %ERRORLEVEL% NEQ 0 ( 
-	  echo frag shader compile failed
-	  goto errexit
-	)
-	
+
 set src=NoThreads/ParticleNoThreads.vert
 set dst=vert2.spv
 echo Compiling vert shader %src% to %dst%

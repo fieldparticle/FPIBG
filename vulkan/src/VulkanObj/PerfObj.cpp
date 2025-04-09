@@ -141,9 +141,9 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps)
 	return 0;
 }
 
-void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, size_t aprCount)
+int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, size_t aprCount)
 {
-	
+	int ret = 0;
 	std::string filename =m_AprFile;
 	
 #ifndef NDEBUG
@@ -201,7 +201,9 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 					objtxt << "Compute counted particles not equal to loaded particles:Expected:" 
 						<< VulkanWin->m_Numparticles-1 << ":Counted:" 
 						<< m_ReportBuffer[ii].NumParticlesComputeCount << std::ends;
-					throw std::runtime_error(objtxt.str());;
+
+					mout << objtxt.str().c_str() << ende;
+					ret = 1;
 				}
 				if(m_ReportBuffer[ii].NumCollisionsComputeCount !=  m_colcount)
 				{
@@ -210,7 +212,9 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 					objtxt << "Compute counted collisions not equal to calulated collisons:Expected:" 
 						<< m_colcount << ":Counted:" 
 						<< m_ReportBuffer[ii].NumCollisionsComputeCount << std::ends;
-					throw std::runtime_error(objtxt.str());;
+					mout << objtxt.str().c_str() << ende;
+					ret = 1;
+
 				}
 #endif
 
@@ -222,7 +226,8 @@ void PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, s
 		
 			tcp->SendPerfFile(filename.c_str(),1);
 		}
-
+		
 	std::cout << "\n\n\n\n================= Done Perf ======================= \n\n\n\n" << std::endl;
+	return ret;
 
 }

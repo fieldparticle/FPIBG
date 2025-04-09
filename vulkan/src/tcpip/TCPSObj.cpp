@@ -29,8 +29,10 @@
 %*
 %*
 %******************************************************************/
-#include "VulkanObj/VulkanApp.hpp"
+#include <filesystem>
 #include "TCPSObj.hpp"
+#include "../mout2_0/mout.hpp"
+extern MsgStream mout;
 namespace fs = std::filesystem;
 
 int TCPObj::WritePort(std::string Message)
@@ -94,6 +96,7 @@ int TCPObj::ReadPortN()
             if (iResult > 0) 
             {
                 std::cout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << std::endl;
+                mout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << ende;
                 m_SRecvBuf = m_Recvbuf;
                 return 0;
                 // Echo the buffer back to the sender
@@ -107,7 +110,11 @@ int TCPObj::ReadPortN()
     }
     return 0;
 }
-
+std::string TCPObj::ReadPortString()
+{
+    ReadPort();
+    return GetBuffer();
+}
 int TCPObj::ReadPort()
 {
     fd_set ReadFDs;
@@ -116,7 +123,7 @@ int TCPObj::ReadPort()
     // No longer need server socket
     closesocket(ListenSocket);
     timeval tm;
-    tm.tv_sec = 2;
+    tm.tv_sec = 10;
     tm.tv_usec = 0;
     // Receive until the peer shuts down the connection
     if (select(0, &ReadFDs, NULL, NULL, &tm) > 0)
@@ -128,21 +135,22 @@ int TCPObj::ReadPort()
             iResult = recv(ClientSocket, m_Recvbuf, m_Recvbuflen, 0);
             if (iResult > 0) 
             {
-                std::cout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << std::endl;
+                mout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << ende;
                 m_SRecvBuf = m_Recvbuf;
                 return 0;
                 // Echo the buffer back to the sender
             }
             else  
             {
+                mout << "Recieve Failed with WSA error:" <<  WSAGetLastError() << ende;
                 printf("recv failed with error: %d\n", WSAGetLastError());
-                return 1;
+                return iResult;
             }
         }
     }
 
     std::cout << "TimeOut" << std::endl;
-    return 0;
+    return -2;
 }
 int TCPObj::Connect()
 {
@@ -165,6 +173,7 @@ int TCPObj::Connect()
         return 1;
     }
     std::cout << "Client Accepted" << std::endl;
+    mout << "Client Accepted" << ende;
     return 0;
 
 
