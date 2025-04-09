@@ -84,7 +84,7 @@ void ProcessPipeBoundary(uint Findex, uint Bindex, in out vec3 OutVel)
 		float rsq = ((P[Findex].PosLoc.w)*(P[Findex].PosLoc.w));	
 	
 			
-#if 0
+#if 1
 			if( (uint(ShaderFlags.frameNum) > startf && uint(ShaderFlags.frameNum) < endf) && Findex == particl)
 			{
 			debugPrintfEXT("F:%u CELL psq:%0.4f dsq:%0.4f,P:%d CFL:%d V<%0.3f,%0.3f,%0.3f>,P<%0.3f,%0.3f,%0.3f> C<%u,%u,%u>",

@@ -34,8 +34,8 @@ struct colmat
 {
 	uint idx[MAX_ARY];
 };
-layout(scalar, binding = 3) buffer CollMatrixIndex 
+layout(scalar, binding = 3) coherent buffer CollMatrixIndex 
 {
-   colmat clink[ColArySize];
+   colmat clink[WIDTH*WIDTH*WIDTH];
 };
 

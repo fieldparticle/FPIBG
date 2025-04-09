@@ -127,7 +127,7 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 		}
 	}
 	
-	uint32_t sidelen = CfgTst->GetUInt("CellAryW", true);
+	uint32_t sidelen = CfgTst->GetUInt("CellAryL", true);
 	m_SideLength = static_cast<float>(sidelen)+1.0f;
 	/*
 	* ##JMB How can they match you just add one ot it

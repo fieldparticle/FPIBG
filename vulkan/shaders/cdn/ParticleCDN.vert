@@ -4,19 +4,28 @@
 #extension GL_EXT_debug_printf : enable
 #extension GL_EXT_scalar_block_layout :enable
 
-
-#include "../params.glsl"
+//#include "../params.glsl"
 #include "../common/constants.glsl"
-#include "../common/util.glsl"
-#include "../common/push.glsl"
 #include "../common/atomicg.glsl"
+#include "../common/push.glsl"
 #include "../common/CollimageIndex.glsl"
 #include "../common/Lockimage.glsl"
 #include "../common/particle.glsl"
-#include "GetCDRadius.glsl"
-#include "ChangePosCDNoz.glsl"
-	
 
+//#include "GetCflg.glsl"
+#include "../common/util.glsl"
+
+#ifdef VERPIPE
+	#include "../common/ChangePosPipe.glsl"
+#endif
+#if  !defined(VERPIPE) && !defined(VERCDNOZ)
+	#include "../common/ChangePos.glsl"
+#endif
+#ifdef VERCDNOZ
+	#include "../cdn/GetCDRadius.glsl"
+	#include "../cdn/ChangePosCDNoz.glsl"
+	
+#endif
 out gl_PerVertex {
     vec4 gl_Position;
 	float gl_PointSize;
@@ -56,14 +65,8 @@ void main(){
 	#ifdef DEBUG
 		atomicAdd(collIn.numParticles,1);	
 	#endif
-	
-	if( uint(ShaderFlags.frameNum) == 100)
-	{
-		debugPrintfEXT("MXBVCDNOZ:F:%d",uint(ShaderFlags.frameNum));
-	
-	}
 	// Set point size 
-	gl_PointSize = 3.0;
+	gl_PointSize = 1.0;
 	
 	// Apply view to location
 	vec3 posLocNDC =  P[index].PosLoc.xyz;
@@ -90,18 +93,18 @@ void main(){
 		P[index].zlink[jj].pindex =0;
 		//P[index].wary[jj].x = 0.0;
 	}
-	
-	#if 1 && defined(DEBUG)
-	if(index == 10 && ShaderFlags.frameNum == 500.0  )
-		debugPrintfEXT("GRAPHPART velocity:%d vx=%0.3f,vy=%0.3f,vz=%0.3f,",
-		0,P[index].VelRad.x,P[index].VelRad.y,P[index].VelRad.z);
-	#endif	
-	
 	if(index > bbound)
 	{
-		if(ChangePosCDNoz(index) != 0)
-			return;
-
+		#ifdef VERPIPE
+			ChangePosPipe(index);	
+		#endif
+		#if  !defined(VERPIPE) && !defined(VERCDNOZ)
+			ChangePos(index);	
+		#endif
+		#ifdef VERCDNOZ
+			if(ChangePosCDNoz(index) != 0)
+				return;
+		#endif
 	}
 		
 	
@@ -143,7 +146,7 @@ void main(){
 	P[index].zlink[7].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R))));
 	if(P[index].zlink[7].ploc == npos)
 		return;
-#if 1
+#if 0
 	
 	if(uint(ShaderFlags.frameNum) == 3 && index == 57)
 	{

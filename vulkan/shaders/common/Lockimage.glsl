@@ -32,8 +32,8 @@
 // Layout for the lock collision image.  
 // See fragment shader.
 
-layout(scalar, binding = 6) buffer LockMatrix 
+layout(scalar, binding = 6) coherent buffer LockMatrix 
 {
-   int L[LockArySize];
+   uint L[WIDTH*WIDTH*WIDTH];
 };
 

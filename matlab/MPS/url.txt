@@ -1,0 +1,5 @@
+https://stackoverflow.com/questions/19691192/finding-intersection-points-of-circle-and-grid-efficiently
+
+https://math.stackexchange.com/questions/1491121/distribution-of-the-intersection-between-a-grid-and-a-circle
+https://tex.stackexchange.com/questions/625746/filling-grid-points-intersected-by-a-circle
+circle grid intersections

@@ -46,7 +46,7 @@ uint ChangePos(uint index)
 	if( (P[index].PosLoc.x > WIDTH-1.0 || P[index].PosLoc.y > WIDTH-1.0 || P[index].PosLoc.z > WIDTH-1.0) && uint(P[index].prvvel.w) == 0)
 	{
 		P[index].prvvel.w = ShaderFlags.frameNum;
-#if 0		
+		
 		debugPrintfEXT("MXBV:F:%d,P:%d cur<%0.5f,%0.5f,%0.5f>,prev<%0.5f,%0.5f,%0.5f>",
 			uint(P[index].prvvel.w),
 			index,P[index].PosLoc.x,P[index].PosLoc.y,P[index].PosLoc.z,
@@ -54,18 +54,16 @@ uint ChangePos(uint index)
 		debugPrintfEXT("--->diff<%0.5f,%0.5f,%0.5f>,cell<%u,%u,%u>",
 			P[index].PosLoc.x-ps.x,P[index].PosLoc.y-ps.y,P[index].PosLoc.z-ps.z,
 			uint(round(ps.x)),uint(round(ps.y)),uint(round(ps.z)));
-#endif
 	}
 	
 	if( (P[index].PosLoc.x < 1.0 || P[index].PosLoc.y < 1.0 || P[index].PosLoc.z < 1.0) && uint(P[index].prvvel.w) == 0)
 	{
 		P[index].prvvel.w = ShaderFlags.frameNum;
-#if 0		
+		
 		debugPrintfEXT("ChangePos MIN Boundary Violation:FRM:%d,P:%d cx=%0.5f,cy=%0.5f,cz=%0.5f,px=%0.5f,py=%0.5f,pz=%0.5f,cell<%d,%d,%d>",
 			uint(P[index].prvvel.w),index,P[index].PosLoc.x,P[index].PosLoc.y,P[index].PosLoc.z,
 			ps.x,ps.y,ps.z,
 			uint(round(ps.x)),uint(round(ps.y)),uint(round(ps.z)));
-#endif			
 	}
 		
 	return 0;
