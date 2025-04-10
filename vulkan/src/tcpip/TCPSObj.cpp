@@ -137,7 +137,7 @@ int TCPObj::ReadPort()
             {
                 mout << "Bytes received:" << iResult << " Message:" << m_Recvbuf << ende;
                 m_SRecvBuf = m_Recvbuf;
-                return 0;
+                return iResult;
                 // Echo the buffer back to the sender
             }
             else  

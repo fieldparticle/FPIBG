@@ -55,6 +55,7 @@ extern ConfigObj* MpsApp;
 #include "VulkanObj/InstanceObj.hpp"
 #include "VulkanObj/ResourceVertexObj.hpp"
 #include "TCPIP/TCPSObj.hpp"
+#include "TCPIP/TCPCObj.hpp"
 #include "particleOnly/ParticleOnly.hpp"
 
 
@@ -73,11 +74,11 @@ void MemStats(VulkanObj* vulkanObj);
 
 extern bool Extflg;
 std::vector<std::string> ReadFileByBlocks(const char* filename, TCPObj* tcps);
-int Loop(PerfObj* pf, TCPObj* tcp,DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
+int Loop(PerfObj* pf, TCPObj* tcp, TCPObj* tcpapp,DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
 int NoPerfLoop(PerfObj* pf, TCPObj* tcp,DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
 int Capture(uint32_t ImgNum);
 int SetupCapture();
-int ParticleOnly(PerfObj* pf, TCPObj* tcp);
+int ParticleOnly(PerfObj* perObj, TCPObj* tcp, TCPObj* tcpapp);
 int ParticleBoundary(ConfigObj* configVCube);
 int ParticleBoundaryV2(ConfigObj* configVCube);
 int glsl(std::vector<std::string>& InputArgs, std::vector<char>& OutPutSPV);

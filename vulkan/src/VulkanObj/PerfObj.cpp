@@ -61,7 +61,7 @@ void PerfObj::Create()
 	}
 
 }
-uint32_t PerfObj::DoStudy(TCPObj* tcps)
+uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp)
 {
 	
 	namespace fs = std::filesystem;
@@ -113,7 +113,7 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps)
 			mout << "Auto DataFile : " << m_DataFile << ende;
 
 
-			if (ParticleOnly(this,tcps))
+			if (ParticleOnly(this,tcps,tcpcapp))
 			{
 				mout << "Auto - ParticleOnly failed" << ende;
 				return 1;

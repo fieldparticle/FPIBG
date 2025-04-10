@@ -166,7 +166,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		xpos = MpsApp->GetInt("window.size.x", true);
 		ypos = MpsApp->GetInt("window.size.y", true);
         capFrames = MpsApp->GetInt("cap_frames", true);
-        capFrameDelay = MpsApp->GetInt("cap_frame_delay", true);
+        capFrameDelay = MpsApp->GetFloat("cap_frame_delay", true);
         capture_image_local = MpsApp->GetBool("capture_image_local", true);
        
 		
@@ -196,29 +196,26 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     
 #ifndef NO_CMDTCP
         // Create a new server port to accept commands from FPIBG.exe
-        TCPObj* tcps = new TCPObj;
-        tcps->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
-        tcps->SetBufSize(MpsApp->GetInt("buffer_size",true));
-        
-        // Set the server port to listen - will block here.
-        mout << "Capture Server Listening on port:" << tcps->GetServerPort().c_str() << ende;
-	    tcps->Create();
-	    // Set the server port to listen - will block here.
-        tcps->Connect();
+        TCPCObj* tcpcapp = new TCPCObj;
+        tcpcapp->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
+        tcpcapp->SetServerIP(MpsApp->GetString("capture_cmd_ip",true));
+        tcpcapp->SetBufSize(MpsApp->GetInt("buffer_size",true));
+	    tcpcapp->Create();
         int ret = 0;
-        if( (ret= tcps->ReadPort()) < 1)
+        if( (ret= tcpcapp->ReadPort()) < 1)
         {
             mout << "Read Error." << ret << ende;
             return 1;
         }
-        std::string rcvtxt = tcps->m_Recvbuf;
-        if(tcps->GetBuffer().compare("quit")==0)
+        mout << "Recieved " << tcpcapp->GetBuffer().c_str() << " Command." << ende;
+        if(tcpcapp->GetBuffer().compare("start") !=0)
         {
-            mout << "Got Quit Command." << ende;
+            mout << "Did not recieve start command." << ende;
             return 0;
         }
 
 #endif 
+       
 
 	uint32_t imgNum = 0;
 	std::ostringstream  delName;
@@ -252,13 +249,34 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         TcpFileName << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".bmp";
 		std::ostringstream  fileName;
 		fileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".bmp";
-		if(screenshot(fileName.str()) != 0)
-            return 1;   // send string to screenshot function
+
+        if( (ret= tcpcapp->ReadPort()) < 1)
+        {
+            mout << "Read Error." << ret << ende;
+            return 1;
+        }
+       
+        if(tcpcapp->GetBuffer().compare("next") == 0)
+        {
+            mout << "Recieved Next Command:" << tcpcapp->GetBuffer().c_str() << ende;
+            if(screenshot(fileName.str()) != 0)
+            {
+                mout << "Screen Shot failed" << ende;
+                return 1;   // send string to screenshot function
+            }
+            mout << "Image saved to:" << fileName.str().c_str() << ende;
+        }
+		else if(tcpcapp->GetBuffer().compare("quit") == 0)
+        {
+            mout << "Quit recieved:" << fileName.str().c_str() << ende;
+            return 0;
+        }
+         mout << "Image saved to:" << fileName.str().c_str() << ende;
 		//std::ostringstream  rawFileName;
 		//rawFileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".raw";
 		//std::ofstream file(rawFileName.str(), std::ios::out | std::ios::binary);
 	
-		Sleep(capFrameDelay);  // delay execution of function 60 Seconds
+		//Sleep(capFrameDelay);  // delay execution of function 60 Seconds
         if(capture_image_local == false)
         {
             if(imgNum > capFrames)
@@ -426,10 +444,11 @@ int CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
                                 << sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD) 
                                 << ","
                                 << cb;
-    tcpc->m_Recvbuflen = 32;
+   
 
     if(capture_image_local == false)
     {
+        tcpc->m_Recvbuflen = 32;
         if(tcpc->ReadPort() == 0)
             return 1;
         if(tcpc->WritePort(header.str()) != 0)
@@ -450,6 +469,7 @@ int CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
         outFile.write(reinterpret_cast<char*>(pbih),sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
         outFile.write(reinterpret_cast<char*>(hp),cb);
         outFile.close();
+        mout << "Saving:" << FileName << ende;
     }
     
     // Free memory.  

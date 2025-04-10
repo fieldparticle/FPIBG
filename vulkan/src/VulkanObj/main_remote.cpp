@@ -141,7 +141,7 @@ int main() try
 
 
 			}
-			ret = pf->DoStudy(tcps);
+			ret = pf->DoStudy(tcps,nullptr);
 			tcps->WritePort("perfdone");
         }
 
@@ -149,7 +149,7 @@ int main() try
         {
 			tcps->m_SRecvBuf = "";
 			CfgTst->Create(CfgApp->GetString("application.testfile", true));	
-			ret=ParticleOnly(pf,tcps);
+			ret=ParticleOnly(pf,tcps,nullptr);
 
         }
 		if(tcps->GetBuffer().compare("sndcsv")==0)

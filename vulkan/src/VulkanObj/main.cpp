@@ -37,7 +37,10 @@ MsgStream			mout;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
 ConfigObj*			CfgApp;
-
+#include "windows.h"
+#include "tcpip/TCPSObj.hpp"
+#include "tcpip/TCPCObj.hpp"
+void LaunchExecutable(std::string path, std::string cmd) ;
 int main() try
 {
 	
@@ -56,8 +59,30 @@ int main() try
 	
 	std::filesystem::path cwd = std::filesystem::current_path();
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
-	
-	
+
+
+	TCPObj* tcpsapp = nullptr;
+
+	bool doCap = MpsApp->GetBool("do_cap", true);
+	bool capture_image_local = MpsApp->GetBool("capture_image_local", true);
+	// If capture image is true and capture to image locally is false 
+	// then set up the tcpip server to send command to the capture app.
+	if(doCap == true)
+	{
+		
+		// Create a client to exchnage commands with the capture app.
+		tcpsapp = new TCPObj;
+		tcpsapp->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
+		tcpsapp->SetBufSize(MpsApp->GetInt("buffer_size",true));
+		
+		tcpsapp->Create();
+		LaunchExecutable("CaptureApp.exe", "none") ;
+			mout << "Connecting to capture thread." << ende;
+		tcpsapp->Connect();
+		std::string cmd = "start";
+		tcpsapp->WritePort(cmd);
+	}
+
 	// Get test type
 	std::string testtype = CfgApp->GetString("application.testtype", true);
 	TCPObj* tcps = nullptr;
@@ -68,15 +93,30 @@ int main() try
 		if (CfgApp->GetBool("application.doAuto", true) == true)
 		{
 			mout << "Do study :" << ende;
-			if (pf->DoStudy(tcps))
+			if (pf->DoStudy(tcps,tcpsapp))
+			{
+				if(doCap == true)
+				{
+					tcpsapp->WritePort("quit");
+					tcpsapp->Close();
+				}
 				return 1;
+			}
+
 		}
 		else
 		{
 			std::string testfile = "application." + testtype + ".testfile";
 			CfgTst->Create(CfgApp->GetString(testfile, true));	
-			if (ParticleOnly(pf,tcps))
-				return 0;
+			if (ParticleOnly(pf,tcps,tcpsapp))
+			{
+				if(doCap == true)
+				{
+					tcpsapp->WritePort("quit");
+					tcpsapp->Close();
+				}
+				return 1;
+			}
 		}
 		return 0;
 	}
@@ -86,11 +126,22 @@ int main() try
 		mout << "Performing CD Nozzle Simulation :" << ende;
 		std::string testfile = "application." + testtype + ".testfile";
 		CfgTst->Create(CfgApp->GetString(testfile, true));	
-		if (ParticleOnly(pf,tcps))
-			return 0;
+		if (ParticleOnly(pf,tcps,tcpsapp))
+		{
+			if(doCap == true)
+				{
+					tcpsapp->WritePort("quit");
+					tcpsapp->Close();
+				}
+			return 1;
+		}
 
-
-
+		if(doCap == true)
+		{
+			tcpsapp->WritePort("quit");
+			tcpsapp->Close();
+		}
+		return 0;
 	}
 }
 #if 1
@@ -102,3 +153,15 @@ catch (const std::exception& e)
 	exit(1);
 }
 #endif
+
+void LaunchExecutable(std::string path, std::string cmd) 
+{
+    STARTUPINFO info = { sizeof(info) };  
+    PROCESS_INFORMATION processInfo;
+	
+	LPSTR s = const_cast<char *>(cmd.c_str());
+    if (!CreateProcess(path.c_str(), s, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo)) 
+	{
+		mout << "Failed to Launch Cpature app." << ende;
+    }
+}

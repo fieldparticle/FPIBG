@@ -64,11 +64,14 @@ class TCPCObj
 					 *ptr = NULL,
 					 hints;
 	 const char *sendbuf = "quit";
-	 char recvbuf[DEFAULT_BUFLEN];
-	 int iResult;
-	 int m_Recvbuflen = DEFAULT_BUFLEN;
-	 std::string m_Server = "127.0.0.1";
-	 std::string m_PortAddress = "50004";
+	 
+	int iResult;
+	char* m_Recvbuf;
+	int m_Recvbuflen;
+	std::string m_Server = "127.0.0.1";
+	std::string m_PortAddress = "50004";
+	std::string m_ReadBuffer;
+	std::string m_SRecvBuf;
 	
 	void SetServerIP(std::string IPAddress)
 	{
@@ -82,10 +85,17 @@ class TCPCObj
 	uint32_t SendImgFile();
 	void SetBufSize(uint32_t BufSize)
 	{
-
+        m_Recvbuflen = BufSize;
+        m_Recvbuf = new char[m_Recvbuflen];
+        memset(m_Recvbuf,0,m_Recvbuflen);
 
 
 	}
+    std::string GetBuffer()
+    {
+        return m_SRecvBuf;
+
+    }
 	int Create();
 	int ReadPort();
 	int WritePort(std::string Command);

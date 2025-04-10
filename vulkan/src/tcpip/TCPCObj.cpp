@@ -37,17 +37,20 @@
 extern MsgStream			mout;
 int TCPCObj::ReadPort()
 {
-    iResult = recv(ConnectSocket, recvbuf, m_Recvbuflen, 0);
+     memset(m_Recvbuf,0,m_Recvbuflen);
+    iResult = recv(ConnectSocket, m_Recvbuf, m_Recvbuflen, 0);
     if ( iResult > 0 )
     {
-        mout << "Bytes received" << iResult << ende;
+        mout << "Bytes received:" << iResult << ende;
+        m_SRecvBuf = m_Recvbuf ;
         return iResult;
     }
     else if ( iResult == 0 )
-         mout << "Connection closed" << ende;
+        mout << "Connection closed." << ende;
     else
         mout << "recv failed with error:" << WSAGetLastError() << ende;
     return 0;
+
 }
 
 int TCPCObj::Close()
