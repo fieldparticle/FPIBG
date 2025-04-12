@@ -54,6 +54,11 @@ int Loop(PerfObj* perfObj, TCPObj* tcp,TCPObj* tcpsapp, DrawObj* DrawInstance, V
 	double				capFrameDelay	= MpsApp->GetFloat("cap_frame_delay", true);	
 	bool				doCap			= MpsApp->GetBool("do_cap", true);
 	uint32_t			imgNum			= 0;
+	int ret = 0;
+	uint32_t partErrC=0;
+	uint32_t partErrG=0;
+	uint32_t collErr=0;
+					
 
 	timerstep = new TimerObj;
 	
@@ -120,18 +125,19 @@ int Loop(PerfObj* perfObj, TCPObj* tcp,TCPObj* tcpsapp, DrawObj* DrawInstance, V
 			double ddt = currentTime - lastCapTime;
 
 			// Check to see if caputre delay has been met then capture this frame
-			if (ddt >= capFrameDelay && doCap == true)
+			if (ddt >= capFrameDelay && doCap == true && tcpsapp != nullptr)
 			{
 				mout << "ddt:" << ddt << " capFrameDelay:" << capFrameDelay << ende;;
 				tcpsapp->WritePort("next");
 				lastCapTime = currentTime;
 			}
 
+			
 			// Load the perf data if less than series length
 			if (currentTime - lastTime >= 1.0)
 			{
 				perfObj->m_ReportBuffer[aprCount].FrameRate = static_cast<float>(nbFrames);
-
+				//Populate the data
 				if (aprCount < seriesLength )
 				{
 					perfObj->m_ReportBuffer[aprCount].Second = aprCount;
@@ -147,16 +153,67 @@ int Loop(PerfObj* perfObj, TCPObj* tcp,TCPObj* tcpsapp, DrawObj* DrawInstance, V
 
 					for (int ii = 0; ii < rcc->m_DRList.size(); ii++)
 						rcc->m_DRList[ii]->AskObject(aprCount);
+
+					//Check for particle number errors in compute
+					if((VulkanWin->m_Numparticles-1) != perfObj->m_ReportBuffer[aprCount].NumParticlesComputeCount)
+					{
+						partErrC = 1;
+						ret = 1;					
+					}
+					if((VulkanWin->m_Numparticles-1) != perfObj->m_ReportBuffer[aprCount].NumParticlesGraphicsCount)
+					{
+						partErrG = 1;
+						ret = 1;
+					}
+					if(perfObj->m_ReportBuffer[aprCount].NumCollisionsComputeCount != perfObj->m_colcount)
+					{
+						collErr = 1;
+						ret = 1;
+
+					}
+
+
+					std::ostringstream  objtxt;
+					objtxt	<< "perfline,"													// 0-Identifier 
+					<< perfObj->m_ReportBuffer[aprCount].Second << ","						// 1- time
+					<< perfObj->m_ReportBuffer[aprCount].FrameRate << ","					// 2- fps
+					<< 1.0f/perfObj->m_ReportBuffer[aprCount].FrameRate << ","				// 3-cpums: cpu time
+					<< perfObj->m_ReportBuffer[aprCount].ComputeExecutionTime << ","		// 4-cms: compute ms
+					<< perfObj->m_ReportBuffer[aprCount].GraphicsExecutionTime << ","		// 5-gms: graphics ms				
+					<< perfObj->m_partcount << ","											// 6-expectedp: frm tst - generated
+					<< VulkanWin->m_Numparticles-1 << ","									// 7-loadedp: loaded into rccdApp
+					<< perfObj->m_ReportBuffer[aprCount].NumParticlesComputeCount << ","	// 8-shaderp_comp: counted from compute
+					<< perfObj->m_ReportBuffer[aprCount].NumParticlesGraphicsCount << ","	// 9-shaderp_grp: counted from graphics
+					<< perfObj->m_colcount << ","											// 10-expectedc: expected collisions
+					<< perfObj->m_ReportBuffer[aprCount].NumCollisionsComputeCount << ","	// 11-shaderc: compute counted collisions
+					<< perfObj->m_ReportBuffer[aprCount].ThreadCountComp << ","				// 12-threadcount: number of threads compute
+					<< VulkanWin->m_SideLength << ","										// 13-sidelen
+					<< 	partErrC << ","														// 14-error compute particles
+					<< 	partErrG << ","														// 15-error graphics particle
+					<< 	collErr << ","														// 16-error compute collsions
+					<< std::endl;
+
+					if(tcp != nullptr)
+					{
+						tcp->WritePort(objtxt.str().c_str());
+						tcp->ReadPort();
+					}
+
 					aprCount++;
 				}
 
 				// If it has been 60 second or the amoint set in series length write the perf data
 				// and return.
-				if (aprCount == seriesLength && seriesLength != 0)
+				if (aprCount == seriesLength && seriesLength != 0 || ret == 1)
 				{
-					aprCount++;
-					perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
 					vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
+					aprCount++;
+					if(perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount) != 0)
+						return 1;
+
+					if(ret == 1)
+						return 1;
+					
 					return 0;
 				}
 			

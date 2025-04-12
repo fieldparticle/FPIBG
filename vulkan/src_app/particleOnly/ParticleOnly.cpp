@@ -169,7 +169,7 @@ int ParticleOnly(PerfObj* perObj, TCPObj* tcp, TCPObj* tcpapp)
 	if(CfgApp->GetBool("application.doAuto", true) == true)
 		ret = Loop(perObj, tcp,tcpapp, drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
 	else
-		ret = NoPerfLoop(perObj, tcp, drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
+		ret = NoPerfLoop(perObj, tcp, tcpapp,drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
 	
 	vulkanObj->CleanAll();
 	vulkanObj->Cleanup();

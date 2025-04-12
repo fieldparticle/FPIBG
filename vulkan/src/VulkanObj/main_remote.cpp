@@ -73,12 +73,11 @@ int main() try
 	tcps->SetBufSize(MpsApp->GetInt("buffer_size",true));
 
 
-	// Create a client to exchnage commands with the capture app.
-	TCPCObj* tcpc = new TCPCObj;
-	tcpc->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
-	tcpc->SetServerIP(MpsApp->GetString("capture_cmd_ip",true));
-	tcpc->SetBufSize(MpsApp->GetInt("buffer_size",true));
+	TCPObj* tcpsapp = nullptr;
 
+	bool doCap = MpsApp->GetBool("do_cap", true);
+	bool capture_image_local = MpsApp->GetBool("capture_image_local", true);
+	
 
 	// Create a perf object to perform performance and verification.
 	PerfObj* pf = new PerfObj();
@@ -86,23 +85,7 @@ int main() try
 
 	// Find out if we are doing a series or a single test
 	bool autoFlag = CfgApp->GetBool("application.doAuto", true);
-	// Find out if we are doing a capture.
-	bool doCap = MpsApp->GetBool("do_cap", true);
 
-	//int result = system("CaptureApp.exe");
-	Sleep(2000);
-	if(tcpc->Create())
-		mout << "Create Failed:"<<  ende;;
-	std::string cmd = "quit";
-	for (int ii = 0; ii< 2;ii++)		
-	{
-		Sleep(2000);
-		if(tcpc->WritePort(cmd))
-			mout << "Write Failed:"<<  ende;;;
-	}
-	
-	//tcpc->Close();
-	return 12;
 	// Set the server port to listen - will block here.
 	tcps->Create();
 	tcps->Connect();
@@ -124,28 +107,42 @@ int main() try
 			ret = 1;
 			break;
 		}
+		if(tcps->GetBuffer().compare("runsim")==0)
+		{
+			std::cout << "Recieved Run" << std::endl;
+			// If capture image is true and capture to image locally is false 
+			// then set up the tcpip server to send command to the capture app.
+			if(doCap == true)
+			{
+		
+				// Create a client to exchnage commands with the capture app.
+				tcpsapp = new TCPObj;
+				tcpsapp->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
+				tcpsapp->SetBufSize(MpsApp->GetInt("buffer_size",true));
+		
+				tcpsapp->Create();
+				LaunchExecutable("CaptureApp.exe", "none") ;
+					mout << "Connecting to capture thread." << ende;
+				tcpsapp->Connect();
+				std::string cmd = "start";
+				tcpsapp->WritePort(cmd);
+			}
+
+			ret=ParticleOnly(pf,tcps,tcpsapp);
+			tcps->WritePort("simdone");
+        }
+
 		// Run series 
 		if(tcps->GetBuffer().compare("runseries")==0)
         {
 			std::cout << "Recieved Run" << std::endl;
 			tcps->m_SRecvBuf = "";
 			// If capture is enabled launch the app
-			if(doCap==true)
-			{
-				int result = system("CaptureApp.exe");
-				Sleep(2000);
-				tcpc->Create();
-				std::string cmd = "quit";
-				tcpc->WritePort(cmd);
-			
-
-
-			}
 			ret = pf->DoStudy(tcps,nullptr);
-			tcps->WritePort("perfdone");
+			tcps->WritePort("perfdone,tcp");
         }
 
-		if(tcps->GetBuffer().compare("runsingle")==0)
+		if(tcps->GetBuffer().compare("runsim")==0)
         {
 			tcps->m_SRecvBuf = "";
 			CfgTst->Create(CfgApp->GetString("application.testfile", true));	

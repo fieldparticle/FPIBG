@@ -73,6 +73,7 @@ class PerfObj
 
 	void Create();
 	PerfObj(){};
+	std::ostringstream AssembleRow(uint32_t rowNum);
 	uint32_t DoStudy(TCPObj* tcps,TCPObj* tcpcapp);
 	int Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin,TCPObj* tcp, size_t aprCount);
 

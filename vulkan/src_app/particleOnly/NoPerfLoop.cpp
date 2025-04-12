@@ -34,7 +34,7 @@
 
 namespace fs = std::filesystem;
 
-int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
+int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc)
 {
 	TimerObj* timerstep;
 	uint32_t			endFrame		= CfgApp->GetUInt("application.end_frame", true);
@@ -46,12 +46,15 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* 
 	uint32_t			AutoWait		=  CfgApp->GetInt("application.seriesLength", true);;
 	size_t				aprCount		= 0;
 	double				lastTime		= glfwGetTime();
+	double				lastCapTime     = 0;
 	int					nbFrames		= 0;
 	bool				doAuto			= CfgApp->GetBool("application.doAuto", true);
 	bool				captureFrame	= MpsApp->GetBool("captureFrame", true);
 	bool				copyFrame		= MpsApp->GetBool("copyFrame", true);
-		
-	uint32_t imgNum=0;
+	double				capFrameDelay	= MpsApp->GetFloat("cap_frame_delay", true);	
+	bool				doCap			= MpsApp->GetBool("do_cap", true);
+	uint32_t			imgNum			= 0;		
+	double				currentTime		=0.0;
 
 	timerstep = new TimerObj;
 	
@@ -74,7 +77,13 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* 
 		{
 			
 			timerstep->reset();
+			float currentBuffer = static_cast<float>(glfwGetTime());
+			deltaTime = currentBuffer - lastFrame;
+			lastFrame = currentBuffer;
 			
+			// Get the current time
+			double currentTime = glfwGetTime();
+
 			//Esc normal termination
 			if (QuitEvent)
 			{
@@ -88,11 +97,17 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* 
 				objtxt << "Quit Loop Error number:" << VulkanWin->m_quit_event <<  std::ends;
 				throw std::runtime_error(objtxt.str());
 			};
-			float currentBuffer = static_cast<float>(glfwGetTime());
-			deltaTime = currentBuffer - lastFrame;
-			lastFrame = currentBuffer;
 
 			
+			// Poll window events.
+			glfwPollEvents();
+
+			// Increment frame counter
+			nbFrames++;
+			
+			// Check to see if caputre delay has been met then capture this frame
+			
+
 			// Test for frame number end.
 			if (endFrame != 0)
 			{
@@ -100,21 +115,32 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* 
 					break;
 
 			};
+	
+			// Sent the cap counter first time.
+			if(nbFrames == 0)
+				lastCapTime = currentTime;
 
-			// Poll window events.
-			glfwPollEvents();
-			// Draw frame.
-			double currentTime = glfwGetTime();
 			DrawInstance->DrawFrame();
+			
+			// Get the current time
+			currentTime = glfwGetTime();
+			
 
-		if(copyFrame	== true)
-		{
-			if (currentTime - lastTime >= 0.5)
+			double ddt = currentTime - lastCapTime;
+			if (ddt >= capFrameDelay && doCap == true && tcpsapp != nullptr)
 			{
-				imgNum++;
-				DrawInstance->SaveImage(imgNum);
+				mout << "ddt:" << ddt << " capFrameDelay:" << capFrameDelay << ende;;
+				std::ostringstream  objtxt;
+				objtxt	<< "perfline,"								// 0-Identifier 
+						<< "," << VulkanWin->m_FrameNumber			// 1-Total frames
+						<< "," << ddt / double(nbFrames)			// 2-FPS
+						<< "," << double(nbFrames) /ddt				// 3-SPF
+						<< "," << CfgTst->GetUInt("pcount",true)	// 4-Number of particles
+						<< std::endl;
+				tcpsapp->WritePort(objtxt.str().c_str());
+				tcpsapp->ReadPort();
+				lastCapTime = currentTime;
 			}
-		}
 
 			if(Extflg == true)
 				throw std::runtime_error("External Flag Exit.");
@@ -130,6 +156,7 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, DrawObj* DrawInstance, VulkanObj* 
 				nbFrames = 0;
 				lastTime += 1.0;
 			}
+
 			Sleep(frameDelay);
 			vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
 		}

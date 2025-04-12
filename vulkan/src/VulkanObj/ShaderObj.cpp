@@ -98,7 +98,6 @@ void  ShaderObj::WriteShaderHeader()
 				//##JMB Get RID
 				<< "const uint CENTER=" << 0.0 << ";\n"
 				<< "const float RADIUS=" << 0.0 << ";\n"
-
 				<< "const uint MAX_ARY=" << CfgTst->GetInt("ColArySize", true) << ";\n"
 				<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
 				<< "const uint SCR_H =" << m_SCO->m_SwapHeight << ";\n"

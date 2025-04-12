@@ -131,15 +131,9 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp)
 			return 0;
 		}
 	}
-	if(tcps != nullptr)
-	{
-	
-		tcps->SendPerfFile("perfdone", 1);
-	}
-
-
 	return 0;
 }
+ 
 
 int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, size_t aprCount)
 {
@@ -172,6 +166,8 @@ int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, si
 			totTime +=m_ReportBuffer[ii].Second;
 			uint32_t partErr = 0;
 			uint32_t colErr = 0;
+
+		
 			ostrm	<< m_ReportBuffer[ii].Second << ","				// time
 					<< m_ReportBuffer[ii].FrameRate << ","			// fps
 					<< 1.0f/m_ReportBuffer[ii].FrameRate << ","		 // cpums: cpu time
@@ -193,37 +189,14 @@ int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, si
 			
 
 
-#ifndef NDEBUG
-				if(m_ReportBuffer[ii].NumParticlesComputeCount != VulkanWin->m_Numparticles-1)
-				{
-					
-					std::ostringstream  objtxt;
-					objtxt << "Compute counted particles not equal to loaded particles:Expected:" 
-						<< VulkanWin->m_Numparticles-1 << ":Counted:" 
-						<< m_ReportBuffer[ii].NumParticlesComputeCount << std::ends;
-
-					mout << objtxt.str().c_str() << ende;
-					ret = 1;
-				}
-				if(m_ReportBuffer[ii].NumCollisionsComputeCount !=  m_colcount)
-				{
-					
-					std::ostringstream  objtxt;
-					objtxt << "Compute counted collisions not equal to calulated collisons:Expected:" 
-						<< m_colcount << ":Counted:" 
-						<< m_ReportBuffer[ii].NumCollisionsComputeCount << std::ends;
-					mout << objtxt.str().c_str() << ende;
-					ret = 1;
-
-				}
-#endif
 
 		}
+		
 		ostrm.flush();
 		ostrm.close();
 		if(tcp != nullptr)
 		{
-		
+			tcp->WritePort("csvfile");
 			tcp->SendPerfFile(filename.c_str(),1);
 		}
 		

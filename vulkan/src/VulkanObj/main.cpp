@@ -153,15 +153,3 @@ catch (const std::exception& e)
 	exit(1);
 }
 #endif
-
-void LaunchExecutable(std::string path, std::string cmd) 
-{
-    STARTUPINFO info = { sizeof(info) };  
-    PROCESS_INFORMATION processInfo;
-	
-	LPSTR s = const_cast<char *>(cmd.c_str());
-    if (!CreateProcess(path.c_str(), s, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo)) 
-	{
-		mout << "Failed to Launch Cpature app." << ende;
-    }
-}
