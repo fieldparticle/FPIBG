@@ -38,6 +38,8 @@ uint32_t			width;
 uint32_t			height;
 uint32_t			xpos;
 uint32_t			ypos;
+bool                cap_independent=false;
+TCPCObj* tcpcapp = new TCPCObj;
 BYTE*				lpPixels;
 BITMAPINFO			MyBMInfo = {0};
 std::ostringstream TcpFileName;
@@ -141,7 +143,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	std::string imagePrefix;
 	uint32_t capFrames;
     uint32_t capFrameDelay;
-     
+    int ret = 0;     
 	try {
 		std::cout << "Starting" << std::endl;
 		mout.Init("CaptureApp.log", "CaptureApp");
@@ -168,6 +170,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         capFrames = MpsApp->GetInt("cap_frames", true);
         capFrameDelay = MpsApp->GetFloat("cap_frame_delay", true);
         capture_image_local = MpsApp->GetBool("capture_image_local", true);
+        cap_independent = MpsApp->GetBool("cap_independent", true);
        
 		
 	}
@@ -187,21 +190,25 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	    tcpc = new TCPCObj;
 	    tcpc->SetServerIP(MpsApp->GetString("image_server_ip",true));
 	    tcpc->SetServerPort(MpsApp->GetString("image_server_port",true));
+        tcpc->SetBufSize(MpsApp->GetInt("buffer_size",true));
 	    if(tcpc->Create() != 0)
         {   
             mout << "Could not get client" << ende;
             return 1;
         }
+        mout << "Got python client" << ende;
     }
     
-#ifndef NO_CMDTCP
+    if(cap_independent == false)
+    {
         // Create a new server port to accept commands from FPIBG.exe
-        TCPCObj* tcpcapp = new TCPCObj;
+        std::cout << "Starting FPIBG Communication" << std::endl;
         tcpcapp->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
         tcpcapp->SetServerIP(MpsApp->GetString("capture_cmd_ip",true));
         tcpcapp->SetBufSize(MpsApp->GetInt("buffer_size",true));
+        mout << "Creating Client FPIBG app communications" << ende;
 	    tcpcapp->Create();
-        int ret = 0;
+        mout << "Created Client FPIBG app communications" << ende;  
         if( (ret= tcpcapp->ReadPort()) < 1)
         {
             mout << "Read Error." << ret << ende;
@@ -213,8 +220,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
             mout << "Did not recieve start command." << ende;
             return 0;
         }
+    }
 
-#endif 
        
 
 	uint32_t imgNum = 0;
@@ -249,29 +256,45 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         TcpFileName << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".bmp";
 		std::ostringstream  fileName;
 		fileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".bmp";
-
-        if( (ret= tcpcapp->ReadPort()) < 1)
+        
+        if(cap_independent == false)
         {
-            mout << "Read Error." << ret << ende;
-            return 1;
-        }
+            if( (ret= tcpcapp->ReadPort()) < 1)
+            {
+                mout << "Read Error." << ret << ende;
+                return 1;
+            }
        
-        if(tcpcapp->GetBuffer().compare("next") == 0)
+            if(tcpcapp->GetBuffer().compare("next") == 0)
+            {
+                tcpcapp->WritePort("gotnext");
+                mout << "Recieved Next Command from Particleonly:" << tcpcapp->GetBuffer().c_str() << ende;
+                if(screenshot(fileName.str()) != 0)
+                {
+                    mout << "Screen Shot failed" << ende;
+                    return 1;   // send string to screenshot function
+                }
+                mout << "Image saved to:" << fileName.str().c_str() << ende;
+            }
+		    else if(tcpcapp->GetBuffer().compare("quit") == 0)
+            {
+                mout << "Quit recieved:" << fileName.str().c_str() << ende;
+                return 0;
+            }
+        }
+        else
         {
-            mout << "Recieved Next Command:" << tcpcapp->GetBuffer().c_str() << ende;
-            if(screenshot(fileName.str()) != 0)
+            uint32_t pret = 0;
+            Sleep(1000);
+            if((pret = screenshot(fileName.str())) == 1)
             {
                 mout << "Screen Shot failed" << ende;
                 return 1;   // send string to screenshot function
             }
-            mout << "Image saved to:" << fileName.str().c_str() << ende;
+            if(pret == 2)
+                return 0;
         }
-		else if(tcpcapp->GetBuffer().compare("quit") == 0)
-        {
-            mout << "Quit recieved:" << fileName.str().c_str() << ende;
-            return 0;
-        }
-         mout << "Image saved to:" << fileName.str().c_str() << ende;
+        mout << "Image saved to:" << fileName.str().c_str() << ende;
 		//std::ostringstream  rawFileName;
 		//rawFileName << imageDir << "/" << imagePrefix <<  std::setfill('0') << std::setw(5) << imgNum << ".raw";
 		//std::ofstream file(rawFileName.str(), std::ios::out | std::ios::binary);
@@ -448,19 +471,35 @@ int CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
 
     if(capture_image_local == false)
     {
-        tcpc->m_Recvbuflen = 32;
+        //tcpc->m_Recvbuflen = 32;
         if(tcpc->ReadPort() == 0)
+        {
             return 1;
+        }
+        if(tcpc->m_SRecvBuf.compare("start") == 0)
+            mout << "Start reevieved from Python Server" << ende;
+        if(tcpc->m_SRecvBuf.compare("stopcap") == 0)
+            return 2;
+
         if(tcpc->WritePort(header.str()) != 0)
+        {
+            mout << "Write Header failed: " << header.str().c_str() << ende;
             return 1;
+        }
+        mout << "Write Header success: " << header.str().c_str() << ende;
+
         if(tcpc->ReadPort() == 0)
             return 1;
+        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
         tcpc->WritePort((char*)&hdr,sizeof(BITMAPFILEHEADER));
         tcpc->ReadPort();
+        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
         tcpc->WritePort((char*)pbih,sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
         tcpc->ReadPort();
+        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
         tcpc->WritePort((char*)hp,cb);
         tcpc->ReadPort();
+        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
     }
 
     if(capture_image_local == true)

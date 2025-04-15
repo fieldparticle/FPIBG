@@ -46,7 +46,7 @@ int TCPObj::WritePort(std::string Message)
         WSACleanup();
         return 1;
     }
-    printf("Bytes sent: %d\n", iSendResult);
+    //printf("Bytes sent: %d\n", iSendResult);
     return 0;
 
 }
@@ -60,7 +60,7 @@ int TCPObj::WritePort(const char* Block,uint32_t Len)
         WSACleanup();
         return 1;
     }
-    printf("Bytes sent: %d\n", iSendResult);
+    //printf("Bytes sent: %d\n", iSendResult);
     return 0;
 
 }
@@ -82,7 +82,7 @@ int TCPObj::ReadPortN()
     // No longer need server socket
     closesocket(ListenSocket);
     timeval tm;
-    tm.tv_sec = 0;
+    tm.tv_sec = 5;
     tm.tv_usec = static_cast<long>(0.0011);
 
     // Receive until the peer shuts down the connection
@@ -163,7 +163,7 @@ int TCPObj::Connect()
         WSACleanup();
         return 1;
     }
-    std::cout << "Listening for Client" << std::endl;
+   
     // Accept a client socket
     ClientSocket = accept(ListenSocket, NULL, NULL);
     if (ClientSocket == INVALID_SOCKET) {

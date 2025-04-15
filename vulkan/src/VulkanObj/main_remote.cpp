@@ -87,12 +87,14 @@ int main() try
 	bool autoFlag = CfgApp->GetBool("application.doAuto", true);
 
 	// Set the server port to listen - will block here.
-	tcps->Create();
-	tcps->Connect();
+	
 
     int ret = 0;
     while (ret == 0)
     {
+		tcps->Create();
+		std::cout << "Listening for Python Client" << std::endl;
+		tcps->Connect();
 		// read the command from the FPIBGUtility app.
         ret = tcps->ReadPort();
 		if(ret == 1)
@@ -110,26 +112,13 @@ int main() try
 		if(tcps->GetBuffer().compare("runsim")==0)
 		{
 			std::cout << "Recieved Run" << std::endl;
-			// If capture image is true and capture to image locally is false 
-			// then set up the tcpip server to send command to the capture app.
-			if(doCap == true)
-			{
-		
-				// Create a client to exchnage commands with the capture app.
-				tcpsapp = new TCPObj;
-				tcpsapp->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
-				tcpsapp->SetBufSize(MpsApp->GetInt("buffer_size",true));
-		
-				tcpsapp->Create();
-				LaunchExecutable("CaptureApp.exe", "none") ;
-					mout << "Connecting to capture thread." << ende;
-				tcpsapp->Connect();
-				std::string cmd = "start";
-				tcpsapp->WritePort(cmd);
-			}
+			CfgTst->Create(CfgApp->GetString("application.cdn.testfile", true));	
+			
 
 			ret=ParticleOnly(pf,tcps,tcpsapp);
 			tcps->WritePort("simdone");
+			tcps->Close();
+			ret = 0;
         }
 
 		// Run series 
@@ -140,14 +129,6 @@ int main() try
 			// If capture is enabled launch the app
 			ret = pf->DoStudy(tcps,nullptr);
 			tcps->WritePort("perfdone,tcp");
-        }
-
-		if(tcps->GetBuffer().compare("runsim")==0)
-        {
-			tcps->m_SRecvBuf = "";
-			CfgTst->Create(CfgApp->GetString("application.testfile", true));	
-			ret=ParticleOnly(pf,tcps,nullptr);
-
         }
 		if(tcps->GetBuffer().compare("sndcsv")==0)
 		{

@@ -48,6 +48,7 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInsta
 	double				lastTime		= glfwGetTime();
 	double				lastCapTime     = 0;
 	int					nbFrames		= 0;
+	int					ndFrames		= 0;
 	bool				doAuto			= CfgApp->GetBool("application.doAuto", true);
 	bool				captureFrame	= MpsApp->GetBool("captureFrame", true);
 	bool				copyFrame		= MpsApp->GetBool("copyFrame", true);
@@ -55,6 +56,9 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInsta
 	bool				doCap			= MpsApp->GetBool("do_cap", true);
 	uint32_t			imgNum			= 0;		
 	double				currentTime		=0.0;
+	uint32_t			numParts			= CfgTst->GetUInt("pcount",true);
+	bool ImageCapRunning = false;
+	bool inCapture = false;
 
 	timerstep = new TimerObj;
 	
@@ -88,6 +92,7 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInsta
 			if (QuitEvent)
 			{
 				VulkanWin->m_quit_event = 1;
+				QuitEvent = false;
 				return 0;
 			};
 
@@ -127,18 +132,12 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInsta
 			
 
 			double ddt = currentTime - lastCapTime;
-			if (ddt >= capFrameDelay && doCap == true && tcpsapp != nullptr)
+			if (ddt >= capFrameDelay && tcpsapp != nullptr && ImageCapRunning == true)
 			{
 				mout << "ddt:" << ddt << " capFrameDelay:" << capFrameDelay << ende;;
-				std::ostringstream  objtxt;
-				objtxt	<< "perfline,"								// 0-Identifier 
-						<< "," << VulkanWin->m_FrameNumber			// 1-Total frames
-						<< "," << ddt / double(nbFrames)			// 2-FPS
-						<< "," << double(nbFrames) /ddt				// 3-SPF
-						<< "," << CfgTst->GetUInt("pcount",true)	// 4-Number of particles
-						<< std::endl;
-				tcpsapp->WritePort(objtxt.str().c_str());
+				tcpsapp->WritePort("next");
 				tcpsapp->ReadPort();
+
 				lastCapTime = currentTime;
 			}
 
@@ -150,7 +149,68 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInsta
 			nbFrames++;
 			if (currentTime - lastTime >= 1.0)
 			{
-			
+				std::ostringstream  objtxt;
+				objtxt	<< "perfline"								// 0-Identifier 
+						<< "," << VulkanWin->m_FrameNumber			// 1-Total frames
+						<< "," << ddt / double(nbFrames)			// 2-FPS
+						<< "," << double(nbFrames) /ddt				// 3-SPF
+						<< "," << numParts							// 4-Number of particles
+						<< std::endl;
+				tcp->WritePort(objtxt.str().c_str());
+				tcp->ReadPort();
+				std::cout << tcp->m_SRecvBuf << std::endl;
+					
+				if(tcp->m_SRecvBuf.compare("stopcap")==0)
+				{
+					tcpsapp->WritePort("quit");
+					tcpsapp->Close();
+					delete tcpsapp;
+				}
+				if(tcp->m_SRecvBuf.compare("startcap")==0)
+				{
+					// If capture image is true and capture to image locally is false 
+					// then set up the tcpip server to send command to the capture app.
+					if(doCap == true)
+					{
+		
+						// Create a client to exchnage commands with the capture app.
+						tcpsapp = new TCPObj;
+						tcpsapp->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
+						tcpsapp->SetBufSize(MpsApp->GetInt("buffer_size",true));
+		
+						tcpsapp->Create();
+						LaunchExecutable("CaptureApp.exe", "none") ;
+						mout << "Connecting to capture thread." << ende;
+						std::cout << "Listening for CaptureApp" << std::endl;
+						tcpsapp->Connect();
+						mout << "Connected to capture thread." << ende;
+						std::string cmd = "start";
+						tcpsapp->WritePort(cmd);
+						ImageCapRunning = true;
+					}
+				}
+				if(tcp->m_SRecvBuf.compare("stop")==0)
+				{
+					vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
+					return 0;
+				}
+				if(tcp->m_SRecvBuf.compare("tgrun")==0)
+				{
+					if(G_Stop == true)
+						G_Stop = false;
+					else
+						G_Stop = true;
+				}
+				if(tcp->m_SRecvBuf.compare("colorc")==0)
+				{
+					ColorMap = 0.0;
+				}
+				if(tcp->m_SRecvBuf.compare("colorang")==0)
+				{
+					ColorMap = 1.0;
+				}
+				tcp->m_SRecvBuf = "";
+
 				aprCount++;
 				std::cout << "Seconds:" << aprCount << " FrameNumber:" << VulkanWin->m_FrameNumber << " FRate:" << 1000.0 / double(nbFrames) << " ms/F, " << " FPS:" << nbFrames << " F/s." << std::endl;
 				nbFrames = 0;

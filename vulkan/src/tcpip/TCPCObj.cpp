@@ -37,7 +37,7 @@
 extern MsgStream			mout;
 int TCPCObj::ReadPort()
 {
-     memset(m_Recvbuf,0,m_Recvbuflen);
+    memset(m_Recvbuf,0,m_Recvbuflen);
     iResult = recv(ConnectSocket, m_Recvbuf, m_Recvbuflen, 0);
     if ( iResult > 0 )
     {

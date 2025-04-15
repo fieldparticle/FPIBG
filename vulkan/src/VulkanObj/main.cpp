@@ -65,24 +65,7 @@ int main() try
 
 	bool doCap = MpsApp->GetBool("do_cap", true);
 	bool capture_image_local = MpsApp->GetBool("capture_image_local", true);
-	// If capture image is true and capture to image locally is false 
-	// then set up the tcpip server to send command to the capture app.
-	if(doCap == true)
-	{
-		
-		// Create a client to exchnage commands with the capture app.
-		tcpsapp = new TCPObj;
-		tcpsapp->SetServerPort(MpsApp->GetString("capture_cmd_port",true));
-		tcpsapp->SetBufSize(MpsApp->GetInt("buffer_size",true));
-		
-		tcpsapp->Create();
-		LaunchExecutable("CaptureApp.exe", "none") ;
-			mout << "Connecting to capture thread." << ende;
-		tcpsapp->Connect();
-		std::string cmd = "start";
-		tcpsapp->WritePort(cmd);
-	}
-
+	
 	// Get test type
 	std::string testtype = CfgApp->GetString("application.testtype", true);
 	TCPObj* tcps = nullptr;

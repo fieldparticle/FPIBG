@@ -74,6 +74,7 @@ void SetCallBacks(VulkanObj* VO)
 	glfwSetScrollCallback(VO->GetGLFWWindow(), scroll_callback);
 	glfwSetKeyCallback(VO->GetGLFWWindow(), key_callback);
 	glfwSetMouseButtonCallback(VO->GetGLFWWindow(), onMouseButton);
+	QuitEvent = false;
 }
 void onMouseButton(GLFWwindow* window, int button, int action, int mods)
 {
