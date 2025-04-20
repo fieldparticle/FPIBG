@@ -53,6 +53,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp,TCPObj* tcpsapp, DrawObj* DrawInstance, V
 	bool				copyFrame		= MpsApp->GetBool("copyFrame", true);
 	double				capFrameDelay	= MpsApp->GetFloat("cap_frame_delay", true);	
 	bool				doCap			= MpsApp->GetBool("do_cap", true);
+	bool				stopOnError		= CfgApp->GetBool("application.stopOnError", true);
 	uint32_t			imgNum			= 0;
 	int ret = 0;
 	uint32_t partErrC=0;
@@ -134,7 +135,7 @@ int Loop(PerfObj* perfObj, TCPObj* tcp,TCPObj* tcpsapp, DrawObj* DrawInstance, V
 
 			
 			// Load the perf data if less than series length
-			if (currentTime - lastTime >= 1.0)
+			if (currentTime - lastTime >= 1.0 && doAuto == true)
 			{
 				perfObj->m_ReportBuffer[aprCount].FrameRate = static_cast<float>(nbFrames);
 				//Populate the data
@@ -204,14 +205,13 @@ int Loop(PerfObj* perfObj, TCPObj* tcp,TCPObj* tcpsapp, DrawObj* DrawInstance, V
 
 				// If it has been 60 second or the amoint set in series length write the perf data
 				// and return.
-				if (aprCount == seriesLength && seriesLength != 0 || ret == 1)
+				if (aprCount == seriesLength && seriesLength != 0)
 				{
 					vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
 					aprCount++;
-					if(perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount) != 0)
-						return 1;
+					perfObj->Doperf(DrawInstance, VulkanWin, tcp, aprCount);
 
-					if(ret == 1)
+					if(ret == 1 && stopOnError == true)
 						return 1;
 					
 					return 0;

@@ -61,28 +61,18 @@ int main() try
 	mout << "Working Directory :" << cwd.string().c_str() << ende;
 
 
-	TCPObj* tcpsapp = nullptr;
-
-	bool doCap = MpsApp->GetBool("do_cap", true);
-	bool capture_image_local = MpsApp->GetBool("capture_image_local", true);
-	
 	// Get test type
 	std::string testtype = CfgApp->GetString("application.testtype", true);
 	TCPObj* tcps = nullptr;
-	if(testtype.compare("bcd") == 0)
+	if(testtype.compare("VerfPerf") == 0)
 	{
 
 		
 		if (CfgApp->GetBool("application.doAuto", true) == true)
 		{
 			mout << "Do study :" << ende;
-			if (pf->DoStudy(tcps,tcpsapp))
+			if (pf->DoStudy(nullptr,nullptr,false))
 			{
-				if(doCap == true)
-				{
-					tcpsapp->WritePort("quit");
-					tcpsapp->Close();
-				}
 				return 1;
 			}
 
@@ -91,13 +81,8 @@ int main() try
 		{
 			std::string testfile = "application." + testtype + ".testfile";
 			CfgTst->Create(CfgApp->GetString(testfile, true));	
-			if (ParticleOnly(pf,tcps,tcpsapp))
+			if (ParticleOnly(pf,nullptr,nullptr,false))
 			{
-				if(doCap == true)
-				{
-					tcpsapp->WritePort("quit");
-					tcpsapp->Close();
-				}
 				return 1;
 			}
 		}
@@ -109,21 +94,11 @@ int main() try
 		mout << "Performing CD Nozzle Simulation :" << ende;
 		std::string testfile = "application." + testtype + ".testfile";
 		CfgTst->Create(CfgApp->GetString(testfile, true));	
-		if (ParticleOnly(pf,tcps,tcpsapp))
+		if (ParticleOnly(pf,nullptr,nullptr,false))
 		{
-			if(doCap == true)
-				{
-					tcpsapp->WritePort("quit");
-					tcpsapp->Close();
-				}
 			return 1;
 		}
 
-		if(doCap == true)
-		{
-			tcpsapp->WritePort("quit");
-			tcpsapp->Close();
-		}
 		return 0;
 	}
 }

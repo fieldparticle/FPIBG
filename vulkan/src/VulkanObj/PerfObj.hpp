@@ -53,7 +53,7 @@ class PerfObj
 			uint32_t	SideLengthCompute;
 		};
 		std::vector< ReportType> m_ReportBuffer;
-
+		bool						m_SingleFileTest=false;
 		std::string					m_TestName;
 		std::string					m_TestDir;
 		std::string					m_TestCFG;
@@ -74,7 +74,7 @@ class PerfObj
 	void Create();
 	PerfObj(){};
 	std::ostringstream AssembleRow(uint32_t rowNum);
-	uint32_t DoStudy(TCPObj* tcps,TCPObj* tcpcapp);
+	uint32_t DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag);
 	int Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin,TCPObj* tcp, size_t aprCount);
 
 };

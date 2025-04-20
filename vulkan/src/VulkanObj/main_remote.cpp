@@ -60,7 +60,7 @@ int main() try
 
 	//Open the cfg. file for this applcation
 	CfgApp = new ConfigObj;
-	CfgApp->Create(MpsApp->GetString("studyFile", true));
+	
 	mout << "Study File Config" << ende;
 
 	// Create the global test file object to hold particlars about these tests
@@ -81,11 +81,9 @@ int main() try
 
 	// Create a perf object to perform performance and verification.
 	PerfObj* pf = new PerfObj();
-	pf->Create();
+	
 
-	// Find out if we are doing a series or a single test
-	bool autoFlag = CfgApp->GetBool("application.doAuto", true);
-
+	
 	// Set the server port to listen - will block here.
 	
 
@@ -97,6 +95,7 @@ int main() try
 		tcps->Connect();
 		// read the command from the FPIBGUtility app.
         ret = tcps->ReadPort();
+		std::vector<std::string> msg = tcps->GetSplitBuffer();
 		if(ret == 1)
 		{
 			tcps->Create();
@@ -104,48 +103,48 @@ int main() try
 			ret = 0;
 		}
 
-        if(tcps->GetBuffer().compare("quit")==0)
+        if(msg[0].compare("quit")==0)
         {
 			ret = 1;
 			break;
 		}
-		if(tcps->GetBuffer().compare("runsim")==0)
+		if(msg[0].compare("runsim")==0)
 		{
-			std::cout << "Recieved Run" << std::endl;
+			std::cout << "Recieved runsim" << std::endl;
+			CfgApp->Create(msg[1]);
+			pf->Create();
 			CfgTst->Create(CfgApp->GetString("application.cdn.testfile", true));	
-			
-
-			ret=ParticleOnly(pf,tcps,tcpsapp);
+			ret=ParticleOnly(pf,tcps,tcpsapp,true);
 			tcps->WritePort("simdone");
 			tcps->Close();
 			ret = 0;
         }
 
 		// Run series 
-		if(tcps->GetBuffer().compare("runseries")==0)
+		if(msg[0].compare("runseries")==0)
         {
-			std::cout << "Recieved Run" << std::endl;
+			CfgApp->Create(msg[1]);
+			pf->Create();
+			// Find out if we are doing a series or a single test
+			bool autoFlag = CfgApp->GetBool("application.doAuto", true);
+
+			std::cout << "Recieved runseries" << std::endl;
 			tcps->m_SRecvBuf = "";
 			// If capture is enabled launch the app
-			ret = pf->DoStudy(tcps,nullptr);
+			ret = pf->DoStudy(tcps,nullptr,true);
 			tcps->WritePort("perfdone,tcp");
         }
-		if(tcps->GetBuffer().compare("sndcsv")==0)
+		if(msg[0].compare("sndcsv")==0)
 		{
 			tcps->m_SRecvBuf = "";
 			tcps->SendPerfFile("Particle.cfg",1);
 		}
-		if(tcps->GetBuffer().compare("rcvcsv")==0)
+		if(msg[0].compare("rcvcsv")==0)
 		{
 			tcps->m_SRecvBuf = "";
 			tcps->SendPerfFile("Particle.cfg",1);
 		}
-		if(tcps->GetBuffer().compare("sendimg")==0)
-		{
-			tcps->m_SRecvBuf = "";
-			tcps->SendImgFile("logo.png");
-		}
-		if(tcps->GetBuffer().compare("test")==0)
+		if(msg[0].compare("test")==0)
 		{
 			std::cout << "Recieved Test" << std::endl;
 			std::string outbuf = "Recieved Test : OK";

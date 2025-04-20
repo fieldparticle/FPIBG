@@ -36,16 +36,18 @@ void ShaderObj::Create(ResourceVertexParticle* VPO, ResourceCollMatrix* CMO, Res
 		m_CMO = CMO;
 		m_SCO = SCO;
 		m_LMO = LMO;
-		
-		GenWorkGroups();
-		WriteShaderHeader();
-		
+		std::string testtype = CfgApp->GetString("application.testtype", true);
+		if(testtype.compare("cdn") == 0)
+			WriteShaderHeaderCDNOZ();
+		if(testtype.compare("VerfPerf") == 0)
+			WriteShaderHeader();
+		GenWorkGroups(testtype);
 }
-void ShaderObj::GenWorkGroups()
+void ShaderObj::GenWorkGroups(std::string testType)
 {
 
 	std::string fildir = CfgApp->GetString("application.gen_glsl_dir", true);
-	std::string filename = fildir + "/workgroups.glsl";
+	std::string filename = fildir + "/" + testType + "/workgroups.glsl";
 	{
 		std::ofstream ostrm(filename);
 		if (!ostrm.is_open())
@@ -58,11 +60,68 @@ void ShaderObj::GenWorkGroups()
 			", local_size_z = " << CfgTst->GetInt("workGroupsz", true) << ") in;\n";
 	}
 }
+void  ShaderObj::WriteShaderHeaderCDNOZ()
+{
+	
+	uint32_t compflag=0;
+	std::string fildir = CfgApp->GetString("application.gen_glsl_dir", true);
+    std::string filename = fildir + "/cdn/params.glsl";
+    {
+		std::string dbgflag = {};
+#ifdef NDEBUG
+		dbgflag = "RELEASE ";
+#else
+		dbgflag = "DEBUG ";
+#endif
+		
+		std::string version = {};
+		version = "VERCDNOZ ";
+		
+		uint32_t motion_str = 0;
+		if(CfgApp->GetBool("application.doMotion", true) == true)
+			motion_str = 1;
+		
+
+		
+		uint32_t MaxLoc = static_cast<uint32_t>(CfgTst->GetUInt("CellAryW", true)
+											  * CfgTst->GetUInt("CellAryH", true) 
+											  * CfgTst->GetUInt("CellAryL", true));
+        std::ofstream ostrm(filename);
+		ostrm	<< "#define " << dbgflag << "\n"
+				<< "#define " << version.c_str()  << "\n"
+				<< "const uint WIDTH=" << CfgTst->GetUInt("CellAryW", true)  << ";\n"
+				<< "const uint HEIGHT=" << CfgTst->GetUInt("CellAryH", true) << ";\n"
+				<< "const uint DEPTH=" << CfgTst->GetUInt("CellAryL", true)  << ";\n"
+				<< "const uint CENTER=" << CfgTst->GetFloat("PipeCenter", true) << ";\n"
+				<< "const float RADIUS=" <<  CfgTst->GetFloat("PipeRadius", true)  << ";\n"
+				<< "const uint MAX_ARY=" << CfgTst->GetInt("ColArySize", true) << ";\n"
+				<< "const uint SCR_W =" << m_SCO->m_SwapWidth << ";\n"
+				<< "const uint SCR_H =" << m_SCO->m_SwapHeight << ";\n"
+				<< "const uint SCR_X =" << m_SCO->m_SwapX << ";\n"
+				<< "const uint SCR_Y =" << m_SCO->m_SwapY << ";\n"
+				<< "const uint NUMPARTS =" << m_VPO->m_NumParticles << ";\n"
+				<< "const uint NUMCOLS =" << CfgTst-> GetInt("colcount", true)<< ";\n"
+				<< "const uint MAXSPCOLLS =" << m_VPO->m_MaxColls << ";\n"
+				<< "const uint ColArySize=" << m_CMO->m_BufSize << ";\n"
+				<< "const uint LockArySize=" << m_LMO->m_BufSize << ";\n"
+				<< "const uint doMotion =" << motion_str  << ";\n"
+				<< "const uint MaxLocation =" << m_CMO->m_MaxLoc << ";\n"
+				<< "const float dt =" << m_App->m_dt  << ";\n"
+				<< "const uint compflag =" << compflag << ";\n"
+				<< "const uint bbound =" << m_VPO->BoundaryParticleLimit << ";\n";
+			
+			
+		ostrm.flush();
+		ostrm.close();
+    }
+}
 
 
 void  ShaderObj::WriteShaderHeader()
 {
-	
+	// Dont compile shaders if using nsight.
+	if(CfgApp->GetBool("application.nsight", true) == true)
+		return;
 	uint32_t compflag=0;
 	uint32_t motion_str = 0;
 	if(CfgApp->GetBool("application.doMotion", true) == true)

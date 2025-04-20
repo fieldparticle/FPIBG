@@ -9,8 +9,7 @@
 #extension GL_KHR_shader_subgroup_basic:enable
 //#extension GL_NV_fragment_shader_interlock : enable
 //#extension GL_ARB_fragment_shader_interlock : enable
-
-#include "../cdn/params.glsl"
+#include "../params.glsl"
 #include "../common/constants.glsl"
 #include "../common/atomicg.glsl"
 #include "../common/push.glsl"
@@ -18,6 +17,8 @@
 #include "../common/Lockimage.glsl"
 #include "../common/particle.glsl"
 #include "../common/util.glsl"
+
+
 
 // Color of this particle from vertex shader.
 layout(location = 0) in vec3 fragColor;
@@ -41,22 +42,15 @@ void main()
 	{	
 		discard;
 	}
-	#if 1 && defined(DEBUG)
-	if(uint(ShaderFlags.frameNum) == 500  && index == 59)
-	{
-		debugPrintfEXT("FRAGPART particlenum=%d, gl_FragCord:<%0.2f,%0.2f,%0.2f,%0.2f>, gl_PointCoord:<%0.2f,%0.2f>,gl_SubgroupInvocationID:%u",
-		index,gl_FragCoord.x,gl_FragCoord.y,gl_FragCoord.z,gl_FragCoord.w,gl_PointCoord.x,gl_PointCoord.y,gl_SubgroupInvocationID);
-		//debugPrintfEXT(" gl_SubgroupInvocationID:%u, gl_SubgroupSize:%u",gl_SubgroupInvocationID,gl_SubgroupSize  );
-	}
-	#endif	
 
+#if !defined(VERPONLY)	
 	if(uint(ShaderFlags.Boundary) == 0 && index <= bbound)
 		discard;
 	
 	// If the particle is not live return.		
 	if(uint(P[index].parms.x) > uint(ShaderFlags.frameNum))
 		return;	
-		
+#endif	
 
 //DEBUG	
 #if 0 && defined(DEBUG)

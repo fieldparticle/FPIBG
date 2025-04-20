@@ -30,7 +30,7 @@
 %*
 %******************************************************************/
 
-#version 450
+#version 460
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 #extension GL_EXT_debug_printf : enable
@@ -39,26 +39,20 @@
 #extension GL_EXT_shader_atomic_float:enable
 #extension GL_KHR_shader_subgroup_basic:enable
 
-#include "../cdn/params.glsl"
+
+#include "../params.glsl"
 #include "../common/constants.glsl"
 #include "../common/util.glsl"
 #include "../common/push.glsl"
 #include "../common/atomic.glsl"
 #include "../common/CollimageIndex.glsl"
+#include "../common/Lockimage.glsl"
 #include "../common/particle.glsl"
-#include "../cdn/GetCflg.glsl"
-#include "../cdn/CalcMomentum.glsl"
-#include "../cdn/ProcessParticleContact.glsl"
+#include "../common/GetCflg.glsl"
+#include "../common/CalcMomentum.glsl"
+#include "../common/ProcessParticleContact.glsl"
+#include "../common/isParticleContact.glsl"
 
-
-#include "../cdn/GetCDRadius.glsl"
-#include "../cdn/CalcBoundaryVel.glsl"
-#include "../cdn/ProcessCDBoundary.glsl"
-
-
-
-// Configure workgroups.
-#include "../cdn/workgroups.glsl"
 
 void main()  
 {
@@ -77,7 +71,7 @@ void main()
 		collOut.vnumParticles=0;
 		
 		P[0].PosLoc.x  = 0.0;
-		 P[0].PosLoc.y  = 0.0;
+		P[0].PosLoc.y  = 0.0;
 		 //P[0].PosLoc.z   = 0.0; holds actual frame
 		// Use to stop everybody on boundary violation
 		P[0].PosLoc.w  = 0.0;
@@ -88,16 +82,16 @@ void main()
 		atomicAdd(collOut.holdPidx,1);	
 #endif	
 
-	if (index >= NUMPARTS || index <= bbound)
+	if (index >= NUMPARTS)
 	{
 		return;	
 	}
+	
 #ifdef DEBUG
 	float(atomicAdd(collOut.numParticles,1));	
 #endif
 	
-	if(P[0].PosLoc.w == 1.0)
-		return;
+		
 	vec3 totVel = vec3(0.0,0.0,0.0);
 	uint Findex = index;
 	uint Tindex = 0;
@@ -105,20 +99,20 @@ void main()
 	uint duplst[256]; 	
 	uint dupcnt = 0;
 	bool dupflg = false;
+	vec3 OutVel = vec3(0.0,0.0,0.0);;		
+	uint flg=0;
 	
-	// If the particle is not live return.
-	if(uint(P[Findex].parms.x) > uint(ShaderFlags.actualFrame))
-		return;
-	//if the particle is dead
-	if(uint(P[Findex].prvvel.w) == 1)
-		return;
-	
+	uint cc = 0;	
 	//uint ii = gl_GlobalInvocationID.y;
-	for(uint ii = 0; ii < 8;ii++)
+	for(uint ii = 0; ii < 8; ii++)
 	{
 		// Set location to local variable.
 		uint loc = P[Findex].zlink[ii].ploc;
-
+		#if 0
+			if(uint(ShaderFlags.frameNum) == 2 && index == 2)
+					debugPrintfEXT("loc:%d",loc);
+				
+		#endif
 		// If the lcation is not zero..
 		if (loc != 0)
 		{
@@ -126,42 +120,67 @@ void main()
 			// And compare this particle with all of the paricles at this location.
 			for(uint jj = 0; jj< MAX_ARY;jj++)
 			{
+				
 				Tindex = clink[loc].idx[jj];
 
 				// If the linked particle is zero teminate
-				if(Tindex == 0)
-					break;
-				
-				// Process boundary first.
-				vec3 OutVel = vec3(0.0,0.0,0.0);
-				
-				ProcessCDBoundary(Findex,Tindex,OutVel);
-				
-				for(uint ii = 0; ii <= dupcnt && dupcnt < 256; ii++)
+				if(Tindex != 0 && Tindex != Findex)
 				{
-					if(duplst[ii] == Tindex)
+
+#if 0			
+	
+						cc = 0;
+						while(cc <= dupcnt+1 && dupcnt < 32)
+						{
+							if(duplst[cc] == Tindex)
+							{
+								dupflg = true;
+								break;
+							}
+							else if(duplst[cc] == 0)
+							{
+								dupflg = false;
+								duplst[dupcnt] = Tindex;
+						#if 1						
+								if(uint(ShaderFlags.frameNum) == 2 && index == 2)
+									debugPrintfEXT("DUPITM:%d",duplst[dupcnt]);
+						#endif
+								dupcnt++;
+								break;
+							}
+							
+						
+							cc++;
+						}
+					
+	#if 1
+					if(uint(ShaderFlags.frameNum) == 3)
 					{
-						dupflg = true;
-						break;
+						if(dupflg == true)
+							flg = 1;
+						else
+							flg = 0;
+						debugPrintfEXT("F:%d C:%d,Findex:%d,Tindex:%d, DUP:%d,",uint(ShaderFlags.frameNum),uint(collOut.CollisionCount),Findex,Tindex,flg);
 					}
-					if(duplst[ii] == 0)
-					{
-						dupflg = false;
-						duplst[ii] == Tindex;
-						dupcnt = ii;
-						break;
+	#endif
+						
+					
+#endif
+						if(dupflg == false)						
+						{
+							
+							if(isParticleContact(ii,Findex, Tindex, OutVel) > 0)
+							{
+								atomicAdd(collOut.CollisionCount,1);
+								
+							}
+							dupflg = true;
+						
+						}
 					}
-				}
-										
-				if(dupflg == false)						
-				{
-					ProcessParticleContact(ii,Findex, Tindex, OutVel);
-					totVel += OutVel;
 				}
 			}
 		}
+
+	
 	}
-	
-	//P[Findex].VelRad.xyz += totVel;
-	
-}

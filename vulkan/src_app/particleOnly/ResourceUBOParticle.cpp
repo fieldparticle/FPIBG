@@ -111,7 +111,8 @@ void ResourceParticleUBO::createBuffers()
 void ResourceParticleUBO::PushMem(uint32_t currentBuffer)
 {
 	
-	
+	//if(m_done == true)
+	//return;
 	float sidelength = m_Particle->m_SideLength;
 	m_UBO = {};
 	///================================ Subpass 1
@@ -128,10 +129,10 @@ void ResourceParticleUBO::PushMem(uint32_t currentBuffer)
 		glm::vec3(0.0, 0.0, 0.0),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	
-	m_UBO.proj = glm::ortho(-static_cast<float>(sidelength) /1.0f,
-							static_cast<float>(sidelength) / 1.0f,
-							-static_cast<float>(sidelength) /1.0f,
-							static_cast<float>(sidelength) / 1.0f,G_OrthoMin,G_OrthoMax);
+	m_UBO.proj = glm::ortho(-static_cast<float>(sidelength) /1.5f,
+							static_cast<float>(sidelength) / 1.5f,
+							-static_cast<float>(sidelength) /1.5f,
+							static_cast<float>(sidelength) / 1.5f,G_OrthoMin,G_OrthoMax);
 	
 	m_UBO.proj[1][1] *= -1.0f;
 	void* data = nullptr;
@@ -139,4 +140,5 @@ void ResourceParticleUBO::PushMem(uint32_t currentBuffer)
 
 	vmaCopyMemoryToAllocation(m_App->m_vmaAllocator, &m_UBO, m_Allocation[currentBuffer],
 		0, sizeof(m_UBO));
+	m_done = true;
 }

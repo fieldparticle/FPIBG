@@ -41,6 +41,8 @@ void VulkanObj::Create(ConfigObj* CFG)
 	m_FramesBuffered = CfgApp->GetUInt("application.framesBuffered", true);
 	#ifndef NDEBUG
 		m_EnableValidationLayers = CfgApp->GetBool("application.enableValidationLayers", true);
+		if(CfgApp->GetBool("application.nsight", true) == true)
+			m_EnableValidationLayers = false;
 	#else
 		m_EnableValidationLayers = false;
 	#endif
@@ -52,9 +54,11 @@ void VulkanObj::Create(ConfigObj* CFG)
 	m_AppName = CfgApp->GetString("name", true);
 	m_dt = CfgApp->GetFloat("application.dt", true);
 	m_PhysDevice = CfgApp->GetString("application.phys_device", true);
+	bool nsight = CfgApp->GetBool("application.nsight", true);
 
 	//##JMB 
-	/*if (m_NSight == true)
+	/*
+	if (nsight == true)
 	{
 		m_CompileShaders = false;
 		m_AutoTimeOut = 0;
@@ -62,7 +66,8 @@ void VulkanObj::Create(ConfigObj* CFG)
 		m_Stopondata = false;
 		m_EnableValidationLayers = false;
 
-	}*/
+	}
+	*/
 #ifdef NDEBUG
 	//m_CompileShaders = true;
 	//m_EnableValidationLayers = false;

@@ -107,6 +107,19 @@ class TCPObj
 
 
 	}
+    std::vector <std::string> GetSplitBuffer()
+    {
+        std::vector<std::string> result;
+        std::stringstream ss;
+        ss << m_SRecvBuf;
+        while( ss.good() )
+        {
+            std::string substr;
+            getline( ss, substr, ',' );
+            result.push_back( substr );
+        }
+     return result;
+    }
     std::string GetBuffer()
     {
         return m_SRecvBuf;

@@ -38,8 +38,8 @@ float ZoomY = 1.0;
 float ZoomZ = 1.0;
 float ColorMap = 0.0;
 bool G_Boundary = true;
-float G_OrthoMin =-80.0f;
-float G_OrthoMax = 250.0f;
+float G_OrthoMin =-100.0f;
+float G_OrthoMax = 350.0f;
 float TranslateX=0.0;
 float TranslateY=0.0;
 float TranslateZ=0.0;
@@ -116,7 +116,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		if(G_OrthoMax == 241.0)
 		{
-			G_OrthoMax = 300.0;
+			G_OrthoMax = 400.0;
 			G_OrthoMin = 100.0;
 		}
 		else

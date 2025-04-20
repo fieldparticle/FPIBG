@@ -33,7 +33,7 @@
 #include "TCPIP/TCPSObj.hpp"
 
 
-int ParticleOnly(PerfObj* perObj, TCPObj* tcp, TCPObj* tcpapp)
+int ParticleOnly(PerfObj* perObj, TCPObj* tcp, TCPObj* tcpapp, bool rmtFlag)
 {
 	
 	VulkanObj* vulkanObj = new VulkanObj;
@@ -166,7 +166,7 @@ int ParticleOnly(PerfObj* perObj, TCPObj* tcp, TCPObj* tcpapp)
 	SetCallBacks(vulkanObj);
 	int ret = 0;
 
-	if(CfgApp->GetBool("application.doAuto", true) == true)
+	if(rmtFlag == false)
 		ret = Loop(perObj, tcp,tcpapp, drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);
 	else
 		ret = NoPerfLoop(perObj, tcp, tcpapp,drawParticleOnly,vulkanObj, resourceGraphicsContainer, resourceComputeContainer);

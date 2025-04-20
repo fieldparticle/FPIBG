@@ -42,6 +42,7 @@ void PerfObj::Create()
 	m_testCFBDir= CfgApp->GetString("application.testdirCFB", true);
 	m_testPCDDir= CfgApp->GetString("application.testdirPCD", true);
 	m_testDUPDir= CfgApp->GetString("application.testdirDUP", true);
+	m_SingleFileTest= CfgApp->GetBool("application.doAutoSingleFile", true);
 	if(!m_TestCFG.compare("testdirPQB"))
 	{
 		m_TestDir = m_testPQBDir;
@@ -61,26 +62,38 @@ void PerfObj::Create()
 	}
 
 }
-uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp)
+uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag)
 {
 	
 	namespace fs = std::filesystem;
-	
 	std::set<fs::path> sorted_by_name;
 	std::vector<std::string> filename;
-	std::string path = m_TestDir;
-	for (auto& entry : fs::directory_iterator(path))
+
+	if(m_SingleFileTest == false)
 	{
-		sorted_by_name.insert(entry.path());
-		filename.push_back(entry.path().string());
+		
+		std::string path = m_TestDir;
+		for (auto& entry : fs::directory_iterator(path))
+		{
+			sorted_by_name.insert(entry.path());
+			filename.push_back(entry.path().string());
+		}
+	#if 1
+		for (const auto& entry : sorted_by_name)
+		{
+			if ((entry.string().find("tst")) != std::string::npos)
+				filename.push_back(entry.string());
+		}
+	#endif
 	}
-#if 0
-	for (const auto& entry : sorted_by_name)
+	else
 	{
-		if ((entry.string().find("tst")) != std::string::npos)
-			filename.push_back(entry.string());
+
+		filename.push_back(CfgApp->GetString("application.VerfPerf.testfile", true));
+
+
 	}
-#endif
+
 	uint32_t count = 0;
 
 	//for (size_t ii = 0; ii < 4; ii++)
@@ -113,7 +126,7 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp)
 			mout << "Auto DataFile : " << m_DataFile << ende;
 
 
-			if (ParticleOnly(this,tcps,tcpcapp))
+			if (ParticleOnly(this,tcps,tcpcapp,false))
 			{
 				mout << "Auto - ParticleOnly failed" << ende;
 				return 1;
@@ -176,7 +189,7 @@ int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, si
 					<< m_partcount << ","										// expectedp: frm tst - generated
 					<< VulkanWin->m_Numparticles-1 << ","							// loadedp: loaded into rccdApp
 					<< m_ReportBuffer[ii].NumParticlesComputeCount << ","// shaderp_comp: counted from compute
-					<< m_ReportBuffer[ii].NumParticlesGraphicsCount << ","							// shaderp_grp: counted from graphics
+					<< m_ReportBuffer[ii].NumParticlesGraphicsCount << ","			// shaderp_grp: counted from graphics
 					<< m_colcount << ","										// expectedc: expected collisions
 					<< m_ReportBuffer[ii].NumCollisionsComputeCount << ","							// shaderc: compute counted collisions
 					<< m_ReportBuffer[ii].ThreadCountComp << ","									// threadcount: number of threads compute

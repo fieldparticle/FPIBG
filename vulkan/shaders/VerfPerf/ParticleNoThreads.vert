@@ -4,19 +4,17 @@
 #extension GL_EXT_debug_printf : enable
 #extension GL_EXT_scalar_block_layout :enable
 
-#include "../cdn/params.glsl"
+
+
 #include "../common/constants.glsl"
-#include "../common/atomicg.glsl"
+#include "../common/util.glsl"
 #include "../common/push.glsl"
+#include "../common/atomicg.glsl"
 #include "../common/CollimageIndex.glsl"
 #include "../common/Lockimage.glsl"
 #include "../common/particle.glsl"
 
-//#include "GetCflg.glsl"
-#include "../common/util.glsl"
-#include "../cdn/GetCDRadius.glsl"
-#include "../cdn/ChangePosCDNoz.glsl"
-	
+
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -46,23 +44,25 @@ layout(location = 2) out vec3 matpos;
 
 void main(){
 	
-	 
+	
+	
 	int index 		= gl_VertexIndex;
 	if(index == 0)
 	{
-		collIn.numParticles = 0;
+		collIn.numParticles = 1;
 		return;
 	}	
 	
 	#ifdef DEBUG
 		atomicAdd(collIn.numParticles,1);	
 	#endif
+	
 	// Set point size 
 	gl_PointSize = 1.0;
 	
 	// Apply view to location
 	vec3 posLocNDC =  P[index].PosLoc.xyz;
-  	gl_Position = ubo.proj * ubo.view * ubo.model * vec4(posLocNDC, 1.0);
+  	gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition.xyz, 1.0);
 	
 	
 	#if 0 && defined(DEBUG)
@@ -70,14 +70,16 @@ void main(){
 		debugPrintfEXT("GRAPHPART velocity:%d vx=%0.3f,vy=%0.3f,vz=%0.3f,",
 		0,P[index].VelRad.x,P[index].VelRad.y,P[index].VelRad.z);
 	#endif	
-		
+	
+
 	// If the particle is not live return.		
 	if(uint(P[index].parms.x) > uint(ShaderFlags.actualFrame))
 		return;	
 		
 	if(uint(P[index].prvvel.w) == 1)
 		return;
-		
+	
+
 	//clear zlink
 	for(uint jj=0;jj<MAX_OCCUPANCY;jj++)
 	{
@@ -85,14 +87,6 @@ void main(){
 		P[index].zlink[jj].pindex =0;
 		//P[index].wary[jj].x = 0.0;
 	}
-	if(index > bbound)
-	{
-	
-		if(ChangePosCDNoz(index) != 0)
-			return;
-
-	}
-		
 	
 	uint Loc[8];
 	float cx 		= P[index].PosLoc.x;
@@ -134,7 +128,7 @@ void main(){
 		return;
 #if 0
 	
-	if(uint(ShaderFlags.frameNum) == 3 && index == 57)
+	if(uint(ShaderFlags.frameNum) == 8 && index == 16)
 	{
 		debugPrintfEXT("%u at <%u,%u,%u>,<%0.4f,%0.4f,%0.4f>",
 			P[index].zlink[0].ploc,uint(round(cx+R)), uint(round(cy+R)), uint(round(cz-R)),
@@ -202,7 +196,7 @@ void main(){
 	
 // DEBUG
 #if 0 && defined(DEBUG)
-	if(uint(ShaderFlags.frameNum) == 3 && index == 1)
+	if(uint(ShaderFlags.frameNum) == 3 && index == 2)
 	{
 		debugPrintfEXT(",,,-------------------------");
 		for(uint ii = 0; ii< MAX_OCCUPANCY;ii++)
@@ -247,7 +241,7 @@ void main(){
 				{
 					uvec3 badloc;
 					//IndexToArray(sltidx,badloc);
-					debugPrintfEXT("GRAPHVERT F:%u,P:%d,R:%0.2f,Slots:%d,at loc: %d(%d,%d,%d), exceeds max array:%d",
+					debugPrintfEXT("VERT slot>MAX_ARY  F:%u,P:%d,R:%0.2f,Slots:%d,at loc: %d(%d,%d,%d), exceeds max array:%d",
 					uint(ShaderFlags.frameNum),index,R,MAX_ARY,sltidx,badloc.x,badloc.y,badloc.z,slot);
 					collIn.ExcessSlots = slot;
 					collIn.ErrorReturn = 1;

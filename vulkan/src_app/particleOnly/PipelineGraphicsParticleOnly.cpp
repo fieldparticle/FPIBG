@@ -156,7 +156,7 @@ void PipelineGraphicsParticleOnly::CreatePipeline()
     //rasterizer.depthBiasEnable 			= VK_FALSE;
     rasterizer.depthBiasEnable = VK_FALSE;
 
-#if 1
+#if 0
         //VkSampleLocationEXT
     VkSampleLocationEXT sampleLocation[8];
     sampleLocation[0].x = 0.1f;

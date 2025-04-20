@@ -392,6 +392,9 @@
     <ClCompile Include="..\..\src\tcpip\TCPCObj.cpp">
       <Filter>vulkanobj</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\system\WinSys.cpp">
+      <Filter>vulkanobj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\run\particle\Particle.cfg" />
