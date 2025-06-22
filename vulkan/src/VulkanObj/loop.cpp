@@ -198,6 +198,12 @@ int Loop(PerfObj* perfObj, TCPObj* tcp,TCPObj* tcpsapp, DrawObj* DrawInstance, V
 					{
 						tcp->WritePort(objtxt.str().c_str());
 						tcp->ReadPort();
+						if(tcp->m_SRecvBuf.compare("stop") == 0)
+						{
+							vkDeviceWaitIdle(VulkanWin->GetLogicalDevice());
+							return 2;
+						}
+							
 					}
 
 					aprCount++;

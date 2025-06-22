@@ -85,6 +85,7 @@ void main(){
 		P[index].zlink[jj].pindex =0;
 		//P[index].wary[jj].x = 0.0;
 	}
+	//######set gl_Positon aftet this
 	if(index > bbound)
 	{
 	

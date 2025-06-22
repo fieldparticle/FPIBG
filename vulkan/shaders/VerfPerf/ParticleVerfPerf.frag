@@ -9,7 +9,7 @@
 #extension GL_KHR_shader_subgroup_basic:enable
 //#extension GL_NV_fragment_shader_interlock : enable
 //#extension GL_ARB_fragment_shader_interlock : enable
-#include "../params.glsl"
+#include "../VerfPerf/params.glsl"
 #include "../common/constants.glsl"
 #include "../common/atomicg.glsl"
 #include "../common/push.glsl"

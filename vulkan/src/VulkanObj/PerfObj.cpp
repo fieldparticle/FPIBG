@@ -125,14 +125,20 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag)
 			m_DataFile = CfgTst->GetString("dataFile", true);
 			mout << "Auto DataFile : " << m_DataFile << ende;
 
-
-			if (ParticleOnly(this,tcps,tcpcapp,false))
+			uint32_t ret = ParticleOnly(this,tcps,tcpcapp,false);
+			//Fail
+			if (ret == 1)
 			{
 				mout << "Auto - ParticleOnly failed" << ende;
 				return 1;
 			}
+			//Stop command
+			if (ret == 2)
+			{
+				mout << "Auto - ParticleOnly failed" << ende;
+				return 2;
+			}
 			
-
 			if (QuitEvent == 1)
 				return 0;
 			

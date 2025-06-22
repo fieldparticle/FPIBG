@@ -127,8 +127,8 @@ void  ShaderObj::WriteShaderHeader()
 	if(CfgApp->GetBool("application.doMotion", true) == true)
 		motion_str = 1;
 
-   std::string fildir = CfgApp->GetString("application.gen_glsl_dir", true);
-	std::string filename = fildir + "/params.glsl";;
+	std::string fildir = CfgApp->GetString("application.gen_glsl_dir", true);
+    std::string filename = fildir + "/VerfPerf/params.glsl";
     {
 		std::string dbgflag = {};
 #ifdef NDEBUG

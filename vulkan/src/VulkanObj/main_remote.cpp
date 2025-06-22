@@ -132,6 +132,9 @@ int main() try
 			tcps->m_SRecvBuf = "";
 			// If capture is enabled launch the app
 			ret = pf->DoStudy(tcps,nullptr,true);
+			// If stop command
+			if(ret == 2)
+				ret = 0;
 			tcps->WritePort("perfdone,tcp");
         }
 		if(msg[0].compare("sndcsv")==0)
