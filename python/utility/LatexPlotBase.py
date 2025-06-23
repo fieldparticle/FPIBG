@@ -10,7 +10,7 @@ import numpy as np
 from LatexConfigurationClass import *
 from LatexConfigurationClass import *
 from LatexPlotBase import * 
-from FPIBGConfig import *
+from ConfigClass import *
 from AttrDictFields import *
 from LatexPreview import *
 from LatexDialogs import *
@@ -119,12 +119,15 @@ class LatexPlotBase(LatexConfigurationClass):
             # allocate a attribute dictionary for fields
             fld = AttrDictFields()
             # Create a data container object
-            dataObj = LatexDataContainer(self.bobj,"LatexDataContainer")
-            # Create the data objecy
-            if(data_file == None):
-                dataObj.Create(data_src,self.cfg.data_dir)
-            else:
-                dataObj.Create(data_src,self.cfg.data_dir,data_file)
+            dataObj = LatexDataContainer(self.bobj,self.itemcfg,"LatexDataContainer")
+            try :
+                # Create the data objecy
+                if(data_file == None):
+                    dataObj.Create(data_src,self.cfg.data_dir)
+                else:
+                    dataObj.Create(data_src,self.cfg.data_dir,data_file)
+            except BaseException as e:
+                return
             # Get the data
             data = dataObj.getData()
             #print(data_src)
@@ -165,7 +168,6 @@ class LatexPlotBase(LatexConfigurationClass):
                 
                 for zz in range(len(plot_cmds)):
                     trendtxt = f"{legends[zz]} {trendlines[plotNum]} trendline" 
-
                     trend  = TrendLine(self.onpdata[0,start:],self.onpdata[zz+1,start:],trendlines[zz-1],plotNames[zz-1],self.valHandler,self.itemcfg.config.tex_dir)
                     trend.doTrendLine(plt,lineColors[zz],trendtxt)
             

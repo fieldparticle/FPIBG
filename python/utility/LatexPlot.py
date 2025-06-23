@@ -12,7 +12,7 @@ from matplotlib.backends.qt_compat import QtWidgets
 import numpy as np
 from LatexConfigurationClass import *
 from LatexPlotBase import * 
-from FPIBGConfig import *
+from ConfigClass import *
 from AttrDictFields import *
 from LatexPreview import *
 from LatexDialogs import *

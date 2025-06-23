@@ -3,10 +3,12 @@ from PyQt6.QtWidgets import QApplication, QWidget,  QFormLayout, QGridLayout, QT
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon
 from TabClassLatex import *
-from FPIBGException import *
+#from FPIBGException import *
 
 GlobalPrintbuffer =  None
-
+sys.path.insert(0, 'J:/FPIBG/python/utility')
+sys.path.insert(0, 'J:/FPIBG/python/shared')
+sys.path.insert(0, 'J:/FPIBG/python')
 import inspect
 ## The main window object that contains the tabs for the utility
 class LatexWin(QWidget):

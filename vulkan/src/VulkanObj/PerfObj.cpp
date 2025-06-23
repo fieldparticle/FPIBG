@@ -76,7 +76,7 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag)
 		for (auto& entry : fs::directory_iterator(path))
 		{
 			sorted_by_name.insert(entry.path());
-			filename.push_back(entry.path().string());
+			//filename.push_back(entry.path().string());
 		}
 	#if 1
 		for (const auto& entry : sorted_by_name)
@@ -104,7 +104,9 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag)
 		size_t pt = 0;
 		std::string pathtest{};
 		pathtest = filename[ii];
-	
+
+		std::filesystem::path cwd = std::filesystem::current_path();
+		
 		if ((pt= pathtest.find("tst")) != std::string::npos)
 		{
 			std::cout	<< "=======================" 

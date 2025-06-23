@@ -7,33 +7,44 @@ from PyQt6.QtWidgets import QFileDialog, QGroupBox,QMessageBox
 from PyQt6.QtWidgets import QGridLayout, QTabWidget, QLineEdit,QListWidget
 from PyQt6.QtWidgets import QPushButton, QGroupBox
 from PyQt6 import QtCore
-from FPIBGConfig import FPIBGConfig
+from ConfigClass import *
 from LatexClass import *
 from CfgLabel import *
-from FPIBGException import *
+from GenSig import *
+from PyQt6.QtCore import (
+    QObject,
+    QRunnable,
+    QThreadPool,
+    QTimer,
+    pyqtSignal,
+    pyqtSlot,
+)
 from LatexDataConfigurationClass import *
 import glob
 
 
-class TabGenData(QTabWidget):
+class TabGenData(QTabWidget,QRunnable):
     
     texFolder = ""
     CfgFile = ""
     texFileName = ""
     hasConfig = False
-    itemcfg = FPIBGConfig("Latex Class")
+    itemcfg = ConfigClass("Latex Class")
     startDir = "J:/MOD/FPIBGUtility/Latex"
     startDir = "J:/FPIBGJournalStaticV2/rpt"
     startDir = "J:/FPIBGDATAPY/cfg"
     selected_item = -1
     ObjName = ""
     ltxObj = None
-   
-
+    select_list = []
+    gen_obj = None
+    sel_dict = None
 
     def __init__(self, *args, **kwargs ):
         super().__init__(*args, **kwargs )
-        
+        self.threadpool = QThreadPool()
+        thread_count = self.threadpool.maxThreadCount()
+        print(f"Multithreading with maximum {thread_count} threads")
        
         
     
@@ -72,7 +83,7 @@ class TabGenData(QTabWidget):
             self.texFileName = os.path.splitext(os.path.basename(self.CfgFile))[0]
             self.dirEdit.setText(self.CfgFile)
             try :
-                self.itemcfg = FPIBGConfig(self.CfgFile)
+                self.itemcfg = ConfigClass(self.CfgFile)
                 self.itemcfg.Create(self.bobj.log,self.CfgFile)
                 
             except BaseException as e:
@@ -130,14 +141,78 @@ class TabGenData(QTabWidget):
         self.ltxObj.setConfigGroup(self.tab_layout)
         self.ltxObj.OpenLatxCFG()
 
+#################################################### GEN DATA
+
+# load all lines from the particle selections file into selections list
+    def open_selections_file(self):
+        try:
+            with open(self.itemcfg.config.selections_file_text,"r",newline='') as csvfl:
+                reader = csv.DictReader(csvfl, delimiter=',',dialect='excel')
+                for row in reader:
+                    if row["sel"] == 's':
+                        self.select_list.append(row)
+        except BaseException as e:
+            self.log.log(self,f"Error opening:{self.itemcfg.config.selections_file_text}, err:", e)
+
+
+    def gen_one_data(self,progress_callback):
+        return self.gen_obj.gen_data_base(self.index,self.sel_dict,progress_callback)
+            
+
+    def result(self, s):
+        pass
+
+
+    def thread_complete(self):
+        print("Thread Complete")
+        self.bobj.log.log(self,f"Wrote {self.gen_obj.count} particle to {self.gen_obj.test_bin_name}")
+        self.index += 1
+        if (self.index >= len(self.select_list)) or (self.gen_obj.flg_stop == True):
+            self.GenDataButton.setStyleSheet("background-color:  #dddddd")
+            self.GenDataButton.clicked.connect(self.gen_data)
+            self.GenDataButton.setText("GenData")
+            return
+        else:
+            self.launch_thread()
+
+    def progress_fn(self, n):
+        print(f"{n:.1f}% done")
+
+    def launch_thread(self):
+        self.sel_dict = self.select_list[self.index]
+        worker = Worker( self.gen_one_data) 
+        worker.signals.result.connect(self.result)
+        worker.signals.finished.connect(self.thread_complete)
+        worker.signals.progress.connect(self.progress_fn)
+        self.threadpool.start(worker)
+    
+    def stop_data(self):
+        self.gen_obj.stop_thread()
+        self.GenDataButton.setStyleSheet("background-color:  #dddddd")
+        self.GenDataButton.clicked.connect(self.gen_data)
+        self.GenDataButton.setText("GenData")
+
     def gen_data(self):
+        self.gen_obj = self.ltxObj.getGenObj()
+        self.GenDataButton.setStyleSheet("background-color:  #ff0000")
+        self.GenDataButton.setText("Stop")
+        self.GenDataButton.clicked.connect(self.stop_data)
+        
+        if not os.path.exists(self.itemcfg.config.data_dir):
+            os.makedirs(self.itemcfg.config.data_dir)
+        self.open_selections_file()
+        self.index = 0
+        self.launch_thread()
+           
+        #self.select_list.clear()
+        """
         self.ltxObj.gen_data()
         self.ListObj.clear()
         files_names = self.itemcfg.config.data_dir + "/*.bin"
         files = glob.glob(files_names)
         for ii in files:
                 self.ListObj.addItem(ii)
-
+        """
 
     def plot_particles(self):
         
@@ -206,7 +281,6 @@ class TabGenData(QTabWidget):
             self.GenDataButton.setEnabled(False)
             dirgrid.addWidget(self.GenDataButton,2,2)
 
-            
             self.ListObj =  QListWidget()
             #self.ListObj.setFont(self.font)
             self.ListObj.setStyleSheet("background-color:  #FFFFFF")
@@ -215,8 +289,6 @@ class TabGenData(QTabWidget):
             #self.ListObj.itemSelectionChanged.connect(lambda: self.valueChangeArray(self.ListObj))
             dirgrid.addWidget(self.ListObj,3,0,1,2)
             self.log.log(self,"TabFormLatex finished Create.")
-            
-
             
             ## -------------------------------------------------------------
             ## Comunications Interface

@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QWidget,QScrollArea,QVBoxLayout,QTabWidget,QFileDial
 from PyQt6.QtGui import QPixmap
 from CfgLabel import *
 from LatexClass import *
-from FPIBGConfig import *
+from ConfigClass import *
 import csv
 class LatexConfigurationClass():
     objArry = []
@@ -139,7 +139,7 @@ class LatexConfigurationClass():
             elif type(v) == bool:
                 #print("Str",k,v)
                 widget = CfgBool(k,v)
-                self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+                self.layouts[self.lyCount].addWidget(widget.Create(self))
                 self.objArry.append(widget)
                 self.cfgHeight += 70
             elif type(v) == int:
@@ -168,17 +168,17 @@ class LatexConfigurationClass():
             H,W = self.DoImageList(cfg,k,v)
         elif "caption_array" in k:
             widget = CfgArray(k,v)
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))    
+            self.layouts[self.lyCount].addWidget(widget.Create(self))    
             self.objArry.append(widget) 
             H,W = widget.getHW()
         elif "command_dict" in k:
             widget = CfgDict(k,v)
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+            self.layouts[self.lyCount].addWidget(widget.Create(self))
             self.objArry.append(widget)                 
             H,W = widget.getHW()
         else:
             widget = CfgArray(k,v)
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))    
+            self.layouts[self.lyCount].addWidget(widget.Create(self))    
             self.objArry.append(widget) 
             H,W = widget.getHW()
         return H,W
@@ -190,61 +190,61 @@ class LatexConfigurationClass():
         W = 0
         if "caption_box" == k:
             widget = CfgTextBox(k,v,self)
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+            self.layouts[self.lyCount].addWidget(widget.Create(self))
             H,W = widget.setHW(100,250)
             self.objArry.append(widget)
         elif "type_text" in k:
-            self.type_text = CfgString(k,v,self)
-            self.layouts[self.lyCount].addWidget(self.type_text.Create(cfg,self.itemcfg,self))
+            self.type_text = CfgString(k,v)
+            self.layouts[self.lyCount].addWidget(self.type_text.Create(self))
             H,W = self.type_text.setHW(30,250)     
             self.objArry.append(self.type_text)
         elif "data_file" in k:
-            self.name_text = CfgDataString(k,v,self)
-            self.layouts[self.lyCount].addWidget(self.name_text.Create(cfg,self.itemcfg,self))
+            self.name_text = CfgDataString(k,v)
+            self.layouts[self.lyCount].addWidget(self.name_text.Create(self))
             H,W = self.name_text.setHW(30,250)     
             self.objArry.append(self.name_text)
         elif "images_name_text" in k:
-            self.images_name_text = CfgString(k,v,self)
-            self.layouts[self.lyCount].addWidget(self.images_name_text.Create(cfg,self.itemcfg,self))
+            self.images_name_text = CfgString(k,v)
+            self.layouts[self.lyCount].addWidget(self.images_name_text.Create(self))
             H,W = self.images_name_text.setHW(30,250)     
             self.objArry.append(self.images_name_text)
         elif "name_text" in k:
-            self.name_text = CfgString(k,v,self)
-            self.layouts[self.lyCount].addWidget(self.name_text.Create(cfg,self.itemcfg,self))
+            self.name_text = CfgString(k,v)
+            self.layouts[self.lyCount].addWidget(self.name_text.Create(self))
             H,W = self.name_text.setHW(30,250)     
             self.objArry.append(self.name_text)
         elif "tex_dir" in k:
-            self.tex_dir = CfgString(k,v,self)
+            self.tex_dir = CfgString(k,v)
             self.tex_dir.setAsDir()
-            self.layouts[self.lyCount].addWidget(self.tex_dir.Create(cfg,self.itemcfg,self))
+            self.layouts[self.lyCount].addWidget(self.tex_dir.Create(self))
             H,W = self.tex_dir.setHW(100,250)
             self.objArry.append(self.tex_dir)  
         elif "images_dir" in k:
-            self.images_dir = CfgString(k,v,self)
+            self.images_dir = CfgString(k,v)
             self.images_dir.setAsDir()
-            self.layouts[self.lyCount].addWidget(self.images_dir.Create(cfg,self.itemcfg,self))
+            self.layouts[self.lyCount].addWidget(self.images_dir.Create(self))
             H,W = self.images_dir.setHW(100,250)
             self.objArry.append(self.images_dir)
         elif "cmd" in k:
-            widget = CfgCmd(k,v,self)
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+            widget = CfgCmd(k,v)
+            self.layouts[self.lyCount].addWidget(widget.Create(self))
             H,W = 0,0
             self.objArry.append(widget)
         elif "dir" in k:
-            widget = CfgString(k,v,self)
+            widget = CfgString(k,v)
             widget.setAsDir()
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+            self.layouts[self.lyCount].addWidget(widget.Create(self))
             H,W = widget.setHW(100,250)
             self.objArry.append(widget)
         elif "file" in k:
-            widget = CfgString(k,v,self)
+            widget = CfgString(k,v)
             widget.setAsFile()
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+            self.layouts[self.lyCount].addWidget(widget.Create(self))
             H,W = widget.setHW(100,250)
             self.objArry.append(widget)
         else:
-            widget = CfgString(k,v,self)
-            self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+            widget = CfgString(k,v)
+            self.layouts[self.lyCount].addWidget(widget.Create(self))
             H,W = widget.setHW(30,250)
             self.objArry.append(widget)
         

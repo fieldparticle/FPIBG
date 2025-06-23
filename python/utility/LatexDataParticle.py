@@ -6,14 +6,23 @@ class LatexDataParticle(LatexDataBaseClass):
 
     sumFile = ""
     average_list = []
-    def __init__(self, FPIBGBase, ObjName):
-        super().__init__(FPIBGBase, ObjName)
-    
+    mode = 0
+    def __init__(self, FPIBGBase, itemcfg, ObjName):
+        super().__init__(FPIBGBase, itemcfg, ObjName)
+        
+
+
     def getData(self):
         return self.data
 
-    def Create(self, data_type,data_dir,data_file= None):
+    def Create(self, data_type,data_dir,data_file= None,type='R'):
         self.data_type = data_type
+        
+        if('validation' in self.itemcfg.config.mode.lower()):
+            self.mode = 1
+        else:
+            self.mode = 0
+
         try :
             self.topdir = data_dir + "/perfdata" + data_type
             self.sumFile = self.topdir + "/perfdata" + data_type + ".csv"
@@ -26,8 +35,10 @@ class LatexDataParticle(LatexDataBaseClass):
         except BaseException as e:
             self.log.log(self,e)
             self.hasData = False
-            return None
-        self.data = pd.read_csv(self.sumFile,header=0)  
+            raise ValueError
+        self.data = pd.read_csv(self.sumFile,header=0) 
+        print(self.data)
+        return
 
     # Returns true if number of .tst files equal to number of R or D files
     def check_data_files(self) -> bool:
@@ -36,9 +47,13 @@ class LatexDataParticle(LatexDataBaseClass):
             self.hasData = False
             return False
         tst_files = [i for i in os.listdir(self.topdir) if i.endswith(".tst")]
-        self.data_files = [i[:-5] for i in os.listdir(self.topdir) if i.endswith("R.csv")]
+        if self.mode == 0:
+            self.data_files = [i[:-5] for i in os.listdir(self.topdir) if i.endswith("R.csv")]
+        else:
+            self.data_files = [i[:-5] for i in os.listdir(self.topdir) if i.endswith("D.csv")]
         self.hasData = len(tst_files) == len(self.data_files)
         if(self.hasData == False):
+            raise ValueError
             print("Raw data file count error")
         return self.hasData
     
@@ -53,15 +68,15 @@ class LatexDataParticle(LatexDataBaseClass):
     def get_averages(self):
         if(self.hasData == False):
             return
-        self.create_summary()
         for i in self.data_files:
             file_path_debug = self.topdir + "/" + i + "D.csv"
             file_path_release = self.topdir + "/" + i + "R.csv"
             fps = cpums = cms = gms = expectedp = loadedp = shaderp_comp = shaderp_grph = expectedc = shaderc = sidelen = count = 0
+            """
             with open(file_path_debug, 'r') as filename:
                 file = csv.DictReader(filename)
                 for col in file:
-                    count += 1
+                    
                     expectedp += float(col['expectedp'])
                     loadedp += float(col['loadedp'])
                     shaderp_comp += float(col['shaderp_comp'])
@@ -69,19 +84,23 @@ class LatexDataParticle(LatexDataBaseClass):
                     expectedc += float(col[' expectedc'])
                     shaderc += float(col['shaderc'])
                     sidelen += float(col[' sidelen'])
+            """
             with open(file_path_release, 'r') as filename:
                 file = csv.DictReader(filename)
                 for col in file:
+                    count += 1
                     fps += float(col['fps'])
                     cpums += float(col['cpums'])
                     cms += float(col['cms'])
                     gms += float(col['gms'])
+                    if count == 1:
+                        loadedp = float(col['loadedp'])
             fps = fps / count
             cpums = cpums / count
             cms = cms / count
             gms = gms / count
             expectedp = expectedp / count
-            loadedp = loadedp / count
+            #loadedp = loadedp / count
             shaderp_comp = shaderp_comp / count
             shaderp_grph = shaderp_grph / count
             expectedc = expectedc / count

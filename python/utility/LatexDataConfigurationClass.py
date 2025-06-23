@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QWidget,QScrollArea,QVBoxLayout,QTabWidget,QFileDial
 from PyQt6.QtGui import QPixmap
 from CfgLabel import *
 from LatexClass import *
-from FPIBGConfig import *
+from ConfigClass import *
 import csv
 class LatexDataConfigurationClass():
     objArry = []
@@ -61,12 +61,15 @@ class LatexDataConfigurationClass():
         self.gen_obj.plot_base(file_name)
         self.do_plot_group()
 
-    def plot_view_changed(self):
-        view = self.viewObj.currentRow()
+    def plot_view_changed(self,obj):
+        view = obj.currentRow()
         self.gen_obj.set_view_num(view)
         self.gen_obj.update_plot()
         return
-
+    
+    def getGenObj(self):
+        return self.gen_obj
+    
     def gen_data(self):
         self.gen_obj.gen_data()
 
@@ -93,12 +96,14 @@ class LatexDataConfigurationClass():
         control.setMaximumHeight(H)
         control.setMaximumWidth(W)
 
-    def itemChanged(self,key,val):
+    def itemChanged(self,key,val,obj=None):
         print("Items Changed in Parent:",key,val)
         if key == "Toggle Cells":
             self.toggle_cells()
         elif(key == "Toggle Cell Face"):
             self.toggle_cell_face()
+        elif (key == "view_list"):
+            self.plot_view_changed(obj)
         
  
     def SaveConfigurationFile(self):
@@ -308,7 +313,7 @@ class LatexDataConfigurationClass():
             H,W = self.name_text.setHW(30,250)     
             self.objArry.append(self.name_text)
         elif "tex_dir" in k:
-            self.tex_dir = CfgString(k,v)
+            self.tex_dir = CfgString(k,v,self)
             self.tex_dir.setAsDir()
             self.layouts[self.lyCount].addWidget(self.tex_dir.Create(self))
             H,W = self.tex_dir.setHW(100,250)

@@ -1,6 +1,6 @@
-from FPIBGLog import FPIBGLog
-from FPIBGConfig import FPIBGConfig
-#from TableModel import *
+from LogClass import *
+from ConfigClass import *
+
 import os
 import inspect
 import matplotlib.pyplot as plt

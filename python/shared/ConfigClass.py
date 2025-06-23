@@ -5,7 +5,7 @@ import io
 import inspect
 import shutil
 from collections import OrderedDict
-import libconf
+
 
 class ConfigClass:
     lvl = 100

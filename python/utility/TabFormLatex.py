@@ -1,18 +1,11 @@
-import sys
-from contextlib import redirect_stdout
-from io import StringIO
-from sys import stderr, stdout
 from PyQt6.QtWidgets import QFileDialog, QGroupBox,QMessageBox
-from PyQt6.QtWidgets import QGridLayout, QTabWidget, QLineEdit,QListWidget
+from PyQt6.QtWidgets import QGridLayout, QTabWidget, QLineEdit,QListWidget,QTextEdit
 from PyQt6.QtWidgets import QPushButton, QGroupBox
 from PyQt6 import QtCore
-from FPIBGclient import *
-from FPIBGServer import *
 from _thread import *
-from FPIBGConfig import FPIBGConfig
+from ConfigClass import *
 from LatexClass import *
 from CfgLabel import *
-from FPIBGException import *
 from LatexSingleImage import *
 from LatexMultiImage import *
 from LatexPlotBase import *
@@ -20,7 +13,7 @@ from LatexPlotParticle import *
 from LatexPlot import *
 from LatexSingleTable import *
 
-
+"""
 def p(x):
     print (x)
 class EmbeddedTerminal(QTextEdit):
@@ -54,14 +47,14 @@ class TerminalWorker(QObject):
             self.func(*self.args, **self.kwargs)
         output = f.getvalue()
         self.progress.emit(output)
-
+"""
 class TabFormLatex(QTabWidget):
     
     texFolder = ""
     CfgFile = ""
     texFileName = ""
     hasConfig = False
-    itemcfg = FPIBGConfig("Latex Class")
+    itemcfg = ConfigClass("Latex Class")
     startDir = "J:/MOD/FPIBGUtility/Latex"
     startDir = "J:/FPIBGJournalStaticV2/rpt"
     startDir = "J:/FPIBGJournalStaticV2/cfg"
@@ -99,7 +92,7 @@ class TabFormLatex(QTabWidget):
             self.texFileName = os.path.splitext(os.path.basename(self.CfgFile))[0]
             self.dirEdit.setText(self.CfgFile)
             try :
-                self.itemcfg = FPIBGConfig(self.CfgFile)
+                self.itemcfg = ConfigClass(self.CfgFile)
                 self.itemcfg.Create(self.bobj.log,self.CfgFile)
                 
             except BaseException as e:
@@ -218,7 +211,7 @@ class TabFormLatex(QTabWidget):
             ## -------------------------------------------------------------
             ## Set parent directory
             LatexcfgFile = QGroupBox("Latex File Configuration")
-            self.setSize(LatexcfgFile,200,300)
+            self.setSize(LatexcfgFile,200,500)
             self.tab_layout.addWidget(LatexcfgFile,0,0,1,2,alignment= Qt.AlignmentFlag.AlignLeft)
             
             dirgrid = QGridLayout()
@@ -248,12 +241,18 @@ class TabFormLatex(QTabWidget):
             self.newButton.clicked.connect(self.browseNewItem)
             dirgrid.addWidget(self.newButton,2,1)
 
+            self.verfButton = QPushButton("New")
+            self.setSize(self.verfButton,30,100)
+            self.verfButton.setStyleSheet("background-color:  #dddddd")
+            self.verfButton.clicked.connect(self.browseNewItem)
+            dirgrid.addWidget(self.verfButton,2,1)
+
             self.PreviewButton = QPushButton("Preview")
             self.setSize(self.PreviewButton,30,100)
             self.PreviewButton.setStyleSheet("background-color:  #dddddd")
             self.PreviewButton.clicked.connect(self.preview)
             self.PreviewButton.setEnabled(False)
-            dirgrid.addWidget(self.PreviewButton,2,2)
+            dirgrid.addWidget(self.PreviewButton,2,3)
 
             self.ListObj =  QListWidget()
             #self.ListObj.setFont(self.font)
