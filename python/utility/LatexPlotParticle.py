@@ -39,7 +39,7 @@ class LatexPlotParicle(LatexPlotBase):
     def __init__(self,Parent):
         super().__init__(Parent)
         self.Parent = Parent
-        self.LatexFileImage = LatexMultiImageWriter(self.Parent)
+        self.LatexFileImage = LatexMultiPlotWriter(self.Parent)
         self.valHandler = ValHandler()
           
     
@@ -58,8 +58,9 @@ class LatexPlotParicle(LatexPlotBase):
         
     # Override LatexPlot()
     def doDataSource(self,plotNum):
-        plotGrouptxt = f"DataSource"
+        plotGrouptxt = f"DataFields{plotNum}"
         oob = self.itemcfg.config[plotGrouptxt][plotNum-1]
+        
         return oob
       
     def doDataFile(self,plotNum):

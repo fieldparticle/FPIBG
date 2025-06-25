@@ -97,6 +97,7 @@ class TabFormLatex(QTabWidget):
                 
             except BaseException as e:
                 self.log.log(self,f"Unable to open item configurations file:{e}")
+                print(f"Unable to open item configurations file:{e}")
                 self.hasConfig = False
                 return 
             self.type = self.itemcfg.config.type_text 
@@ -111,7 +112,11 @@ class TabFormLatex(QTabWidget):
             elif "image" in self.type:
                 self.ltxObj = LatexSingleImage(self)
                 self.ltxObj.setConfigGroup(self.tab_layout)
-                self.ltxObj.setImgGroup(self.tab_layout)
+                self.ltxObj.OpenLatxCFG()
+                self.hasConfig = True
+            elif "multitable" in self.type:
+                self.ltxObj = LatexMultiTable(self)
+                self.ltxObj.setConfigGroup(self.tab_layout)
                 self.ltxObj.OpenLatxCFG()
                 self.hasConfig = True
             elif "singletable" in self.type:

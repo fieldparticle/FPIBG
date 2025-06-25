@@ -113,7 +113,7 @@ class CfgDict():
 		self.dict = AttrDictFields()
 		for k,v in self.value.items():
 			widget = CfgArray(k,v)
-			self.paramlo.addWidget(widget.Create(self))    
+			self.paramlo.addWidget(widget.Create(self.Parent))    
 			self.ListObj.append(widget) 
 			H,W = widget.getHW()
 		"""
@@ -638,8 +638,8 @@ class CfgString():
 			self.Parent.itemChanged(self.key,self.value)
 
 class CfgCmd(CfgString):
-	def __init__(self, key,value,parent):
-		super().__init__(key,value,parent)
+	def __init__(self, key,value):
+		super().__init__(key,value)
 		
 
 class CfgDataString():
@@ -656,10 +656,10 @@ class CfgDataString():
 	startDir = "J:/FPIBGJournalStaticV2/rpt"
 	dataFile = ""
 
-	def __init__(self, key,value,parent):
+	def __init__(self, key,value):
 		self.key = key
 		self.value = value
-		self.Parent = parent
+		
 
 	def setAsDir(self):
 		self.dirFlg = True
@@ -858,9 +858,9 @@ class CfgBool():
 			self.cfg[self.key]=False
 		
 
-		def Create(self,parent):
-			self.Parent = parent
-			self.cfg = self.Parent.bobj.cfg.config
+	def Create(self,parent):
+		self.Parent = parent
+		self.cfg = self.Parent.itemcfg.config
 
 	
 		self.font = QFont("Times", 10)

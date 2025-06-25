@@ -4,8 +4,9 @@ import os
 import csv
 class LatexDataCSV(LatexDataBaseClass):
 
-    def __init__(self, FPIBGBase, ObjName):
-        super().__init__(FPIBGBase, ObjName)
+    def __init__(self, FPIBGBase, itemcfg,ObjName):
+        super().__init__(FPIBGBase, itemcfg, ObjName)
+        pass
     
     def getData(self):
         return self.data

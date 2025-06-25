@@ -213,6 +213,8 @@ class TabGenData(QTabWidget,QRunnable):
         for ii in files:
                 self.ListObj.addItem(ii)
         """
+    def list_particles(self):
+        pass
 
     def plot_particles(self):
         
@@ -274,12 +276,19 @@ class TabGenData(QTabWidget,QRunnable):
             self.newButton.clicked.connect(self.plot_particles)
             dirgrid.addWidget(self.newButton,2,1)
 
+            self.listButton = QPushButton("List Partcles")
+            self.setSize(self.listButton,30,100)
+            self.listButton.setStyleSheet("background-color:  #dddddd")
+            self.listButton.clicked.connect(self.list_particles)
+            dirgrid.addWidget(self.listButton,2,2)
+
+
             self.GenDataButton = QPushButton("GenData")
             self.setSize(self.GenDataButton,30,100)
             self.GenDataButton.setStyleSheet("background-color:  #dddddd")
             self.GenDataButton.clicked.connect(self.gen_data)
             self.GenDataButton.setEnabled(False)
-            dirgrid.addWidget(self.GenDataButton,2,2)
+            dirgrid.addWidget(self.GenDataButton,2,3)
 
             self.ListObj =  QListWidget()
             #self.ListObj.setFont(self.font)

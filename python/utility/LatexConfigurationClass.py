@@ -130,7 +130,7 @@ class LatexConfigurationClass():
                 #print("List",k,len(v))
             elif type(v) == libconf.AttrDict:
                 widget = CfgDict(k,v)
-                self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self.Parent))
+                self.layouts[self.lyCount].addWidget(widget.Create(self))
                 self.objArry.append(widget)    
                 self.cfgHeight += 70
             elif type(v) == str:
@@ -145,7 +145,7 @@ class LatexConfigurationClass():
             elif type(v) == int:
                 #print("int",k,v)
                 widget = CfgInt(k,v)
-                self.layouts[self.lyCount].addWidget(widget.Create(cfg,self.itemcfg,self))
+                self.layouts[self.lyCount].addWidget(widget.Create(self))
                 self.objArry.append(widget)    
                 self.cfgHeight += 70
             elif type(v) == tuple   :

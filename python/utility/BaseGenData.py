@@ -398,6 +398,7 @@ class BaseGenData:
                 ret = f.readinto(record)
                 if ret == 0:
                     break
+                print(record.pnum)
                 results.append(record)
         p_lst = []
         return results

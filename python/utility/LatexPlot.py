@@ -39,7 +39,7 @@ class LatexPlot(LatexPlotBase):
     def __init__(self,Parent):
         super().__init__(Parent)
         self.Parent = Parent
-        self.LatexFileImage = LatexMultiImageWriter(self.Parent)
+        self.LatexFileImage = LatexMultiPlotWriter(self.Parent)
         self.valHandler = ValHandler()
     
 

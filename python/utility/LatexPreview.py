@@ -11,6 +11,10 @@ class LatexPreview():
         pass
 
     def ProcessLatxCode(self):
+        if not os.path.exists(self.valsFile):
+            vl = open(self.valsFile,'w')            
+            vl.write("% Values file.")
+            vl.close()
         dirname = os.path.dirname(self.fileName)
         hdr_file = dirname + "/LatexUtilityBaseHeader.tex"
         hdr_lst = []
@@ -34,7 +38,7 @@ class LatexPreview():
     
     def Run(self):
         with open("termPreview.log","w") as outFile:
-            x = subprocess.call(f"pdflatex -halt-on-error {self.fileName}",cwd= self.wkdir,stdout=outFile)
+            x = subprocess.call(f"pdflatex -halt-on-error -interaction=batchmode {self.fileName}",cwd= self.wkdir,stdout=outFile)
             if x != 0:
                 print('Exit-code not 0, check result!')
                 

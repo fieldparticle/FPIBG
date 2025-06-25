@@ -3,8 +3,10 @@ from PyQt6.QtWidgets import QTableView
 from CfgLabel import *
 from LatexClass import *
 from LatexConfigurationClass import *
+from LatexDataContainer import *
 import pandas as pd
 import numpy as np
+
 
 class LatexSingleTable(LatexConfigurationClass):
 
@@ -21,25 +23,39 @@ class LatexSingleTable(LatexConfigurationClass):
         for oob in self.objArry:
             oob.updateCFGData()
         self.itemcfg.updateCfg()
+        self.updateTableData()
         self.LatexTable.Write() 
 
     def itemChanged(self,key,value):
         pass
 
     def OpenLatxCFG(self):
-        print(self.itemcfg)
+       #print(self.itemcfg)
         self.doItems(self.itemcfg.config)
         self.updateTableData()
 
     def updateTableData(self):
         temp_ary = []
-        self.data = pd.read_csv(self.cfg.data_file,header=0)  
+        plotGrouptxt = f"DataSource"
+        data_src = self.itemcfg.config[plotGrouptxt][0]
+        #self.data = pd.read_csv(self.cfg.data_file,header=0)  
+        dataObj = LatexDataContainer(self.bobj,self.itemcfg,"LatexDataContainer")
+        try :
+            dataObj.Create(data_src,self.cfg.data_dir)
+        except BaseException as e:
+            print("Data Base error:",e)
+            #print("There is not data or there is an error with the path.")
+            print(f"Current path is:{self.cfg.data_dir}")
+            return False
+        # Get the data
+        data = dataObj.getData()
         temp_ary = []
         # allocate a attribute dictionary
         fld = AttrDictFields()
-        for name, df in self.data.items():
-            fld[name] = self.data[name]
-        for k,v in self.cfg.command_dict.items():
+        for name, df in data.items():
+            fld[name] = data[name]
+
+        for k,v in self.cfg.items():
             plotGrouptxt = "DataFields" + str(1)
             if plotGrouptxt in k:
                 for ii in range(len(v)):
@@ -49,27 +65,14 @@ class LatexSingleTable(LatexConfigurationClass):
                     else:
                         # Else strip the fld. from the field and get the array at that column name
                         fldtxt = v[ii].split('.')
-                        temp_ary.append(self.data[fldtxt[1]])
+                        temp_ary.append(data[fldtxt[1]])
                     self.onpdata = np.array(temp_ary)   
                 temp_ary = []
                   
         self.LatexTable.Create(self.onpdata)
         self.hasPlot = True
 
-   
     
-    def setImgGroup(self,layout):
-        ## Image Interface
-        self.imageGroupLayout = QGridLayout()
-        self.Parent.imgmgrp.setLayout(self.imageGroupLayout)
-        self.image = QTableView()
-        self.image.setStyleSheet("background-color:  #ffffff")
-        self.setSize(self.image,15,15)
-        self.imageGroupLayout.addWidget(self.image,1,0,alignment= Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        self.setSize(self.Parent.imgmgrp,700,650) 
-        self.setSize(self.image,700,650) 
-        return self.Parent.imgmgrp
-
 class SingleTableWidget(QAbstractTableModel):
     
     def __init__(self, data):
@@ -100,3 +103,8 @@ class SingleTableWidget(QAbstractTableModel):
 
             #if orientation == Qt.Orientation.Vertical:
               #  return str(self._data.index[section])
+
+class LatexMultiTable(LatexSingleTable):
+    def __init__(self,Parent,itemCFG=None):
+        super().__init__(Parent)
+        self.LatexTable = LatexMultiTableWriter(self.Parent)

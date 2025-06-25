@@ -4,7 +4,6 @@ from CfgLabel import *
 from LatexClass import *
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 from matplotlib.backends.backend_qtagg import FigureCanvasAgg as FigureCanvas
 from matplotlib.backends.qt_compat import QtWidgets
 import numpy as np
@@ -23,8 +22,6 @@ from matplotlib.ticker import (MultipleLocator,
                                FormatStrFormatter,
                                AutoMinorLocator,
                                FuncFormatter)
-
-from mpl_toolkits.axisartist.axislines import AxesZero
 
 class LatexPlotBase(LatexConfigurationClass):
     fignum = 0
@@ -97,10 +94,6 @@ class LatexPlotBase(LatexConfigurationClass):
     def updatePlotData(self):
         if(self.fignum != 0):
             plt.close("all")
-        for ii in range(0,int(self.cfg.num_plots_text)):
-            previewTex = f"{self.itemcfg.config.plots_dir}/{self.itemcfg.config.name_text}{ii+1}.png"
-            if os.path.exists(previewTex):
-                os.remove(previewTex)
         self.fignum += 1
         self.valHandler.doValues(f"{self.itemcfg.config.tex_dir}/_vals_{self.itemcfg.config.name_text}.tex")          
         # for each plot line
@@ -108,7 +101,7 @@ class LatexPlotBase(LatexConfigurationClass):
             self.fig = plt.figure(plotNum)
             self.ax = self.fig.gca()
         
-            #self.DoPlotFormat(plotNum)
+            self.DoPlotFormat(plotNum)
             start,stop  = self.doLineSlice(plotNum)
             lineColors  = self.doLineColors(plotNum)
             trendlines  =  self.doTrendLine(plotNum)
@@ -116,19 +109,24 @@ class LatexPlotBase(LatexConfigurationClass):
             plot_cmds   = self.doPlotCommands(plotNum)
             plotNames   = self.doPlotNames(plotNum)
             data_fields = self.doDataFields(plotNum)
-            #data_src    = self.doDataSource(plotNum)
+            data_src    = self.doDataSource(plotNum)
+            data_file   = self.doDataFile(plotNum)
+            #grid        = self.doGrid(plotNum)
+            #axisFormat   = self.doAxisFormat(plotNum)
             self.doGeneralCommands(plotNum)
+           # axex        = self.doAxesLabel(plotNum)
             temp_ary = []
             # allocate a attribute dictionary for fields
             fld = AttrDictFields()
             # Create a data container object
             dataObj = LatexDataContainer(self.bobj,self.itemcfg,"LatexDataContainer")
             try :
-                dataObj.Create(plotNum,"particle")
+                # Create the data objecy
+                if(data_file == None):
+                    dataObj.Create(data_src,self.cfg.data_dir)
+                else:
+                    dataObj.Create(data_src,self.cfg.data_dir,data_file)
             except BaseException as e:
-                print(e)
-                print("There is not data or there is an error with the path.")
-                print(f"Current path is:{self.cfg.data_dir}")
                 return
             # Get the data
             data = dataObj.getData()
@@ -140,14 +138,12 @@ class LatexPlotBase(LatexConfigurationClass):
 
             # Fill the data performaing any math on the columns
             for ii in range(len(data_fields)):
-                fld_name = data_fields[ii].replace(':','_')
                 if any(map(lambda char: char in data_fields[ii], "+-/*")):
-                    
-                    field = eval(fld_name)
+                    field = eval(data_fields[ii])
                     temp_ary.append(field)
                 else:
                     # Else strip the fld. from the field and get the array at that column name
-                    fldtxt = fld_name.split('.')
+                    fldtxt = data_fields[ii].split('.')
                     temp_ary.append(data[fldtxt[1]])
                 self.onpdata = np.array(temp_ary)   
             self.hasPlot = True
@@ -158,17 +154,12 @@ class LatexPlotBase(LatexConfigurationClass):
             plot_list = plot_cmds[plotNum-1].split(".")
             class_major = self.getClassMajor(plot_list[0])
             funct = getattr(class_major,(plot_list[1]))
-            
             # Do the plot
             for pp in range(len(plot_cmds)):
-                
-                ret_dict = self.DoPlotFormat(plotNum,pp+1) # Do the Legend
-                
-                if 'plot' in plot_list[1]:
-                    self.line = funct(self.onpdata[0,start:],self.onpdata[pp+1,start:],color=lineColors[pp],label=legends[pp])
-                else:
-                    self.line = funct(self.onpdata[0,start:],self.onpdata[pp+1,start:],**ret_dict,label=legends[pp])
-                    
+               # self.ax.xaxis.set_major_formatter(FormatStrFormatter(axisFormat[0]))
+               # self.ax.xaxis.set_major_formatter(FormatStrFormatter(axisFormat[pp+1]))
+                self.line = funct(self.onpdata[0,start:],self.onpdata[pp+1,start:],color=lineColors[pp],label=legends[pp])
+                 # Do the Legend
                 
            
 
@@ -186,30 +177,7 @@ class LatexPlotBase(LatexConfigurationClass):
             pltTempImg = f"{self.itemcfg.config.plots_dir}/{self.itemcfg.config.name_text}{plotNum}.png"
             plt.savefig(pltTempImg, bbox_inches='tight')
             plt.close("all")        
-
-    
-    def DoPlotFormat(self,plotNum,line_num):
-        ret_dict = {}
-        plotGrouptxt = "plotFormat" + str(plotNum)+str(line_num)
-        oob = self.itemcfg.config[plotGrouptxt]
-        if len(oob) > 0:
-            for ii in range(len(oob)):
-                all_item = oob[ii].split("=")
-                cmd_item = all_item[0]
-                val_item = all_item[1]
-                try :
-                    if self.isfloat(val_item) == True:
-                        ret_dict[cmd_item]= float(val_item)
-                    elif self.isInt(val_item) == True:
-                        ret_dict[cmd_item] = int(val_item)
-                    else:
-                        ret_dict[cmd_item] = str(val_item)
-                except BaseException as e:
-                    self.log.log(self,e)
-                    print(e)
-                    continue
-        return ret_dict
-
+                            
     def doGeneralCommands(self,plotNum):
         fig = plt.figure(plotNum)
         ax = self.fig.gca()
@@ -293,9 +261,26 @@ class LatexPlotBase(LatexConfigurationClass):
         return oob
        
 
+    def DoPlotFormat(self,plotNum):
+        plotGrouptxt = "plotFormat" + str(plotNum)
+        oob = self.itemcfg.config[plotGrouptxt]
+        if len(oob) > 0:
+            for ii in range(len(oob)):
+                all_item = oob[ii].split("=")
+                cmd_item = all_item[0]
+                val_item = all_item[1]
+                try :
+                    if self.isfloat(val_item) == True:
+                        plt.rcParams[cmd_item]= float(val_item)
+                    elif self.isInt(val_item) == True:
+                        plt.rcParams[cmd_item] = int(val_item)
+                    else:
+                        plt.rcParams[cmd_item] = str(val_item)
+                except BaseException as e:
+                    self.log.log(self,e)
+                    continue
 
 
     def setImgGroup(self,layout):
         pass
           
-   

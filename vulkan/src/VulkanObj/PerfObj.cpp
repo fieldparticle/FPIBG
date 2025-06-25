@@ -179,7 +179,7 @@ int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, si
 		}
 		
 		//
-		ostrm << "time,fps,cpums,cms,gms,expectedp,loadedp,shaderp_comp,shaderp_grph, expectedc,shaderc,threadcount, sidelen,density,PERR,CERR" << std::endl;
+		ostrm << "time,fps,cpums,cms,gms,expectedp,loadedp,shaderp_comp,shaderp_grph,expectedc,shaderc,threadcount,sidelen,density,PERR,CERR" << std::endl;
 		for (size_t ii = 0; ii < aprCount-1; ii++)
 		{
 			

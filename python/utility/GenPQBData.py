@@ -8,7 +8,6 @@ class GenPQBData(BaseGenData):
 
 
 
-
     def gen_data(self):
         self.gen_data_base()
         
