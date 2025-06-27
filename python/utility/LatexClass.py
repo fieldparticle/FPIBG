@@ -47,6 +47,146 @@ class LatexClass:
 #############################################################################################
 # 						class LatexTableWriter
 #############################################################################################
+class LatexSplitTableWriter(LatexClass):
+    
+    def __init__(self,Parent):
+        super().__init__(Parent)
+
+    
+    def Create(self,data):
+        self.data = data
+        self.cols = self.data.shape[0]
+        self.rows = self.data.shape[1]
+        self.table_array  = [[0 for x in range(self.cols)] for y in range(self.rows)] 
+        self.setLatexData()
+        
+    header_arry = []
+    
+    def setLatexHeaderArray(self, header):
+        self.header_arry = header
+
+    def setTableItemArray(self, cellstr,col, row):
+        self.table_array[row][col] = cellstr
+
+    def setLatexData(self):
+        for i in range(self.cols):
+            for j in range(self.rows):
+                self.loadItem(i,j)
+
+    def loadItem(self,i,j):
+        cellstr = ""
+        val =  self.data[i][j]
+        if i > len(self.cfg[f"format_array1"]):
+            print("Mismatch between colums of data and the format of that data.")
+            return
+        fmt_txt = self.cfg[f"format_array1"][i]
+        if 'd' in fmt_txt:
+            pval = int(val)
+        elif 'f' in fmt_txt:
+            pval = float(val)
+        elif 's' in fmt_txt:
+            pval = str(val)
+            ret = self.setTableItemArray(pval,i,j)
+            return pval            
+        out1 = f"{pval}"
+        out_txt = "f\"%{fmt_txt}\"%(" + out1 + ")"
+        #out_data = eval(out_txt)
+        out_val = eval(out_txt)
+        #out_val = eval(out_val)
+        ret = self.setTableItemArray(out_val,i,j)
+        return out_val
+    
+        if (i == 2):
+            self.setTableItemArray(str("%.2f" % (1000*value)),i,j)
+            return "%.2f" % (1000*value)
+        
+        if (i == 3):
+            self.setTableItemArray(str("%.2f" % (1000*value)),i,j)
+            return "%.2f" % (1000*value)
+
+                    
+    def MultiTable(self,f):
+        
+        num_tables = 0    
+        split_at = 0
+        end_row = 0
+        if 'split_table_array' in self.cfg:
+            num_tables = int(self.cfg.split_table_array[0])
+            split_at = int(self.cfg.split_table_array[1])
+            end_row = split_at-1
+        else:
+            num_tables = 1
+            split_at = 0
+        
+
+        start_row = 0
+        f.write("\\begin{table}[%s]\n" % self.cfg.placement_text)
+        f.write("\\caption{\\textit{")
+        f.write(self.cfg.caption_box)
+        f.write("}}\n")
+        f.write("\\label{tab:%s}\n"%self.cfg.name_text)
+            
+        for i in range(num_tables):
+            if num_tables > 1:
+                f.write("\\begin{minipage}{.5\\linewidth}\n")
+            if i > 0:
+                start_row = split_at
+                end_row = self.rows
+            f.write("\\fontsize{%s}{%s}\\selectfont\n" % (self.cfg.font_size,self.cfg.font_size))
+            f.write("\\renewcommand{\\arraystretch}{%s}\n" % (self.cfg.arystretch_text))
+            
+            f.write("\\begin{center}\n")
+            f.write("\\begin{tabular}\n{")
+            for k in range(self.cols):
+                f.write("l ")
+            f.write("}\n")
+            f.write("\\hline \\\\ \n")
+            header_key = f"header_array1"
+            lsz = len(self.cfg[header_key])
+            headers = self.cfg[header_key]
+            if (self.cols != lsz):
+                f.close()
+                print("In LatexTableWriter columns of data do not match column headings")   
+                return 
+            for k in range(lsz):
+                if(k < lsz-1):
+                    txt = ""
+                    txt = "\\makecell{" + headers[k] + "}&"
+                else:
+                    txt = "\\makecell{" + headers[k] + "}"
+                f.write(txt)
+            
+            f.write("\\\\ \\hline\n")
+
+            for i in range(start_row,end_row): #,skip):
+                for j in range(self.cols):
+                    if(j < self.cols-1):
+                        
+                        #txt = self.format_cell(self.table_array[i][j],j,1) + "&"
+                        txt = str(self.table_array[i][j]) + "&"
+                        f.write(txt)
+                    else:
+                        txt = str(self.table_array[i][j]) + "\\\\ \n"
+                        f.write(txt)
+            f.write("\\hline\n\\end{tabular}\n\\end{center}\n")
+            if num_tables > 1:
+                f.write("\\end{minipage}\n")
+
+        f.write("\\end{table}\n")
+        f.close()
+        self.WritePre("pre_tables")
+      
+    def Write(self):
+        loutname = self.cfg.tex_dir + "/" + self.cfg.name_text + ".tex"
+        try:
+            f = open(loutname, "w")
+        except IOError as e:
+            self.log.log(self,f"Couldn't write to file ({e})")
+            return
+        self.MultiTable(f)
+
+# 						class LatexTableWriter
+#############################################################################################
 class LatexMultiTableWriter(LatexClass):
     
     def __init__(self,Parent):
@@ -185,6 +325,7 @@ class LatexMultiTableWriter(LatexClass):
             return
         self.MultiTable(f)
 
+        
         
 #############################################################################################
 # 						class LatexPlotWriter
@@ -445,81 +586,53 @@ class LatexTableWriter(LatexClass):
         ret = self.setTableItemArray(out_val,i,j)
         return out_val
     
-        if (i == 2):
-            self.setTableItemArray(str("%.2f" % (1000*value)),i,j)
-            return "%.2f" % (1000*value)
+      
+    def Table(self,f):
         
-        if (i == 3):
-            self.setTableItemArray(str("%.2f" % (1000*value)),i,j)
-            return "%.2f" % (1000*value)
-
-                    
-    def MultiTable(self,f):
-        
-        num_tables = 0    
-        split_at = 0
-        end_row = 0
-        if 'split_table_array' in self.cfg:
-            num_tables = int(self.cfg.split_table_array[0])
-            split_at = int(self.cfg.split_table_array[1])
-            end_row = split_at-1
-        else:
-            num_tables = 1
-            split_at = 0
-        
-
-        start_row = 0
         f.write("\\begin{table}[%s]\n" % self.cfg.placement_text)
-        for i in range(num_tables):
-            if num_tables > 1:
-                f.write("\\begin{minipage}{.5\\linewidth}\n")
-            if i > 0:
-                start_row = split_at
-                end_row = self.rows
-            f.write("\\fontsize{%s}{%s}\\selectfont\n" % (self.cfg.font_size,self.cfg.font_size))
-            f.write("\\renewcommand{\\arraystretch}{%s}\n" % (self.cfg.arystretch_text))
-            
-            f.write("\\caption{\\textit{")
-            f.write(self.cfg.caption_box)
-            f.write("}}\n")
-            f.write("\\label{tab:%s}\n"%self.cfg.name_text)
-            f.write("\\begin{center}\n")
-            f.write("\\begin{tabular}\n{")
-            for k in range(self.cols):
-                f.write("l ")
-            f.write("}\n")
-            f.write("\\hline \\\\ \n")
-            header_key = f"header_array1"
-            lsz = len(self.cfg[header_key])
-            headers = self.cfg[header_key]
-            if (self.cols != lsz):
-                f.close()
-                print("In LatexTableWriter columns of data do not match column headings")   
-                return 
-            for k in range(lsz):
-                if(k < lsz-1):
-                    txt = ""
-                    txt = "\\makecell{" + headers[k] + "}&"
+        
+        f.write("\\fontsize{%s}{%s}\\selectfont\n" % (self.cfg.font_size,self.cfg.font_size))
+        f.write("\\renewcommand{\\arraystretch}{%s}\n" % (self.cfg.arystretch_text))
+        
+        f.write("\\caption{\\textit{")
+        f.write(self.cfg.caption_box)
+        f.write("}}\n")
+        f.write("\\label{tab:%s}\n"%self.cfg.name_text)
+        f.write("\\begin{center}\n")
+        f.write("\\begin{tabular}\n{")
+        for k in range(self.cols):
+            f.write("l ")
+        f.write("}\n")
+        f.write("\\hline \\\\ \n")
+        header_key = f"header_array1"
+        lsz = len(self.cfg[header_key])
+        headers = self.cfg[header_key]
+        if (self.cols != lsz):
+            f.close()
+            print("In LatexTableWriter columns of data do not match column headings")   
+            return 
+        for k in range(lsz):
+            if(k < lsz-1):
+                txt = ""
+                txt = "\\makecell{" + headers[k] + "}&"
+            else:
+                txt = "\\makecell{" + headers[k] + "}"
+            f.write(txt)
+        
+        f.write("\\\\ \\hline\n")
+
+        for i in range(0,self.rows): #,skip):
+            for j in range(self.cols):
+                if(j < self.cols-1):
+                    
+                    #txt = self.format_cell(self.table_array[i][j],j,1) + "&"
+                    txt = str(self.table_array[i][j]) + "&"
+                    f.write(txt)
                 else:
-                    txt = "\\makecell{" + headers[k] + "}"
-                f.write(txt)
+                    txt = str(self.table_array[i][j]) + "\\\\ \n"
+                    f.write(txt)
+        f.write("\\hline\n\\end{tabular}\n\\end{center}\n")
             
-            f.write("\\\\ \\hline\n")
-
-            for i in range(start_row,end_row): #,skip):
-                for j in range(self.cols):
-                    if(j < self.cols-1):
-                        
-                        #txt = self.format_cell(self.table_array[i][j],j,1) + "&"
-                        txt = str(self.table_array[i][j]) + "&"
-                        f.write(txt)
-                    else:
-                        txt = str(self.table_array[i][j]) + "\\\\ \n"
-                        f.write(txt)
-            f.write("\\hline\n\\end{tabular}\n\\end{center}\n")
-            if num_tables > 1:
-                f.write("\\end{minipage}\n")
-
         f.write("\\end{table}\n")
         f.close()
         self.WritePre("pre_tables")
@@ -531,4 +644,4 @@ class LatexTableWriter(LatexClass):
         except IOError as e:
             self.log.log(self,f"Couldn't write to file ({e})")
             return
-        self.MultiTable(f)
+        self.Table(f)

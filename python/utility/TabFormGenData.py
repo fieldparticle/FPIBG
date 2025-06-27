@@ -144,17 +144,7 @@ class TabGenData(QTabWidget,QRunnable):
 #################################################### GEN DATA
 
 # load all lines from the particle selections file into selections list
-    def open_selections_file(self):
-        try:
-            with open(self.itemcfg.config.selections_file_text,"r",newline='') as csvfl:
-                reader = csv.DictReader(csvfl, delimiter=',',dialect='excel')
-                for row in reader:
-                    if row["sel"] == 's':
-                        self.select_list.append(row)
-        except BaseException as e:
-            self.log.log(self,f"Error opening:{self.itemcfg.config.selections_file_text}, err:", e)
-
-
+    
     def gen_one_data(self,progress_callback):
         return self.gen_obj.gen_data_base(self.index,self.sel_dict,progress_callback)
             
@@ -165,13 +155,14 @@ class TabGenData(QTabWidget,QRunnable):
 
     def thread_complete(self):
         print("Thread Complete")
-        self.bobj.log.log(self,f"Wrote {self.gen_obj.count} particle to {self.gen_obj.test_bin_name}")
+        self.bobj.log.log(self,f"Wrote {self.gen_obj.count} particles to {self.gen_obj.test_bin_name}")
         self.index += 1
         if (self.index >= len(self.select_list)) or (self.gen_obj.flg_stop == True):
             self.GenDataButton.setStyleSheet("background-color:  #dddddd")
             self.GenDataButton.clicked.connect(self.gen_data)
             self.GenDataButton.setText("GenData")
             return
+        
         else:
             self.launch_thread()
 
@@ -200,7 +191,7 @@ class TabGenData(QTabWidget,QRunnable):
         
         if not os.path.exists(self.itemcfg.config.data_dir):
             os.makedirs(self.itemcfg.config.data_dir)
-        self.open_selections_file()
+        self.select_list = self.gen_obj.open_selections_file()
         self.index = 0
         self.launch_thread()
            

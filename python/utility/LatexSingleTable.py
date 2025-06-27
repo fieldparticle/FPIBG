@@ -34,14 +34,19 @@ class LatexSingleTable(LatexConfigurationClass):
         self.doItems(self.itemcfg.config)
         self.updateTableData()
 
+    def doDataFields(self,plotNum):
+        # Get color. Its special becasue it has no rcParams
+        plotGrouptxt = f"DataFields{plotNum}"
+        oob = self.itemcfg.config[plotGrouptxt]
+        return oob
+    
     def updateTableData(self):
         temp_ary = []
-        plotGrouptxt = f"DataSource"
-        data_src = self.itemcfg.config[plotGrouptxt][0]
+        data_fields = self.doDataFields(1)
         #self.data = pd.read_csv(self.cfg.data_file,header=0)  
         dataObj = LatexDataContainer(self.bobj,self.itemcfg,"LatexDataContainer")
         try :
-            dataObj.Create(data_src,self.cfg.data_dir)
+            dataObj.Create(1,data_fields)
         except BaseException as e:
             print("Data Base error:",e)
             #print("There is not data or there is an error with the path.")
@@ -59,12 +64,13 @@ class LatexSingleTable(LatexConfigurationClass):
             plotGrouptxt = "DataFields" + str(1)
             if plotGrouptxt in k:
                 for ii in range(len(v)):
+                    fld_name = v[ii].replace(':','_')
                     if any(map(lambda char: char in v[ii], "+-/*")):
-                        field = eval(v[ii])
+                        field = eval(fld_name)
                         temp_ary.append(field)
                     else:
                         # Else strip the fld. from the field and get the array at that column name
-                        fldtxt = v[ii].split('.')
+                        fldtxt = fld_name.split('.')
                         temp_ary.append(data[fldtxt[1]])
                     self.onpdata = np.array(temp_ary)   
                 temp_ary = []
@@ -103,6 +109,11 @@ class SingleTableWidget(QAbstractTableModel):
 
             #if orientation == Qt.Orientation.Vertical:
               #  return str(self._data.index[section])
+
+class LatexSplitTable(LatexSingleTable):
+    def __init__(self,Parent,itemCFG=None):
+        super().__init__(Parent)
+        self.LatexTable = LatexSplitTableWriter(self.Parent)
 
 class LatexMultiTable(LatexSingleTable):
     def __init__(self,Parent,itemCFG=None):

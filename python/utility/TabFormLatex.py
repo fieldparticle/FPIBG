@@ -114,6 +114,11 @@ class TabFormLatex(QTabWidget):
                 self.ltxObj.setConfigGroup(self.tab_layout)
                 self.ltxObj.OpenLatxCFG()
                 self.hasConfig = True
+            elif "splittable" in self.type:
+                self.ltxObj = LatexSplitTable(self)
+                self.ltxObj.setConfigGroup(self.tab_layout)
+                self.ltxObj.OpenLatxCFG()
+                self.hasConfig = True
             elif "multitable" in self.type:
                 self.ltxObj = LatexMultiTable(self)
                 self.ltxObj.setConfigGroup(self.tab_layout)

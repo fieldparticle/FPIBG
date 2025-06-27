@@ -56,6 +56,7 @@ class GenPQBData(BaseGenData):
         
     
     def do_cells(self,progress_callback):
+       
         if self.cfg.particle_enumeration_text == 'random':
             self.rand_data = self.gen_random_numbers_in_range(0, self.number_particles, self.number_particles)    
         
@@ -84,6 +85,7 @@ class GenPQBData(BaseGenData):
                                     self.write_bin_file(self.w_list)
                                     self.w_list.clear()
         self.write_bin_file(self.w_list)
+        return 0
         
         
                                     

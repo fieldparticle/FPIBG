@@ -15,12 +15,18 @@ class LatexDataContainer():
 
     def Create(self,plot_num,data_type):
 
-        
-        #matches = ["pqb","pcd","cfb","pqbrandom"]
-        if "csv" in data_type:
+        matches = ["pqb","pcd","cfb","pqbrandom"]
+        print(type(data_type))
+        if isinstance(data_type,list):
+            test = data_type[0].lower()
+        elif isinstance(data_type,str):
+            test = data_type.lower()
+        else:
+            print("LatexDataContainer.Create() bad data type")
+        if "csv" in test:
             self.data_base = LatexDataCSV(self.bobj,self.itemcfg,"CSV Data")
-            #self.data_base.Create(data_type,data_dir,data_file=self.itemcfg.config.data_file) 
-        elif "particle" in data_type:
+            self.data_base.Create(0) 
+        elif any(x in test for x in matches):
             self.data_base = LatexDataParticle(self.bobj,self.itemcfg,"Particle Data")
             self.data_base.Create(plot_num) 
         else:

@@ -37,7 +37,11 @@ class LatexDataConfigurationClass():
         self.log = self.bobj.log
         self.cfg = self.gui_parent.itemcfg.config
 
-        gen_class = self.load_class(gen_class_txt)
+        try :
+            gen_class = self.load_class(gen_class_txt)
+        except BaseException as e:
+            print("LatexDataConfigurationClass.Create():",e)
+            return
         self.gen_obj = None
         self.gen_obj = gen_class()
         self.gen_obj.Create(self.bobj,"BaseGenClass",self.cfg,self)

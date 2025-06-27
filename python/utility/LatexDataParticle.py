@@ -2,56 +2,158 @@ import pandas as pd
 from LatexDataBaseClass import *
 import os
 import csv
+import re
 class LatexDataParticle(LatexDataBaseClass):
 
     sumFile = ""
     average_list = []
     mode = 0
+    mmrr_fps = 0.0
+    mmrr_cpums = 0.0
+    mmrr_gms = 0.0
+        
     lines_return = pd.DataFrame()
     def __init__(self, FPIBGBase, itemcfg, ObjName):
         super().__init__(FPIBGBase, itemcfg, ObjName)
         
-
+    def isNumber(self,value):
+        try:
+            float(value)
+        except ValueError:
+            return False
+        try:
+            int(value)
+        except ValueError:
+            return False
+        return True
 
     def getData(self):
         return self.lines_return
+    
+    def split(self,string):
+        char_remove = ["(",")"]
+        for char in char_remove:
+            string = string.replace(char, "")                
+        char_remove = ["+","-","/","*"]
+        for char in char_remove:
+            string = string.replace(char, ",")       
+        return string
 
     def Create(self, plot_num):
-        
-        
+        if len(self.lines_return) != 0:
+            self.lines_return = pd.DataFrame()
         if('validation' in self.itemcfg.config.mode.lower()):
             self.mode = 1
         else:
             self.mode = 0
+        self.do_mmrr()
         getFieldStr = f"DataFields{plot_num}"
         data_fields = self.itemcfg.config[getFieldStr]
         for jj in range(len(data_fields)):
-            file_list = data_fields[jj].split('.')
-            field_name = file_list[1].split(':')
-            try :
-                self.topdir = self.itemcfg.config.data_dir + "/perfdata" + field_name[0]
-                self.sumFile = self.topdir + "/perfdata" + field_name[0] + ".csv"
-            except BaseException as e:
-                self.log.log(self,e)
-            try :
-                self.create_summary()
-                self.check_data_files()
-                self.get_averages()
-            except BaseException as e:
-                self.log.log(self,e)
-                self.hasData = False
-                raise ValueError
+            if any(map(lambda char: char in data_fields[jj], "+-/*")):
+                alt_lst = self.split(data_fields[jj])
+                alt_sary = alt_lst.split(',')   
+                alt_const = None
+                # Is there a constant
+                for dd in alt_sary:
+                    if self.isNumber(dd) == True:
+                        alt_sary.remove(dd)
+                        alt_const = alt_sary[0]
+                        alt_sary = [alt_const]
+                        break
+                    
+                
+                for ss in range(len(alt_sary)):
+                    file_list = alt_sary[ss].split(".")    
+                    field_name = file_list[1].split(':')
+                    field_name_txt = f"{field_name[0]}_{field_name[1]}"
+                    if field_name_txt not in self.lines_return.keys():
+                        self.build_field(field_name,field_name_txt)    
+            else:
+                file_list = data_fields[jj].split(".")
+                field_name = file_list[1].split(':')
+                field_name_txt = f"{field_name[0]}_{field_name[1]}"
+                if field_name_txt not in self.lines_return.keys():
+                    self.build_field(field_name,field_name_txt)    
         
-            self.data = pd.read_csv(self.sumFile,header=0) 
-            field_name_txt = f"{field_name[0]}_{field_name[1]}"
-            try :
-                self.lines_return[field_name_txt]=self.data[field_name[1]] 
-            except BaseException as e:
-                print(e)
+    
+        fps_ary = []
+        cpums_ary = []
+        gms_ary = []
+        cnt = len(self.lines_return)
+        for ii in range(len(self.lines_return)):
+            fps_ary.append(self.mmrr_fps)
+            cpums_ary.append(self.mmrr_cpums)
+            gms_ary.append(self.mmrr_gms )
+            
+        self.lines_return["MMR_fps"] = fps_ary
+        self.lines_return["MMR_cpums"] = cpums_ary
+        self.lines_return["MMR_gms"] = gms_ary
+        
+                        
+
+    def build_field(self,field_name,key_name):
+
+        if 'MMR' in key_name:
+            return
+       
+        field_name[0] = field_name[0].strip()
+        field_name[1] = field_name[1].strip()
+        key_name = key_name.strip()
+        try :
+            self.topdir = self.itemcfg.config.data_dir + "/perfdata" + field_name[0]
+            self.sumFile = self.topdir + "/perfdata" + field_name[0] + ".csv"
+        except BaseException as e:
+            self.log.log(self,e)
+        try :
+            self.create_summary()
+            self.check_data_files()
+            self.get_averages()
+        except BaseException as e:
+            self.log.log(self,e)
+            self.hasData = False
+            raise ValueError
+    
+        self.data = pd.read_csv(self.sumFile,header=0) 
+
+        
+        try :
+            self.lines_return[key_name]=self.data[field_name[1]] 
+        except BaseException as e:
+            print(e)
 
 
-        print(self.lines_return)
+        #print(self.lines_return)
+        try :
+            print(f"Type of {key_name} is {type(self.lines_return[key_name][0])}")
+            
+        except BaseException as e:
+            print(e)
         return
+    
+    def do_mmrr(self):
+        fps = cpums = cms = gms = expectedp = loadedp = shaderp_comp = shaderp_grph = expectedc = shaderc = sidelen = count = 0
+        mmr_path = f"{self.itemcfg.config.data_dir}/mmrr.csv"
+        if(os.path.exists(mmr_path) == False):
+            print ("MMRR Directories not available" )
+            return False
+        try:
+            with open(mmr_path, 'r') as filename:
+                file = csv.DictReader(filename)
+                count = 0
+                for col in file:
+                    count += 1
+                    fps += float(col['fps'])
+                    cpums += float(col['cpums'])
+                    gms += float(col['gms'])
+        except BaseException as e:
+            print(e)
+            return
+        
+        self.mmrr_fps = fps / count
+        self.mmrr_cpums = cpums / count
+        self.mmrr_gms = gms / count    
+       
 
     # Returns true if number of .tst files equal to number of R or D files
     def check_data_files(self) -> bool:
@@ -116,6 +218,8 @@ class LatexDataParticle(LatexDataBaseClass):
                                 expectedc = int(col[' expectedc'])
                             else:
                                 expectedc = int(col['expectedc'])
+                            sidelen = int(col['sidelen'])
+                            
             except BaseException as e:
                 print(e)
 
@@ -123,13 +227,9 @@ class LatexDataParticle(LatexDataBaseClass):
             cpums = cpums / count
             cms = cms / count
             gms = gms / count
-            #expectedp = expectedp / count
-            #loadedp = loadedp / count
             shaderp_comp = shaderp_comp / count
             shaderp_grph = shaderp_grph / count
-            #expectedc = expectedc / count
             shaderc = shaderc / count
-            sidelen = sidelen / count
             avg_list = [i, fps, cpums, cms, gms, expectedp, loadedp, shaderp_comp,
                         shaderp_grph, expectedc, shaderc, sidelen]
             with open(self.sumFile, 'a', newline='') as file:

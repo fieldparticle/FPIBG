@@ -53,9 +53,11 @@ class BaseGenData:
     collsions_in_cell_count = 0
     particles_in_cell_count = 0
     sepdist = 0.05
+    select_list = []
     bin_file = None
     start_cell = 0
     end_cell = 0
+    test_bin_name = ""
     flg_plt_exists  = False
     toggle_flag = False
     cur_view_num = 0
@@ -137,6 +139,17 @@ class BaseGenData:
     def gen_random_numbers_in_range(self,low, high, n):
         return random.sample(range(low, high), n)
     
+    def open_selections_file(self):
+        try:
+            with open(self.itemcfg.selections_file_text,"r",newline='') as csvfl:
+                reader = csv.DictReader(csvfl, delimiter=',',dialect='excel')
+                for row in reader:
+                    if row["sel"] == 's':
+                        self.select_list.append(row)
+        except BaseException as e:
+            self.log.log(self,f"Error opening:{self.itemcfg.selections_file_text}, err:", e)
+        return self.select_list
+
 ################################# GENERATE A SINGLE DATA ####################
 
     def stop_thread(self):
@@ -154,20 +167,6 @@ class BaseGenData:
     def calc_test_parms(self):
         pass
 
-    # load all lines from the particle selections file into selections list
-    def open_selections_file(self):
-        try:
-            with open(self.cfg.selections_file_text,"r",newline='') as csvfl:
-                reader = csv.DictReader(csvfl, delimiter=',',dialect='excel')
-                for row in reader:
-                    if row["sel"] == 's':
-                        self.select_list.append(row)
-                        
-                        
-        except BaseException as e:
-            self.log.log(self,f"Error opening:{self.cfg.selections_file_text}, err:", e)
-
-       
     def calulate_cell_properties(self,index,sel_dict):
         try :
             self.collision_density           = float(sel_dict['cdens'])
@@ -231,7 +230,7 @@ class BaseGenData:
             f.write(fstr)
             fstr = f"aprFile = \"{ self.report_file.replace('/','\\')}\";\n"
             f.write(fstr)
-            fstr = f"density = {sel_dict['cdens']};\n"
+            fstr = f"density = {float(sel_dict['cdens'])};\n"
             f.write(fstr)
             fstr = f"pdensity = 0;\n"
             f.write(fstr)
@@ -390,16 +389,24 @@ class BaseGenData:
         struct_unpack = struct.Struct(struct_fmt).unpack_from
         count = 0
         results = []
-        
+        counter = 0
+        slist = self.cfg.particle_range_array
+        start_it = int(slist[0])
+        end_it = int(slist[1])
         with open(file_name, "rb") as f:
             
             while True:
-                record = pdata()
-                ret = f.readinto(record)
-                if ret == 0:
-                    break
-                print(record.pnum)
-                results.append(record)
+                if counter >= start_it: 
+                    record = pdata()
+                    ret = f.readinto(record)
+                    if ret == 0:
+                        break
+                    print(record.pnum)
+                    results.append(record)
+                    if counter > end_it:
+                        break
+                counter += 1
+                
         p_lst = []
         return results
     

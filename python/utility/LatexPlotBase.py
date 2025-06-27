@@ -22,9 +22,11 @@ import matplotlib.ticker
 from matplotlib.ticker import (MultipleLocator,
                                FormatStrFormatter,
                                AutoMinorLocator,
-                               FuncFormatter)
+                               FuncFormatter,
+                               EngFormatter)
 
 from mpl_toolkits.axisartist.axislines import AxesZero
+import matplotlib.ticker as ticker
 
 class LatexPlotBase(LatexConfigurationClass):
     fignum = 0
@@ -35,6 +37,7 @@ class LatexPlotBase(LatexConfigurationClass):
     fig = None
     ax = None
     pixmap = None
+    has_legend = False
 
     def __init__(self,Parent,itemCFG=None):
         super().__init__(Parent)
@@ -108,23 +111,19 @@ class LatexPlotBase(LatexConfigurationClass):
             self.fig = plt.figure(plotNum)
             self.ax = self.fig.gca()
         
-            #self.DoPlotFormat(plotNum)
+            
             start,stop  = self.doLineSlice(plotNum)
-            lineColors  = self.doLineColors(plotNum)
             trendlines  =  self.doTrendLine(plotNum)
-            legends     = self.doLegend(plotNum)
             plot_cmds   = self.doPlotCommands(plotNum)
             plotNames   = self.doPlotNames(plotNum)
             data_fields = self.doDataFields(plotNum)
-            #data_src    = self.doDataSource(plotNum)
-            self.doGeneralCommands(plotNum)
             temp_ary = []
             # allocate a attribute dictionary for fields
             fld = AttrDictFields()
             # Create a data container object
             dataObj = LatexDataContainer(self.bobj,self.itemcfg,"LatexDataContainer")
             try :
-                dataObj.Create(plotNum,"particle")
+                dataObj.Create(plotNum,data_fields)
             except BaseException as e:
                 print(e)
                 print("There is not data or there is an error with the path.")
@@ -132,8 +131,6 @@ class LatexPlotBase(LatexConfigurationClass):
                 return
             # Get the data
             data = dataObj.getData()
-            #print(data_src)
-            #print(data)
             # Create a eval table
             for name, df in data.items():
                 fld[name] = data[name]
@@ -142,7 +139,6 @@ class LatexPlotBase(LatexConfigurationClass):
             for ii in range(len(data_fields)):
                 fld_name = data_fields[ii].replace(':','_')
                 if any(map(lambda char: char in data_fields[ii], "+-/*")):
-                    
                     field = eval(fld_name)
                     temp_ary.append(field)
                 else:
@@ -151,42 +147,61 @@ class LatexPlotBase(LatexConfigurationClass):
                     temp_ary.append(data[fldtxt[1]])
                 self.onpdata = np.array(temp_ary)   
             self.hasPlot = True
-            #self.updatePlot(plotNum)
             temp_ary = []
 
              # Convert text plot command to function
             plot_list = plot_cmds[plotNum-1].split(".")
             class_major = self.getClassMajor(plot_list[0])
             funct = getattr(class_major,(plot_list[1]))
-            
+            self.doGeneralCommands(plotNum)            
+            try :
             # Do the plot
-            for pp in range(len(plot_cmds)):
-                
-                ret_dict = self.DoPlotFormat(plotNum,pp+1) # Do the Legend
-                
-                if 'plot' in plot_list[1]:
-                    self.line = funct(self.onpdata[0,start:],self.onpdata[pp+1,start:],color=lineColors[pp],label=legends[pp])
-                else:
-                    self.line = funct(self.onpdata[0,start:],self.onpdata[pp+1,start:],**ret_dict,label=legends[pp])
+                for pp in range(len(plot_cmds)):
+                    ret_dict = self.DoPlotFormat(plotNum,pp+1) # Do the Legend
+                    self.line = funct(self.onpdata[0,start:],self.onpdata[pp+1,start:],**ret_dict)
+            except BaseException as e:
+                print(f"Plot num:{plotNum} error:{e}")
+                return
                     
-                
-           
-
             # Do trendline
-            if not "none" in trendlines[plotNum-1]:
-                
-                for zz in range(len(plot_cmds)):
-                    trendtxt = f"{legends[zz]} {trendlines[plotNum]} trendline" 
-                    trend  = TrendLine(self.onpdata[0,start:],self.onpdata[zz+1,start:],trendlines[zz-1],plotNames[zz-1],self.valHandler,self.itemcfg.config.tex_dir)
-                    trend.doTrendLine(plt,lineColors[zz],trendtxt)
+            try :
+                if not "none" in trendlines[plotNum-1]:
+                    for zz in range(len(plot_cmds)):
+                        ret_dict = self.DoTrendFormat(plotNum,zz+1) # Do the Legend
+                        trend  = TrendLine(self.onpdata[0,start:],self.onpdata[zz+1,start:],trendlines[zz-1],plotNames[zz-1],self.valHandler,self.itemcfg.config.tex_dir)
+                        trend.doTrendLine(plt,ret_dict)
+            except BaseException as e:
+                print(f"Trend num:{plotNum} error:{e}")
+                return
             
-            self.ax.legend()
-            #self.ax.grid(grid)
+            if self.has_legend == True:
+                leg_items = self.ax.legend()
             # Save temp image 
             pltTempImg = f"{self.itemcfg.config.plots_dir}/{self.itemcfg.config.name_text}{plotNum}.png"
             plt.savefig(pltTempImg, bbox_inches='tight')
             plt.close("all")        
 
+    def DoTrendFormat(self,plotNum,line_num):
+        ret_dict = {}
+        plotGrouptxt = "trendFormat" + str(plotNum)+str(line_num)
+        oob = self.itemcfg.config[plotGrouptxt]
+        if len(oob) > 0:
+            for ii in range(len(oob)):
+                all_item = oob[ii].split("=")
+                cmd_item = all_item[0]
+                val_item = all_item[1]
+                try :
+                    if self.isfloat(val_item) == True:
+                        ret_dict[cmd_item]= float(val_item)
+                    elif self.isInt(val_item) == True:
+                        ret_dict[cmd_item] = int(val_item)
+                    else:
+                        ret_dict[cmd_item] = str(val_item)
+                except BaseException as e:
+                    self.log.log(self,e)
+                    print(e)
+                    continue
+        return ret_dict
     
     def DoPlotFormat(self,plotNum,line_num):
         ret_dict = {}
@@ -196,6 +211,8 @@ class LatexPlotBase(LatexConfigurationClass):
             for ii in range(len(oob)):
                 all_item = oob[ii].split("=")
                 cmd_item = all_item[0]
+                if 'label' in cmd_item:
+                    self.has_legend = True
                 val_item = all_item[1]
                 try :
                     if self.isfloat(val_item) == True:
@@ -219,7 +236,7 @@ class LatexPlotBase(LatexConfigurationClass):
              
             print(func_str)
             try:
-                exec(func_str)     
+                eval(func_str)     
             except BaseException as e:
                 self.log.log(self,f"Command {func_str} is invalid or ill formed")
         

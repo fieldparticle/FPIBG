@@ -59,6 +59,7 @@ void main()
 		debugPrintfEXT("fragment:index %d:%0.3f,%0.3f,%0.3f",index,P[index].PosLoc.x,P[index].PosLoc.y,P[index].PosLoc.z);
 	}
 #endif
+	
 		outColor = vec4(fragColor,1.0);
 		
 }

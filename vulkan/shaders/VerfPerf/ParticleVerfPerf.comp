@@ -86,7 +86,7 @@ void main()
 	uint duplst[MAX_ARY+1];
 	uint dupcnt = 0;
 	bool dupflg = false;
-	
+	P[Findex].ColFlg = 0;
 	// Clear the duparray
 	for(uint kk =0; kk < MAX_ARY; kk++)
 		duplst[kk] = 0;
@@ -129,6 +129,7 @@ void main()
 				{
 					if(isParticleContact(ii,Findex, Tindex) > 0)
 					{
+						P[Findex].ColFlg = 1;
 						atomicAdd(collOut.CollisionCount,1);
 						
 					}

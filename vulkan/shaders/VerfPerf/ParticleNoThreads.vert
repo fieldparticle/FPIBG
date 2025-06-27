@@ -276,16 +276,16 @@ void main(){
 		if(uint(ShaderFlags.ColorMap) == 0)				
 		{
 			
-			if(P[index].ColFlg == 1.0)
-				fragColor = vec3(0.5,1.0,0.4);
+			if(P[index].ColFlg > 0.0)
+				fragColor = vec3(1.0,0.0,0.0);	
 			else
-				fragColor = vec3(1.0,0.3,0.3);	
+				fragColor = vec3(0.0,0.0,1.0);
 		}
 		if(uint(ShaderFlags.ColorMap) == 1)				
 		{
 			fragColor  = hsv2rgb(vec3(P[index].FrcAng.w,1.0,1.0));
 		}
 		
-	
+	fragColor = vec3(0.0,0.0,1.0);
 	
 }

@@ -50,7 +50,7 @@ void PerfObj::Create()
 	if(!m_TestCFG.compare("testdirCFB"))
 	{
 		m_TestDir = m_testCFBDir;
-		m_SeriesLength = 3;
+		
 	}
 	if(!m_TestCFG.compare("testdirPCD"))
 	{
@@ -78,6 +78,7 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag)
 			sorted_by_name.insert(entry.path());
 			//filename.push_back(entry.path().string());
 		}
+
 	#if 1
 		for (const auto& entry : sorted_by_name)
 		{

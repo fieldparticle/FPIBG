@@ -42,6 +42,11 @@ class LatexPlot(LatexPlotBase):
         self.LatexFileImage = LatexMultiPlotWriter(self.Parent)
         self.valHandler = ValHandler()
     
+    def isNumber(self,value):
+        if isinstance(float(value), float) and '.' in value:
+            return True
+        if isinstance(int(value), int) and '.' in value:
+            return True
 
     def isfloat(self,value):
         try:

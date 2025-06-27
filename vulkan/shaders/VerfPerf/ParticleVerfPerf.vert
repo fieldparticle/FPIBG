@@ -231,7 +231,11 @@ void main(){
 		}
 	}
 	
-	
-	fragColor = vec3(1.0,0.3,0.3);	
+		if(P[index].ColFlg == 1)
+		{
+			fragColor = vec3(1.0,0.0,0.0);	
+		}
+		else
+			fragColor = vec3(0.0,1.0,0.0);	
 	
 }

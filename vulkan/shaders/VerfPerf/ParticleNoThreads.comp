@@ -105,13 +105,14 @@ void main()
 	bool dupflg = false;
 	vec3 OutVel = vec3(0.0,0.0,0.0);;		
 	uint flg=0;
-	
+	P[Findex].ColFlg = 0;
 	
 	//uint ii = gl_GlobalInvocationID.y;
 	for(uint ii = 0; ii < 8; ii++)
 	{
 		// Set location to local variable.
 		uint loc = P[Findex].zlink[ii].ploc;
+		
 		#if 0
 			if(uint(ShaderFlags.frameNum) == 2 && index == 2)
 					debugPrintfEXT("loc:%d",loc);
@@ -180,6 +181,7 @@ void main()
 #if 0
 					if(uint(ShaderFlags.frameNum) == 3 && dupflg == false)
 					{
+						
 						atomicAdd(collOut.CollisionCount,1);
 						if(dupflg == true)
 							flg = 1;
@@ -197,9 +199,11 @@ void main()
 						
 						if(isParticleContact(ii,Findex, Tindex, OutVel) > 0)
 						{
+							P[Findex].ColFlg = 1.0;
 							atomicAdd(collOut.CollisionCount,1);
-							
 						}
+						
+							
 						dupflg = true;
 					
 					}
