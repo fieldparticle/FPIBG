@@ -137,7 +137,7 @@ void main()
 					if(duplst[cc] == Tindex)
 					{
 						dupflg = true;
-						#if 0						
+						#if 1						
 						if(uint(ShaderFlags.frameNum) == 3)
 							debugPrintfEXT("DUPTRUE:cc:%d,dupcnt:%d,[%d,%d,%d,%d,%d,%d,%d]",cc,dupcnt,
 							duplst[0],

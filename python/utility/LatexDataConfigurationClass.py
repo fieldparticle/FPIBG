@@ -202,6 +202,8 @@ class LatexDataConfigurationClass():
                 self.objArry.append(widget)    
                 self.cfgHeight += 70
             elif type(v) == tuple   :
+               if 'cell_select_list' in k:
+                   return
                H,W = self.doArray(cfg,k,v)
                self.cfgHeight += H
         #self.setSize(self.ConfigGroup,self.cfgHeight,450)

@@ -565,19 +565,25 @@ class LatexTableWriter(LatexClass):
 
     def loadItem(self,i,j):
         cellstr = ""
-        val =  self.data[i][j]
-        if i > len(self.cfg[f"format_array1"]):
-            print("Mismatch between colums of data and the format of that data.")
-            return
-        fmt_txt = self.cfg[f"format_array1"][i]
-        if 'd' in fmt_txt:
-            pval = int(val)
-        elif 'f' in fmt_txt:
-            pval = float(val)
-        elif 's' in fmt_txt:
-            pval = str(val)
-            ret = self.setTableItemArray(pval,i,j)
-            return pval            
+        try:
+            if i == 11:
+                print(f"{i} {j}")       
+            val =  self.data[i][j]
+            if i > len(self.cfg[f"format_array1"]):
+                print("Mismatch between colums of data and the format of that data.")
+                return
+            
+            fmt_txt = self.cfg[f"format_array1"][i]
+            if 'd' in fmt_txt:
+                pval = int(val)
+            elif 'f' in fmt_txt:
+                pval = float(val)
+            elif 's' in fmt_txt:
+                pval = str(val)
+                ret = self.setTableItemArray(pval,i,j)
+                return pval            
+        except BaseException as e:
+            print(e)
         out1 = f"{pval}"
         out_txt = "f\"%{fmt_txt}\"%(" + out1 + ")"
         #out_data = eval(out_txt)

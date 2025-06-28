@@ -114,6 +114,18 @@ void main()
 					if(duplst[cc] == Tindex)
 					{
 						dupflg = true;
+						#if 0				
+						if(uint(ShaderFlags.frameNum) == 3)
+							debugPrintfEXT("DUPTRUE:cc:%d,dupcnt:%d,[%d,%d,%d,%d,%d,%d,%d]",cc,dupcnt,
+							duplst[0],
+							duplst[1],
+							duplst[2],
+							duplst[3],
+							duplst[4],
+							duplst[5],
+							duplst[6]						
+							);
+						#endif	
 						break;
 					}
 					if(duplst[cc] == 0)

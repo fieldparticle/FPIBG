@@ -117,6 +117,17 @@ class BaseGenData:
             self.log.log(self,e)
         self.count = 0
 
+    def list_particles(self,p_list,list_obj):
+        p_count = 0
+        p_start = int(self.cfg.particle_range_array[0])
+        p_end = int(self.cfg.particle_range_array[1])
+        for ii in p_list:
+            if (p_count >= p_start):
+                list_obj.append(f"Pnum:{ii.pnum} at <{ii.rx:.2f},{ii.ry:.2f},{ii.rz:.2f}>")
+            p_count +=1
+            if(p_count > p_end):
+                break        
+
     def write_bin_file(self,w_lst):
         try:
             for ii in w_lst:
@@ -169,7 +180,7 @@ class BaseGenData:
 
     def calulate_cell_properties(self,index,sel_dict):
         try :
-            self.collision_density           = float(sel_dict['cdens'])
+            self.collision_density      = float(sel_dict['cdens'])
             self.number_particles       =  int(sel_dict['tot'])
             self.radius                 = float(sel_dict['radius'])
             self.sepdist                =  float(self.cfg.particle_separation_text)
@@ -354,30 +365,37 @@ class BaseGenData:
         side_txt = f"{self.tst_side_length}:{self.tst_side_length}"
         
     def plot_cells(self,cx,cy,cz):
-        R = 0.5
-        pt_lst = np.zeros((8,3))
-        pt_lst[0]= [cx-R,cy-R,cz-R]
-        pt_lst[1]= [cx+R,cy-R,cz-R]
-        pt_lst[2]= [cx+R,cy+R,cz-R]
-        pt_lst[3]= [cx-R,cy+R,cz-R]
-        pt_lst[4]= [cx-R,cy-R,cz+R]
-        pt_lst[5]= [cx+R,cy-R,cz+R]
-        pt_lst[6]= [cx+R,cy+R,cz+R]
-        pt_lst[7]= [cx-R,cy+R,cz+R]
-        x = pt_lst[:,0]
-        y = pt_lst[:,1]
-        z = pt_lst[:,2]
-        # Face IDs
-        vertices = [[0,1,2,3],[1,5,6,2],[3,2,6,7],[4,0,3,7],[5,4,7,6],[4,5,1,0]]
+        ret = False
+        for ii in self.itemcfg.cell_select_list:
+            if ii == [cx,cy,cz]:
+                ret = True
+                break
+        if ret == True:
         
-        tupleList = list(zip(x, y, z))
-        poly3d = [[tupleList[vertices[ix][iy]] for iy in range(len(vertices[0]))] for ix in range(len(vertices))]
-        face_color = 'y'
-        if self.flg_plot_cell_faces == True:
-            alpha_val = 0.5
-        else:
-            alpha_val = 0.0
-        self.ax.add_collection3d(Poly3DCollection(poly3d, edgecolors= 'k',facecolors=face_color, linewidths=1, alpha=alpha_val))
+            R = 0.5
+            pt_lst = np.zeros((8,3))
+            pt_lst[0]= [cx-R,cy-R,cz-R]
+            pt_lst[1]= [cx+R,cy-R,cz-R]
+            pt_lst[2]= [cx+R,cy+R,cz-R]
+            pt_lst[3]= [cx-R,cy+R,cz-R]
+            pt_lst[4]= [cx-R,cy-R,cz+R]
+            pt_lst[5]= [cx+R,cy-R,cz+R]
+            pt_lst[6]= [cx+R,cy+R,cz+R]
+            pt_lst[7]= [cx-R,cy+R,cz+R]
+            x = pt_lst[:,0]
+            y = pt_lst[:,1]
+            z = pt_lst[:,2]
+            # Face IDs
+            vertices = [[0,1,2,3],[1,5,6,2],[3,2,6,7],[4,0,3,7],[5,4,7,6],[4,5,1,0]]
+            
+            tupleList = list(zip(x, y, z))
+            poly3d = [[tupleList[vertices[ix][iy]] for iy in range(len(vertices[0]))] for ix in range(len(vertices))]
+            face_color = 'y'
+            if self.flg_plot_cell_faces == True:
+                alpha_val = 0.5
+            else:
+                alpha_val = 0.0
+            self.ax.add_collection3d(Poly3DCollection(poly3d, edgecolors= 'k',facecolors=face_color, linewidths=1, alpha=alpha_val))
         
 
      
@@ -401,7 +419,7 @@ class BaseGenData:
                     ret = f.readinto(record)
                     if ret == 0:
                         break
-                    print(record.pnum)
+                    #print(record.pnum)
                     results.append(record)
                     if counter > end_it:
                         break

@@ -11,7 +11,7 @@ class LatexDataParticle(LatexDataBaseClass):
     mmrr_fps = 0.0
     mmrr_cpums = 0.0
     mmrr_gms = 0.0
-        
+    
     lines_return = pd.DataFrame()
     def __init__(self, FPIBGBase, itemcfg, ObjName):
         super().__init__(FPIBGBase, itemcfg, ObjName)
@@ -42,7 +42,7 @@ class LatexDataParticle(LatexDataBaseClass):
     def Create(self, plot_num):
         if len(self.lines_return) != 0:
             self.lines_return = pd.DataFrame()
-        if('validation' in self.itemcfg.config.mode.lower()):
+        if('verification' in self.itemcfg.config.mode.lower()):
             self.mode = 1
         else:
             self.mode = 0
@@ -89,7 +89,7 @@ class LatexDataParticle(LatexDataBaseClass):
         self.lines_return["MMR_fps"] = fps_ary
         self.lines_return["MMR_cpums"] = cpums_ary
         self.lines_return["MMR_gms"] = gms_ary
-        
+        return
                         
 
     def build_field(self,field_name,key_name):
@@ -101,16 +101,25 @@ class LatexDataParticle(LatexDataBaseClass):
         field_name[1] = field_name[1].strip()
         key_name = key_name.strip()
         try :
+            
             self.topdir = self.itemcfg.config.data_dir + "/perfdata" + field_name[0]
-            self.sumFile = self.topdir + "/perfdata" + field_name[0] + ".csv"
+            if self.mode == 1:
+                self.sumFile = self.topdir + "/perfdata" + field_name[0] + "VERF.csv"
+            else:
+                self.sumFile = self.topdir + "/perfdata" + field_name[0] + ".csv"
         except BaseException as e:
             self.log.log(self,e)
         try :
-            self.create_summary()
+            if self.mode == 0:
+                self.create_summary()
             self.check_data_files()
-            self.get_averages()
+            if self.mode == 0:
+                self.get_averages()
+            else:
+                self.get_verify()
         except BaseException as e:
             self.log.log(self,e)
+            print(e)
             self.hasData = False
             raise ValueError
     
@@ -124,11 +133,11 @@ class LatexDataParticle(LatexDataBaseClass):
 
 
         #print(self.lines_return)
-        try :
-            print(f"Type of {key_name} is {type(self.lines_return[key_name][0])}")
+        #try :
+            #print(f"Type of {key_name} is {type(self.lines_return[key_name][0])}")
             
-        except BaseException as e:
-            print(e)
+        #except BaseException as e:
+        #    print(e)
         return
     
     def do_mmrr(self):
@@ -158,7 +167,7 @@ class LatexDataParticle(LatexDataBaseClass):
     # Returns true if number of .tst files equal to number of R or D files
     def check_data_files(self) -> bool:
         if(os.path.exists(self.sumFile) == False):
-            print ("Data Direcoptries not available" )
+            print ("LatexDataParticle.check_data_files() Data directories not available" )
             self.hasData = False
             return False
         tst_files = [i for i in os.listdir(self.topdir) if i.endswith(".tst")]
@@ -182,26 +191,72 @@ class LatexDataParticle(LatexDataBaseClass):
         except BaseException as e:
             print(e)
 
+   
+    def get_verify(self):
+        data = ['file','line', 'expectedp', 'loadedp', 'shaderp_comp',
+                            'shaderp_grph', 'expectedc', 'shaderc', 'loaded_err', 'compp_err','grphp_err','coll_err']
+        try :
+            with open(self.sumFile, mode= 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(data)
+        except BaseException as e:
+            print(e)
+
+        if(self.hasData == False):
+            return
+        file_count = 0
+        average_list = []
+        for i in self.data_files:
+            file_path = self.topdir + "/" + i + "D.csv"
+            
+            try:
+                with open(file_path, 'r') as filename:
+                    file = csv.DictReader(filename)
+                    loaded_err = grphp_err = compp_err = coll_err = expectedp = loadedp = shaderp_comp = shaderp_grph = shaderc = 0
+                    line_count = 0
+                    for col in file:
+                        expectedp = int(col['expectedp'])
+                        loadedp = int(col['loadedp'])
+                        shaderp_comp = int(col['shaderp_comp'])
+                        shaderp_grph= int(col['shaderp_grph'])
+                        if loadedp != expectedp:
+                            loaded_err = 1
+                        if shaderp_comp != expectedp:
+                            compp_err = 1
+                        if shaderp_grph != expectedp:
+                            grphp_err = 1
+                        
+                        expectedc = int(col[' expectedc'])
+                        shaderc = int(col['shaderc'])
+                        
+                        if expectedc != shaderc:
+                            coll_err = 1
+
+                if loaded_err or grphp_err or compp_err or coll_err:
+                    avg_list = [file_count, line_count, expectedp, loadedp, shaderp_comp,
+                        shaderp_grph, expectedc, shaderc, loaded_err, compp_err, grphp_err, coll_err]
+                    average_list.append(avg_list)            
+                line_count += 1
+            except BaseException as e:
+                print(e)
+            file_count += 1
+        with open(self.sumFile, 'a', newline='\n') as file:
+            writer = csv.writer(file)
+            for ii in range(len(average_list)):
+                writer.writerow(average_list[ii])
+                
+        
+
     def get_averages(self):
         if(self.hasData == False):
             return
         for i in self.data_files:
-            file_path_debug = self.topdir + "/" + i + "D.csv"
-            file_path_release = self.topdir + "/" + i + "R.csv"
+            if self.mode == 0:
+                file_path_release = self.topdir + "/" + i + "R.csv"
+            else:
+                file_path_debug = self.topdir + "/" + i + "D.csv"
             fps = cpums = cms = gms = expectedp = loadedp = shaderp_comp = shaderp_grph = expectedc = shaderc = sidelen = count = 0
-            """
-            with open(file_path_debug, 'r') as filename:
-                file = csv.DictReader(filename)
-                for col in file:
-                    
-                    expectedp += float(col['expectedp'])
-                    loadedp += float(col['loadedp'])
-                    shaderp_comp += float(col['shaderp_comp'])
-                    shaderp_grph += float(col['shaderp_grph'])
-                    expectedc += float(col[' expectedc'])
-                    shaderc += float(col['shaderc'])
-                    sidelen += float(col[' sidelen'])
-            """
+        
             try:
                 with open(file_path_release, 'r') as filename:
                     file = csv.DictReader(filename)

@@ -205,7 +205,20 @@ class TabGenData(QTabWidget,QRunnable):
                 self.ListObj.addItem(ii)
         """
     def list_particles(self):
-        pass
+        selected_item = self.ListObj.selectedItems()
+        if selected_item ==self.selected_item:
+            return
+        else:
+            self.selected_item = selected_item
+        if self.selected_item:
+            self.gen_obj = self.ltxObj.getGenObj()
+            p_list = self.gen_obj.read_particle_data(self.selected_item[0].text())
+            self.gen_obj.list_particles(p_list,self.terminal)
+        else:
+            print("no item selected")
+        
+
+
 
     def plot_particles(self):
         

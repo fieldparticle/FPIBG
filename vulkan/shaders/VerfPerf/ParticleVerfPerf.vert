@@ -82,64 +82,142 @@ void main(){
 	float R			= P[index].PosLoc.w;
 	
 	
+	#if 1 && defined(DEBUG)
+	if(index == 16 && uint(ShaderFlags.frameNum) == 10 )
+		debugPrintfEXT("ParticleVerfPerf A position: Particle:%d <rx=%0.3f,ry=%0.3f,rz=%0.3f>",
+		index,P[index].PosLoc.x,P[index].PosLoc.y,P[index].PosLoc.z);
 	
-	P[index].zlink[0].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R))));
-	if(P[index].zlink[0].ploc == npos)
-	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R)));
-		return;
-	}											//++-
+	#endif	
 	
-	P[index].zlink[1].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R))));
-	if(P[index].zlink[1].ploc == npos)
-	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R)));
-		return;
-	}											//+--
 	
-	P[index].zlink[2].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R))));
-	if(P[index].zlink[2].ploc == npos)
-	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R)));
-		return;
-	}											//---
 	
-	P[index].zlink[3].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R))));
-	if(P[index].zlink[3].ploc == npos)
+	if (cx+R > 0.0 && cy+R > 0.0 && cz-R > 0.0)
 	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R)));
-		return;
-	}	
-	
-	//##############
-	P[index].zlink[4].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R))));
-	if(P[index].zlink[4].ploc == npos)
-	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R)));
-		return;
+		P[index].zlink[0].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R))));
+		if(P[index].zlink[0].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R)));
+			return;
+		}							
 	}
-								//-++
-	P[index].zlink[5].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R))));
-	if(P[index].zlink[5].ploc == npos)
+	else
 	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R)));
-		return;
-	}											//-+-
-	
-	P[index].zlink[6].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R))));
-	if(P[index].zlink[6].ploc == npos)
-	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>]",index,uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R)));
-		return;
-	}											//+-+
-	#if 1				
-	P[index].zlink[7].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R))));
-	if(P[index].zlink[7].ploc == npos)
-	{
-		debugPrintfEXT("Particle:%d missed <%d,%d,%d>]",index,uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R)));
-		return;
+		P[index].zlink[0].ploc = 0;
 	}
-	#endif
+		
+	
+	if (cx+R > 0.0 && cy+R > 0.0 && cz+R > 0.0)
+	{
+		P[index].zlink[1].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R))));
+		if(P[index].zlink[1].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R)));
+			return;
+		}						
+	}
+	else
+	{
+		P[index].zlink[1].ploc = 0;
+	}
+		
+	if (cx-R > 0.0 && cy+R > 0.0 && cz+R > 0.0)
+	{
+		P[index].zlink[2].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R))));
+		if(P[index].zlink[2].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R)));
+			return;
+		}											//---
+	}
+	else
+	{
+		P[index].zlink[2].ploc = 0;
+	}
+	
+	if (cx-R > 0.0 && cy+R > 0.0 && cz-R > 0.0)
+	{
+		P[index].zlink[3].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R))));
+		if(P[index].zlink[3].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R)));
+			return;
+		}
+	}
+	else
+	{
+		P[index].zlink[3].ploc = 0;
+	}
+	
+	if (cx+R > 0.0 && cy-R > 0.0 && cz-R > 0.0)
+	{
+		P[index].zlink[4].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R))));
+		if(P[index].zlink[4].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R)));
+			return;
+		}
+	}
+	else
+	{
+		P[index].zlink[4].ploc = 0;
+	}
+		
+	
+	
+	if (cx+R > 0.0 && cy-R > 0.0 && cz-R > 0.0)
+	{
+		P[index].zlink[5].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R))));
+		if(P[index].zlink[5].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R)));
+			return;
+		}											//-+-
+	}
+	else
+	{
+		P[index].zlink[5].ploc = 0;
+	}
+	
+	if (cx-R > 0.0 && cy-R > 0.0 && cz+R > 0.0)
+	{
+		P[index].zlink[6].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R))));
+		if(P[index].zlink[6].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>]",index,uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R)));
+			return;
+		}											//+-+
+	}
+	else
+	{
+		P[index].zlink[6].ploc = 0;
+	}
+		
+	
+	if (cx-R > 0.0 && cy-R > 0.0 && cz-R > 0.0)
+	{
+		P[index].zlink[7].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R))));
+		if(index == 16 && uint(ShaderFlags.frameNum) == 10 )
+			debugPrintfEXT("ParticleVerfPerf corner: Particle:%d corner %d <%d>",index,7,P[index].zlink[7].ploc);
+		if(P[index].zlink[7].ploc == npos)
+		{
+			debugPrintfEXT("Particle:%d missed <%d,%d,%d>]",index,uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R)));
+			return;
+		}
+	}
+	else
+	{
+		if(index == 16 && uint(ShaderFlags.frameNum) == 10 )
+			debugPrintfEXT("ParticleVerfPerf corner: Particle:%d corner %d <%d>",index,7,P[index].zlink[7].ploc);
+		P[index].zlink[7].ploc = 0;
+	}
+	
+	
+	#if 1 && defined(DEBUG)
+	if(index == 1 && uint(ShaderFlags.frameNum) == 0 )
+		debugPrintfEXT("ParticleVerfPerf corners: Particle:%d <%d,%d,%d,%d,%d,%d,%d,%d>",
+		index,P[index].zlink[0].ploc,P[index].zlink[1].ploc,P[index].zlink[2].ploc,P[index].zlink[3].ploc,P[index].zlink[4].ploc,
+		P[index].zlink[5].ploc,P[index].zlink[6].ploc,P[index].zlink[7].ploc);
+	#endif	
 	
 		// Orignal indexer
 	uint kk = 0;
@@ -200,7 +278,8 @@ void main(){
 			{
 				uvec3 badloc;
 				#if defined(DEBUG)
-					debugPrintfEXT("VERT slot>MAX_ARY  F:%u,P:%d,R:%0.2f,Slots:%d,at loc: %d(%d,%d,%d), exceeds max array:%d",
+					IndexToArray(sltidx,badloc);
+					debugPrintfEXT("ParticleVerfPerf slot>F:%u,P:%d,R:%0.2f,MAX_ARY:%d,at loc: %d(%d,%d,%d), exceeds max array:%d",
 					uint(ShaderFlags.frameNum),index,R,MAX_ARY,sltidx,badloc.x,badloc.y,badloc.z,slot);
 				#endif
 				collIn.ExcessSlots = slot;
@@ -211,7 +290,7 @@ void main(){
 			if(sltidx > MaxLocation)
 			{
 				#if defined(DEBUG)
-					debugPrintfEXT("VERT sltidx > MaxLocation:P=%d,sltidx=%d,MaxLocation=%d",index,sltidx,MaxLocation);
+					debugPrintfEXT("ParticleVerfPerf sltidx > MaxLocation:P=%d,sltidx=%d,MaxLocation=%d",index,sltidx,MaxLocation);
 				#endif	
 				collIn.ExcessSlots = sltidx;
 				collIn.ErrorReturn = 2;
@@ -223,7 +302,7 @@ void main(){
 			#if 1 && defined(DEBUG)
 				if(ShaderFlags.frameNum == 8 && index == 16)
 				{
-					debugPrintfEXT("VERT particle %d added to cell %d slot %d.",index,sltidx,slot);
+					debugPrintfEXT("ParticleVerfPerf particle %d added to cell %d slot %d.",index,sltidx,slot);
 				}
 			#endif	
 			clink[sltidx].idx[slot] = index;
