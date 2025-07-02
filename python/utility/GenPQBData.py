@@ -31,6 +31,7 @@ class GenPQBData(BaseGenData):
         if(self.collsions_in_cell_count <= self.num_collisions_per_cell):
             ry = 0.5 + 2.0*self.radius + self.center_line_length*col+yy
             self.collsions_in_cell_count+=2
+            self.collision_count+=2
             particle_struct.ptype = 1
         else:
             particle_struct.ptype = 0
@@ -63,6 +64,7 @@ class GenPQBData(BaseGenData):
         ret = 0
         self.w_list = []
         self.particle_count = 0
+        self.add_null_particle(self.w_list)
         for zz in range(self.cell_z_len-1):
 
             progress_callback.emit(zz)

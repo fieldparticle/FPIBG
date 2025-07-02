@@ -13,44 +13,10 @@ from LatexPlotParticle import *
 from LatexPlot import *
 from LatexSingleTable import *
 
-"""
-def p(x):
-    print (x)
-class EmbeddedTerminal(QTextEdit):
-    def __init__(self, parent):
-        super(EmbeddedTerminal, self).__init__(parent)
-
-    def run_func(self, func, *args, **kwargs):
-        self.thread = QThread()
-        self.worker = TerminalWorker(func, args, kwargs)
-        self.worker.moveToThread(self.thread)
-        self.thread.started.connect(self.worker.run)
-        self.worker.progress.connect(self.update_terminal)
-        self.thread.start()
-
-    def update_terminal(self, text):
-        self.setText(text)
-
-
-class TerminalWorker(QObject):
-    finished = pyqtSignal()
-    progress = pyqtSignal(str)
-
-    def __init__(self, func, args, kwargs):
-        QObject.__init__(self)
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-
-    def run(self):
-        with redirect_stdout(StringIO()) as f:
-            self.func(*self.args, **self.kwargs)
-        output = f.getvalue()
-        self.progress.emit(output)
-"""
 class TabFormLatex(QTabWidget):
     
     texFolder = ""
+    prv = None
     CfgFile = ""
     texFileName = ""
     hasConfig = False
@@ -65,29 +31,26 @@ class TabFormLatex(QTabWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
        
-        
-    
+       
     def setSize(self,control,H,W):
+        return
         control.setMinimumHeight(H)
         control.setMinimumWidth(W)
         control.setMaximumHeight(H)
         control.setMaximumWidth(W)
+
+    def refresh_config(self):
+        self.OpenConfigFile()
 
     def SaveConfigurationFile(self):
         self.ltxObj.updateCfgData()
         
         #self.ltxObj.clearConfigGrp()
 
-  
-    def browseFolder(self):
-        """ Opens a dialog window for the user to select a folder in the file system. """
-        #folder = QFileDialog.getExistingDirectory(self, "Select Folder")
-        folder = QFileDialog.getOpenFileName(self, ("Open File"),
-                                       self.startDir,
-                                       ("Configuration File (*.cfg)"))
-        
-        if folder[0]:
-            self.CfgFile = folder[0]
+    def OpenConfigFile(self,file_name=None):
+            if file_name != None:
+                self.CfgFile = file_name
+            
             self.texFolder = os.path.dirname(self.CfgFile)
             self.texFileName = os.path.splitext(os.path.basename(self.CfgFile))[0]
             self.dirEdit.setText(self.CfgFile)
@@ -154,6 +117,18 @@ class TabFormLatex(QTabWidget):
             self.PreviewButton.setEnabled(True)
 
 
+
+    def browseFolder(self):
+        """ Opens a dialog window for the user to select a folder in the file system. """
+        #folder = QFileDialog.getExistingDirectory(self, "Select Folder")
+        folder = QFileDialog.getOpenFileName(self, ("Open File"),
+                                       self.startDir,
+                                       ("Configuration File (*.cfg)"))
+        
+        if folder[0]:
+            self.OpenConfigFile(folder[0])
+            
+
     def browseNewItem(self):
         """ Opens a dialog window for the user to select a folder in the file system. """
         #folder = QFileDialog.getExistingDirectory(self, "Select Folder")
@@ -183,6 +158,9 @@ class TabFormLatex(QTabWidget):
             self.OpenLatxCFG(self.CfgFile)
    
     def preview(self):
+        if self.prv != None:
+            if (self.prv.flg_isopen):
+                self.prv.close()
         self.SaveConfigurationFile()
         previewFile = f"{self.itemcfg.config.tex_dir}/preview.tex"
         previewPdf =  f"{self.itemcfg.config.tex_dir}/preview.pdf"
@@ -198,8 +176,8 @@ class TabFormLatex(QTabWidget):
             while txt_line:
                 txt_line = infile.readline().strip("\n")
                 self.terminal.append(txt_line)
-        prv = PreviewDialog(previewPdf)
-        prv.exec()
+        self.prv = PreviewDialog(previewPdf)
+        self.prv.exec()
         
 
         
@@ -216,13 +194,15 @@ class TabFormLatex(QTabWidget):
             self.tab_layout = QGridLayout()
             self.tab_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
             self.tab_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+            self.setSize(self,1000,1000)
+            self.setFixedWidth(1000)
             self.setLayout(self.tab_layout)
 
             ## -------------------------------------------------------------
             ## Set parent directory
             LatexcfgFile = QGroupBox("Latex File Configuration")
-            self.setSize(LatexcfgFile,200,500)
-            self.tab_layout.addWidget(LatexcfgFile,0,0,1,2,alignment= Qt.AlignmentFlag.AlignLeft)
+            #self.setSize(LatexcfgFile,450,500)
+            self.tab_layout.addWidget(LatexcfgFile,0,0,2,2,alignment= Qt.AlignmentFlag.AlignLeft)
             
             dirgrid = QGridLayout()
             LatexcfgFile.setLayout(dirgrid)
@@ -251,11 +231,11 @@ class TabFormLatex(QTabWidget):
             self.newButton.clicked.connect(self.browseNewItem)
             dirgrid.addWidget(self.newButton,2,1)
 
-            self.verfButton = QPushButton("New")
-            self.setSize(self.verfButton,30,100)
-            self.verfButton.setStyleSheet("background-color:  #dddddd")
-            self.verfButton.clicked.connect(self.browseNewItem)
-            dirgrid.addWidget(self.verfButton,2,1)
+            self.refsButton = QPushButton("Refresh")
+            self.setSize(self.refsButton,30,100)
+            self.refsButton.setStyleSheet("background-color:  #dddddd")
+            self.refsButton.clicked.connect(self.refresh_config)
+            dirgrid.addWidget(self.refsButton,2,2)
 
             self.PreviewButton = QPushButton("Preview")
             self.setSize(self.PreviewButton,30,100)
@@ -263,7 +243,7 @@ class TabFormLatex(QTabWidget):
             self.PreviewButton.clicked.connect(self.preview)
             self.PreviewButton.setEnabled(False)
             dirgrid.addWidget(self.PreviewButton,2,3)
-
+            
             self.ListObj =  QListWidget()
             #self.ListObj.setFont(self.font)
             self.ListObj.setStyleSheet("background-color:  #FFFFFF")
@@ -273,15 +253,24 @@ class TabFormLatex(QTabWidget):
             self.ListObj.insertItem(2, "multiplot")
             self.ListObj.insertItem(3, "multiimage")
             self.ListObj.itemSelectionChanged.connect(lambda: self.valueChangeArray(self.ListObj))
-            dirgrid.addWidget(self.ListObj,3,0,1,2)
+            dirgrid.addWidget(self.ListObj,3,0,2,2)
             
+            self.intro_image = QLabel(self)
+            self.pixmap = QPixmap('Logo.png')
+            self.pixmap = self.pixmap.scaled(600, 400)
+            self.intro_image.setPixmap(self.pixmap)
+            #self.setSize(self.intro_image,350,450)
+            ##Add items to the layout
+            
+            self.tab_layout.addWidget(self.intro_image,0,2,2,2,alignment= Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
             ## -------------------------------------------------------------
             ## Comunications Interface
             self.terminal =  QTextEdit(self)
             self.terminal.setStyleSheet("background-color:  #ffffff; color: green")
             self.setSize(self.terminal,225,900)
-            self.tab_layout.addWidget(self.terminal,4,0,1,3,alignment= Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+            self.terminal.setFixedWidth(950)
+            self.tab_layout.addWidget(self.terminal,5,0,2,4,alignment= Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         except BaseException as e:
             self.log.log(self,e)
    

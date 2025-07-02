@@ -71,12 +71,14 @@ void main()
 	}
 
 #ifdef DEBUG
+	// Thread count
 	atomicAdd(collOut.holdPidx,1);	
 #endif	
 
 
 	
 #ifdef DEBUG
+	// Particle count
 	atomicAdd(collOut.numParticles,1);	
 #endif
 	
@@ -88,7 +90,7 @@ void main()
 	bool dupflg = false;
 	P[Findex].ColFlg = 0;
 	// Clear the duparray
-	for(uint kk =0; kk < MAX_ARY; kk++)
+	for(uint kk =0; kk < 8; kk++)
 		duplst[kk] = 0;
 	
 	
@@ -101,15 +103,18 @@ void main()
 		{
 			// Use the linked particle location to index into the particle-cell hash table 
 			// And compare this particle with all of the paricles at this location.
-			for(uint jj = 0; jj< MAX_ARY;jj++)
+			uint lock_len = L[loc];
+			for(uint jj = 0; jj <= lock_len;jj++)
 			{
 				
 				Tindex = clink[loc].idx[jj];
 				if(Tindex == 0)
 					break;
 				
+				#if 0
+				
 				//----------------------- DUP Process start		
-				for(uint cc =0; cc < MAX_ARY; cc++)
+				for(uint cc =0; cc < dupcnt+1; cc++)
 				{
 					if(duplst[cc] == Tindex)
 					{
@@ -136,14 +141,20 @@ void main()
 						break;
 					}
 				}
-
+				#endif
 				if(dupflg == false)						
 				{
 					if(isParticleContact(ii,Findex, Tindex) > 0)
 					{
 						P[Findex].ColFlg = 1;
-						atomicAdd(collOut.CollisionCount,1);
-						
+						#ifdef DEBUG
+							atomicAdd(collOut.CollisionCount,1);
+						#endif
+						//if(uint(ShaderFlags.frameNum) == 3 && index == 1)
+						#if 1
+							if(uint(ShaderFlags.frameNum) == 3)
+								debugPrintfEXT("%d,%d",Tindex,Findex);
+						#endif
 					}
 					dupflg = true;
 				}

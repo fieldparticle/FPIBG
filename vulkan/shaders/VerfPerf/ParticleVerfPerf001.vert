@@ -91,104 +91,199 @@ void main(){
 	
 	uint duplist[8];
 	uint dupcntr = 0;
-	uint cnr_index = 0;
 	
-	#if 0
-	P[index].zlink[0].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R))));
-	P[index].zlink[1].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R))));
-	P[index].zlink[2].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R))));
-	P[index].zlink[3].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R))));
-	P[index].zlink[4].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R))));
-	P[index].zlink[5].ploc = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R))));
-	P[index].zlink[6].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R))));
-	P[index].zlink[7].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R))));
-	#endif
-	
-	for (uint kk = 0;kk<8;kk++)
-		P[index].zlink[kk].ploc = 0;
-	
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R))));
-	duplist[0] = cnr_index;
-	P[index].zlink[0].ploc = cnr_index;
-	
-	
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R))));
-	if (cnr_index != P[index].zlink[0].ploc)
+	if (cx+R > 0.0 && cy+R > 0.0 && cz-R > 0.0)
 	{
-		dupcntr++;
-		P[index].zlink[dupcntr].ploc = cnr_index;
+		duplist[0] = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R))));
+		if(duplist[0] == npos)
+		{
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R)));
+			#endif
+			return;
+		}							
+	}
+	else
+	{
+		duplist[0] = 0;
 	}
 	
+	 P[index].zlink[dupcntr].ploc = duplist[dupcntr];
+	
+	if (cx+R > 0.0 && cy+R > 0.0 && cz+R > 0.0)
+	{
+		duplist[1] = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R))));
+		if(duplist[1] == npos)
+		{
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R)));
+			#endif
+			return;
+		}						
+	}
+	else
+	{
+		duplist[1] = 0;
+	}
+	
+	if (duplist[0] != duplist[1])
+		dupcntr++;
+		P[index].zlink[dupcntr].ploc = duplist[1];
 		
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R))));
-	if (cnr_index != P[index].zlink[0].ploc && 
-		cnr_index != P[index].zlink[1].ploc)
+
+	
+	if (cx-R > 0.0 && cy+R > 0.0 && cz+R > 0.0)
 	{
+		duplist[2] = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R))));
+		if(duplist[2] == npos)
+		{
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R)));
+			#endif
+			return;
+		}											
+	}
+	else
+	{
+		duplist[2] = 0;
+	}
+	
+	if (duplist[0] != duplist[2] && duplist[1] != duplist[2])
 		dupcntr++;
-		P[index].zlink[dupcntr].ploc = cnr_index;
+		P[index].zlink[dupcntr].ploc = duplist[2];
+	
+	
+	if (cx-R > 0.0 && cy+R > 0.0 && cz-R > 0.0)
+	{
+		duplist[3] = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R))));
+		if(duplist[3] == npos)
+		{
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R)));
+			#endif
+			return;
+		}
+	}
+	else
+	{
+		duplist[3] = 0;
+	}
+	
+	if (duplist[0] != duplist[3] && 
+		duplist[1] != duplist[3] && 
+		duplist[2] != duplist[3])
+		dupcntr++;
+		P[index].zlink[dupcntr].ploc = duplist[3];
+	
+	
+	
+	if (cx+R > 0.0 && cy-R > 0.0 && cz-R > 0.0)
+	{
+		duplist[4] = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R))));
+		if(duplist[4] == npos)
+		{
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R)));
+			#endif
+			return;
+		}
+	}
+	else
+	{
+		duplist[4] = 0;
 	}
 		
-	
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz-R))));
-	if (cnr_index != P[index].zlink[0].ploc && 
-		cnr_index != P[index].zlink[1].ploc &&
-		cnr_index != P[index].zlink[2].ploc)
-	{
+	if (duplist[0] != duplist[4] && 
+		duplist[1] != duplist[4] && 
+		duplist[2] != duplist[4] && 
+		duplist[3] != duplist[4])
 		dupcntr++;
-		P[index].zlink[dupcntr].ploc = cnr_index;
+		P[index].zlink[dupcntr].ploc = duplist[4];
+	
+	if (cx+R > 0.0 && cy-R > 0.0 && cz-R > 0.0)
+	{
+		duplist[5] = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R))));
+		if(duplist[5] == npos)
+		{
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>",index,uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R)));
+			#endif
+			return;
+		}											//-+-
 	}
+	else
+	{
+		duplist[5] = 0;
+	}
+	
+	if (duplist[0] != duplist[5] && 
+		duplist[1] != duplist[5] && 
+		duplist[2] != duplist[5] && 
+		duplist[3] != duplist[5] && 
+		duplist[4] != duplist[5])
+		dupcntr++;
+		P[index].zlink[dupcntr].ploc = duplist[5];
+	
+	
+	
+	if (cx-R > 0.0 && cy-R > 0.0 && cz+R > 0.0)
+	{
+		duplist[6] = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R))));
+		if(duplist[6] == npos)
+		{
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>]",index,uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R)));
+			#endif
+			return;
+		}											//+-+
+	}
+	else
+	{
+		duplist[6] = 0;
+	}
+
+	if (duplist[0] != duplist[6] && 
+		duplist[1] != duplist[6] && 
+		duplist[2] != duplist[6] && 
+		duplist[3] != duplist[6] && 
+		duplist[4] != duplist[6] && 
+		duplist[5] != duplist[6])
+		dupcntr++;
+		P[index].zlink[dupcntr].ploc = duplist[6];
 		
 	
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz+R))));
-	if (cnr_index != P[index].zlink[0].ploc && 
-		cnr_index != P[index].zlink[1].ploc &&
-		cnr_index != P[index].zlink[2].ploc &&
-		cnr_index != P[index].zlink[3].ploc)
+	if (cx-R > 0.0 && cy-R > 0.0 && cz-R > 0.0)
 	{
-		dupcntr++;
-		P[index].zlink[dupcntr].ploc = cnr_index;
-	}
-	
-	
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy-R)),uint(round(cz-R))));
-	if (cnr_index != P[index].zlink[0].ploc && 
-		cnr_index != P[index].zlink[1].ploc &&
-		cnr_index != P[index].zlink[2].ploc &&
-		cnr_index != P[index].zlink[3].ploc &&
-		cnr_index != P[index].zlink[4].ploc)
-	{
-		dupcntr++;
-		P[index].zlink[dupcntr].ploc = cnr_index;
-	}
+		duplist[7] = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R))));
+
+		#if 0
+			
+				debugPrintfEXT("ParticleVerfPerf corner: Particle:%d corner %d <%d>",index,7,P[index].zlink[7].ploc);
+		#endif
+		if(duplist[7] == npos)
+		{
 		
-	
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz+R))));
-	if (cnr_index != P[index].zlink[0].ploc && 
-		cnr_index != P[index].zlink[1].ploc &&
-		cnr_index != P[index].zlink[2].ploc &&
-		cnr_index != P[index].zlink[3].ploc &&
-		cnr_index != P[index].zlink[4].ploc &&
-		cnr_index != P[index].zlink[5].ploc)
-	{
-		dupcntr++;
-		duplist[dupcntr] = cnr_index;
-		P[index].zlink[dupcntr].ploc = cnr_index;
+			#ifdef DEBUG
+				debugPrintfEXT("Particle:%d missed <%d,%d,%d>]",index,uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R)));
+			#endif
+			return;
+		}
 	}
-		
-	
-	cnr_index = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R))));
-	if (cnr_index != P[index].zlink[0].ploc && 
-		cnr_index != P[index].zlink[1].ploc &&
-		cnr_index != P[index].zlink[2].ploc &&
-		cnr_index != P[index].zlink[3].ploc &&
-		cnr_index != P[index].zlink[4].ploc &&
-		cnr_index != P[index].zlink[5].ploc&&
-		cnr_index != P[index].zlink[6].ploc)
+	else
 	{
-		dupcntr++;
-		P[index].zlink[dupcntr].ploc = cnr_index;
+	
+		duplist[7] = 0;
 	}
 	
+	if (duplist[0] != duplist[7] && 
+		duplist[1] != duplist[7] && 
+		duplist[2] != duplist[7] && 
+		duplist[3] != duplist[7] && 
+		duplist[4] != duplist[7] && 
+		duplist[5] != duplist[7] && 
+		duplist[6] != duplist[7])
+		dupcntr++;
+		P[index].zlink[dupcntr].ploc = duplist[7];
 	
 	uint kk = 0;
 
@@ -198,7 +293,7 @@ void main(){
 	// Remove location duplicates.
 	//*******************************************************
 	#if 0
-		if(index == 3 && uint(ShaderFlags.frameNum) == 100)
+		if(index == 58 && uint(ShaderFlags.frameNum) == 100)
 		{
 			debugPrintfEXT("p:%d,H:%d,W:%d[%d,%d,%d,%d,%d,%d,%d,%d]",index,WIDTH,HEIGHT,
 				P[index].zlink[0].ploc,
@@ -215,7 +310,7 @@ void main(){
 	//*******************************************************
 	// Populate particle-cell array
 	//*******************************************************
-	for( uint ii = 0; ii < 8 && uint(P[index].parms[0])==0; ii++)
+	for( uint ii = 0; ii < dupcntr && uint(P[index].parms[0])==0; ii++)
 	{
 		// Location index for this slot.
 		uint sltidx = 0;
@@ -275,9 +370,8 @@ void main(){
 
 			// Insert the location of this particle in the particle-cell 
 			// hash table.
-			
-			#if 1 && defined(DEBUG)
-				if(index == 58 && uint(ShaderFlags.frameNum) == 100)
+			#if 0 && defined(DEBUG)
+				if(ShaderFlags.frameNum == 8 && index == 16)
 				{
 					debugPrintfEXT("ParticleVerfPerf particle %d added to cell %d slot %d.",index,sltidx,slot);
 				}

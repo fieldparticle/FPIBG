@@ -12,29 +12,6 @@ class GenDUPData(BaseGenData):
     def plot_particle_cell(self,file_name):
         self.plot_particle_cell_base(file_name)
     
-    
-    def place_particles(self,xx,yy,zz,colliding,w_list):
-        
-        particle_struct = pdata()
-        #print(f"particle: {self.particle_count}, xx={xx}, yy= {yy}, zz={zz}, layer= {layer}, row= {row} col= {col}")
-        #                         |offset so no particle is in a cell with a zero in it|
-       
-        
-        particle_struct.ptype = colliding
-        ry = yy
-        rx = xx
-        rz = zz
-    
-        particle_struct.pnum = self.particle_count     
-        particle_struct.rx = rx
-        particle_struct.ry = ry
-        particle_struct.rz = rz
-        particle_struct.radius = self.radius
-        w_list.append(particle_struct)
-        self.particle_count+=1
-        self.particles_in_cell_count +=1
-        return 0
-
     def write_test_file(self,index,sel_dict):
         
         with open(self.test_file_name,'w') as f:
@@ -79,34 +56,85 @@ class GenDUPData(BaseGenData):
         f.close()
 
 
+    def place_particlePair(self,xx1,yy1,zz1,xx2,yy2,zz2,colliding,w_list):
+        
+        particle_struct1 = pdata()
+        particle_struct1.ptype = 1
+        self.collision_count+=1
+        particle_struct1.pnum = self.particle_count + 1    
+        particle_struct1.rx = xx1
+        particle_struct1.ry = yy1
+        particle_struct1.rz = zz1
+        p0 =  np.array([xx1,yy1,zz1])
+        particle_struct1.radius = self.radius
+        w_list.append(particle_struct1)
+        self.particle_count+=1
+        self.particles_in_cell_count +=1
+
+        particle_struct2 = pdata()
+        particle_struct2.ptype = 1
+        self.collision_count+=1
+        particle_struct2.pnum = self.particle_count + 1    
+        particle_struct2.rx = xx2
+        particle_struct2.ry = yy2
+        particle_struct2.rz = zz2
+        p1 = np.array([xx2,yy2,zz2])
+        particle_struct2.radius = self.radius
+        w_list.append(particle_struct2)
+        self.particle_count+=1
+        self.particles_in_cell_count +=1
+        dist = np.linalg.norm(p0 - p1)
+        if dist >= (particle_struct2.radius + particle_struct1.radius):
+            print(f"P:{particle_struct1.pnum} and P:{particle_struct2.pnum} are not colliding.")
+
+        return [int(particle_struct1.pnum),int(particle_struct2.pnum)]
+
     def do_cells(self,progress_callback):
-       
         if self.cfg.particle_enumeration_text == 'random':
             self.rand_data = self.gen_random_numbers_in_range(0, self.number_particles, self.number_particles)    
         
         ret = 0
         self.w_list = []
         self.particle_count = 0
+        flg_col_rpt = False
 
+        if self.cfg.collision_sel_text in self.test_bin_name:
+            flg_col_rpt = True
+            fiel_name = f"{self.cfg.data_dir}/{self.cfg.collision_rpt_text}"
+            col_file = open(fiel_name,'w')
+
+        col_lst = []
+        #self.add_null_particle(self.w_list)
         for zz in range(self.cell_z_len-1):
             progress_callback.emit(zz)
             for yy in range(self.cell_y_len-1):
                 for xx in range(self.cell_x_len-1):
                     # Top 4
-                    self.place_particles(xx+1.5,yy+1.5,zz+1.45,1,self.w_list)  
-                    self.place_particles(xx+1.5,yy+1.5,zz+1.55,0,self.w_list)  
+                    p1ary = self.place_particlePair(xx+1.5,yy+1.5,zz+1.45,xx+1.5,yy+1.5,zz+1.55,1,self.w_list)  
+                    #self.place_particles(xx+1.5,yy+1.5,zz+1.55,0,self.w_list)  
                     # Side 2 colide X plane
                     
-                    self.place_particles(xx+1.42,yy+1.0,zz+1.0,1,self.w_list)  
-                    self.place_particles(xx+1.57,yy+1.0,zz+1.0,0,self.w_list)  
+                    p2ary = self.place_particlePair(xx+1.42,yy+1.0,zz+1.0,xx+1.57,yy+1.0,zz+1.0,1,self.w_list)  
+                    #self.place_particles(xx+1.57,yy+1.0,zz+1.0,0,self.w_list)  
 
-                    self.place_particles(xx+1.0,yy+1.42,zz+1.0,1,self.w_list)  
-                    self.place_particles(xx+1.0,yy+1.57,zz+1.0,0,self.w_list)  
+                    p3ary = self.place_particlePair(xx+1.0,yy+1.42,zz+1.0,xx+1.0,yy+1.57,zz+1.0,1,self.w_list)  
+                    #self.place_particles(xx+1.0,yy+1.57,zz+1.0,0,self.w_list)  
 
-                    self.place_particles(xx+1.0,yy+1.0,zz+1.42,1,self.w_list)  
-                    self.place_particles(xx+1.0,yy+1.0, zz+1.57,0,self.w_list)  
-                    
+                    p4ary = self.place_particlePair(xx+1.0,yy+1.0,zz+1.42,xx+1.0,yy+1.0, zz+1.57,1,self.w_list)  
+                    #self.place_particles(xx+1.0,yy+1.0, zz+1.57,0,self.w_list)  
+
+                    if flg_col_rpt == True:
+                        col_lst.append(p1ary) 
+                        col_lst.append(p2ary) 
+                        col_lst.append(p3ary) 
+                        col_lst.append(p4ary) 
+        
         self.write_bin_file(self.w_list)
+        if flg_col_rpt == True:
+            for ii in col_lst:
+                col_file.write(f"{ii[0]},{ii[1]}\n")
+            col_file.close()
+        
         return 0
         
         

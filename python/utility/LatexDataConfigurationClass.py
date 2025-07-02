@@ -62,7 +62,10 @@ class LatexDataConfigurationClass():
 
     def plot(self,file_name):
         self.cur_file_name = file_name
-        self.gen_obj.plot_base(file_name)
+        if int(self.cfg.plot_as_points_text) == 1:
+            self.gen_obj.plot_base(file_name,as_points=True)
+        else:
+            self.gen_obj.plot_base(file_name,as_points=False)
         self.do_plot_group()
 
     def plot_view_changed(self,obj):
@@ -71,6 +74,9 @@ class LatexDataConfigurationClass():
         self.gen_obj.update_plot()
         return
     
+    def out_put_cell_ary(self,file):
+        self.gen_obj.out_put_cell_ary(file)
+
     def getGenObj(self):
         return self.gen_obj
     

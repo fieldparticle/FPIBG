@@ -19,4 +19,4 @@ const uint doMotion = 0;
 const uint MaxLocation =125;
 const float dt =0.1;
 const uint compflag =0;
-const uint bbound =32;
+const uint bbound =64;

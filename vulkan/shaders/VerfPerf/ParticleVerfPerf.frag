@@ -42,24 +42,7 @@ void main()
 	{	
 		discard;
 	}
-
-#if !defined(VERPONLY)	
-	if(uint(ShaderFlags.Boundary) == 0 && index <= bbound)
-		discard;
 	
-	// If the particle is not live return.		
-	if(uint(P[index].parms.x) > uint(ShaderFlags.frameNum))
-		return;	
-#endif	
-
-//DEBUG	
-#if 0 && defined(DEBUG)
-	if(ShaderFlags.frameNum == 1 && index == 1)
-	{
-		debugPrintfEXT("fragment:index %d:%0.3f,%0.3f,%0.3f",index,P[index].PosLoc.x,P[index].PosLoc.y,P[index].PosLoc.z);
-	}
-#endif
-	
-		outColor = vec4(fragColor,1.0);
+	outColor = vec4(fragColor,1.0);
 		
 }

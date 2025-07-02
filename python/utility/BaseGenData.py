@@ -11,6 +11,7 @@ import math
 from ConfigClass import *
 from abc import ABC, abstractmethod
 import random
+from shared.utilities import *
 
 
 	#double rx;
@@ -27,6 +28,8 @@ import random
 	#double molar_mass;
 	#double temp_vel;
 class pdata(ctypes.Structure):
+    zlink = [0]*8
+
     _fields_ = [("pnum", ctypes.c_double),
                 ("rx",  ctypes.c_double),
                 ("ry",  ctypes.c_double),
@@ -41,8 +44,9 @@ class pdata(ctypes.Structure):
                 ("Acc_a",  ctypes.c_double),
                 ("molar_mass",  ctypes.c_double),
                 ("temp_vel",  ctypes.c_double)]          
+    
+    
           
-
 
 class BaseGenData:
 
@@ -108,6 +112,11 @@ class BaseGenData:
     def do_cells(self,progress_callback):
         pass
     
+    def add_null_particle(self,w_list):
+        particle_struct = pdata()
+        particle_struct.pnum = 0
+        w_list.append(particle_struct)
+
     def open_bin_file(self):
         try:
             if self.bin_file:
@@ -119,14 +128,9 @@ class BaseGenData:
 
     def list_particles(self,p_list,list_obj):
         p_count = 0
-        p_start = int(self.cfg.particle_range_array[0])
-        p_end = int(self.cfg.particle_range_array[1])
+        list_obj.clear()
         for ii in p_list:
-            if (p_count >= p_start):
-                list_obj.append(f"Pnum:{ii.pnum} at <{ii.rx:.2f},{ii.ry:.2f},{ii.rz:.2f}>")
-            p_count +=1
-            if(p_count > p_end):
-                break        
+            list_obj.append(f"P:{ii.pnum} <{ii.rx:.2f},{ii.ry:.2f},{ii.rz:.2f}")
 
     def write_bin_file(self,w_lst):
         try:
@@ -150,6 +154,8 @@ class BaseGenData:
     def gen_random_numbers_in_range(self,low, high, n):
         return random.sample(range(low, high), n)
     
+  
+    
     def open_selections_file(self):
         try:
             with open(self.itemcfg.selections_file_text,"r",newline='') as csvfl:
@@ -172,6 +178,9 @@ class BaseGenData:
         self.open_bin_file()
         ret = self.do_cells(progress_callback)
         self.close_bin_file()
+        print("=========================================================\n")
+        print(f"Colliding Particles:{self.collision_count}. Collsion pairs:{self.collision_count/2}")
+        print("=========================================================\n")
         return ret
        
         # Define the event handling function
@@ -298,15 +307,15 @@ class BaseGenData:
         self.fig.canvas.mpl_connect('scroll_event', self.on_scroll)
         
 
-    def do_plot(self,view_num=None,cells_on=True):
-        self.plot_particles(self.plist,aspoints=False)
+    def do_plot(self,view_num=None,cells_on=True,aspoints=True):
+        self.plot_particles(self.plist,aspoints=aspoints)
         if self.flg_plot_cells == True:
             for ii in range(self.tst_side_length):
                 for jj in range(self.tst_side_length):
                     for kk in range(self.tst_side_length):
                         self.plot_cells(ii,jj,kk)
 
-        self.end_plot()
+        self.end_plot(sidelen=self.side_length)
         self.flg_plt_exists  = True
 
     def update_plot(self): 
@@ -315,16 +324,60 @@ class BaseGenData:
         plt.show(block=False)
         plt.pause(0.01)
         
-    def plot_base(self,file_name,view_num=None,cells_on=True):
+    def plot_base(self,file_name,view_num=None,cells_on=True,as_points=True):
         self.cur_file = file_name        
         self.set_up_plot()
         file_prefix = os.path.splitext(file_name)[0]
         self.test_file_name = file_prefix + ".tst"
         self.tst_file_cfg.Create(self.bobj.log,self.test_file_name)
         self.tst_side_length = int(self.cfg.start_sidelen_text)
+        self.side_length = self.tst_file_cfg.config.CellAryW
         self.plist = self.read_particle_data(file_name)
-        self.do_plot()
+        self.do_plot(aspoints=as_points )
         plt.show(block=False)
+
+    def plot_particles(self,plist,aspoints=True,scolor=None):
+        
+        p_count = 0
+        sphere_facets = int(self.cfg.sphere_facets_text)
+        p_start = int(self.cfg.particle_range_array[0])
+        p_end = int(self.cfg.particle_range_array[1])
+        theta = np.linspace(0, 2 * np.pi, sphere_facets)
+        phi = np.linspace(0, np.pi, sphere_facets)
+        theta, phi = np.meshgrid(theta, phi)
+        pcolor = self.cfg.particle_color_text
+        
+        if aspoints == True:    
+            xx = []
+            yy = []
+            zz = []
+            for ii in plist:
+                if (p_count >= p_start):
+                    xx.append(ii.rx)
+                    yy.append(ii.ry)
+                    zz.append(ii.rz)
+                p_count +=1
+                if(p_count > p_end):
+                    break
+            
+            self.ax.scatter(xx,yy,zz)
+        else:
+            for ii in plist:
+                if (p_count >= p_start):
+                    # Convert to Cartesian coordinates
+                    x = ii.rx + ii.radius * np.sin(phi) * np.cos(theta)
+                    y = ii.ry + ii.radius * np.sin(phi) * np.sin(theta)
+                    z = ii.rz + ii.radius * np.cos(phi)
+                    if ii.ptype == 1:
+                        self.ax.plot_surface(x, y, z, color='blue',alpha=0.8)
+                    else:
+                        self.ax.plot_surface(x, y, z, color=pcolor,alpha=0.8)
+                    #print(f"Particle {p_count} Loc: <{ii.rx:2f},{ii.ry:2f},{ii.rz:2f})>")
+                    
+                p_count +=1
+                if(p_count > p_end):
+                    break
+                    
         
     def side_value_changed(self,side_txt):
         if len(side_txt) < 2:
@@ -398,7 +451,36 @@ class BaseGenData:
             self.ax.add_collection3d(Poly3DCollection(poly3d, edgecolors= 'k',facecolors=face_color, linewidths=1, alpha=alpha_val))
         
 
-     
+    def out_put_cell_ary(self,file_name=None):
+      
+        self.cur_file = file_name     
+        file_prefix = os.path.splitext(file_name)[0]
+        self.test_file_name = file_prefix + ".tst"
+        self.tst_file_cfg.Create(self.bobj.log,self.test_file_name)
+        self.tst_side_length = int(self.cfg.start_sidelen_text)
+        self.side_length = self.tst_file_cfg.config.CellAryW
+        self.test_array_to_index(self.side_length)
+        col_ary_size = self.tst_file_cfg.config.ColArySize
+        plist = self.read_all_particle_data(file_name)
+        pu = ParticleUtilities(self.side_length,col_ary_size)
+        out_file_name = f"{file_prefix}.CellArray.csv"
+        pu.gen_cell_ary(plist,out_file_name)
+        
+
+    def test_array_to_index(self,sidlen):
+        file_name = f"{self.itemcfg.data_dir}/{self.itemcfg.test_indexing_rpt_text}"
+        col_file = open(file_name,'w')
+        col_file.write(f"Height:{self.side_length},Width{self.side_length}\n")
+        col_ary_size = self.tst_file_cfg.config.ColArySize
+        pu = ParticleUtilities(self.side_length,col_ary_size)
+        for zz in range(sidlen):
+            for yy in range(sidlen):
+                for xx in range(sidlen):
+                    ary = [(int(round(xx)),int(round(yy)),int(round(zz)))]
+                    index = pu.ArrayToIndex(ary)
+                    col_file.write(f"Index:{index} at <{xx},{yy},{zz}>\n")
+
+        col_file.close()
 
     def read_particle_data(self,file_name):
         struct_fmt = 'dddddddddddddd'
@@ -427,37 +509,23 @@ class BaseGenData:
                 
         p_lst = []
         return results
-    
-    
-    def plot_particles(self,plist,aspoints=True,scolor=None):
-        
-        p_count = 0
-        sphere_facets = int(self.cfg.sphere_facets_text)
-        p_start = int(self.cfg.particle_range_array[0])
-        p_end = int(self.cfg.particle_range_array[1])
-        theta = np.linspace(0, 2 * np.pi, sphere_facets)
-        phi = np.linspace(0, np.pi, sphere_facets)
-        theta, phi = np.meshgrid(theta, phi)
-        pcolor = self.cfg.particle_color_text
-        if aspoints == True:    
-            self.ax.scatter(plist[:,1],plist[:,2],plist[:,3])
-        else:
-            for ii in plist:
-                if (p_count >= p_start):
-                    # Convert to Cartesian coordinates
-                    x = ii.rx + ii.radius * np.sin(phi) * np.cos(theta)
-                    y = ii.ry + ii.radius * np.sin(phi) * np.sin(theta)
-                    z = ii.rz + ii.radius * np.cos(phi)
-                    if ii.ptype == 1:
-                        self.ax.plot_surface(x, y, z, color='blue',alpha=0.8)
-                    else:
-                        self.ax.plot_surface(x, y, z, color=pcolor,alpha=0.8)
-                    #print(f"Particle {p_count} Loc: <{ii.rx:2f},{ii.ry:2f},{ii.rz:2f})>")
-                    
-                p_count +=1
-                if(p_count > p_end):
+    def read_all_particle_data(self,file_name):
+        struct_fmt = 'dddddddddddddd'
+        struct_len = struct.calcsize(struct_fmt)
+        struct_unpack = struct.Struct(struct_fmt).unpack_from
+        results = []
+        counter = 0
+        with open(file_name, "rb") as f:
+            while True:
+                record = pdata()
+                ret = f.readinto(record)
+                if ret == 0:
                     break
-                    
+                results.append(record)    
+        p_lst = []
+        return results
+    
+  
 
     def on_scroll(self, event):
         #print(event.button, event.step)

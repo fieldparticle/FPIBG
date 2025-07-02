@@ -48,6 +48,7 @@ class KeyValDialog(QDialog):
 
 class PreviewDialog(QDialog):
 	
+	flg_isopen = False
 	def __init__(self,pdfName):
 		super().__init__()
 		self.pdfName = pdfName
@@ -70,7 +71,12 @@ class PreviewDialog(QDialog):
 		widget = QWidget()
 		widget.setLayout(layout)
 		self.setLayout(layout)
+		self.flg_isopen = True
 		self.show()
+
+	def closeEvent(self,event):
+		flg_isopen = False
+		event.accept()
 
 		
 

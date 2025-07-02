@@ -119,7 +119,7 @@ class LatexDataParticle(LatexDataBaseClass):
                 self.get_verify()
         except BaseException as e:
             self.log.log(self,e)
-            print(e)
+            print("LatexDataParticle build_field",e)
             self.hasData = False
             raise ValueError
     
@@ -129,7 +129,7 @@ class LatexDataParticle(LatexDataBaseClass):
         try :
             self.lines_return[key_name]=self.data[field_name[1]] 
         except BaseException as e:
-            print(e)
+            print("LatexDataParticle build_field line 132",e)
 
 
         #print(self.lines_return)
@@ -156,7 +156,7 @@ class LatexDataParticle(LatexDataBaseClass):
                     cpums += float(col['cpums'])
                     gms += float(col['gms'])
         except BaseException as e:
-            print(e)
+            print("LatexDataParticle line 159:",e)
             return
         
         self.mmrr_fps = fps / count
@@ -177,8 +177,9 @@ class LatexDataParticle(LatexDataBaseClass):
             self.data_files = [i[:-5] for i in os.listdir(self.topdir) if i.endswith("D.csv")]
         self.hasData = len(tst_files) == len(self.data_files)
         if(self.hasData == False):
+            print("LatexDataParticle.check_data_files() Value error line 180")
             raise ValueError
-            print("Raw data file count error")
+            
         return self.hasData
     
     def create_summary(self):
@@ -189,7 +190,8 @@ class LatexDataParticle(LatexDataBaseClass):
                 writer = csv.writer(file)
                 writer.writerow(data)
         except BaseException as e:
-            print(e)
+            print("LatexDataParticle create_summary line 193:",e)
+            
 
    
     def get_verify(self):
@@ -200,7 +202,7 @@ class LatexDataParticle(LatexDataBaseClass):
                 writer = csv.writer(file)
                 writer.writerow(data)
         except BaseException as e:
-            print(e)
+            print("LatexDataParticle get_verify line 193:",e)
 
         if(self.hasData == False):
             return
@@ -238,7 +240,8 @@ class LatexDataParticle(LatexDataBaseClass):
                     average_list.append(avg_list)            
                 line_count += 1
             except BaseException as e:
-                print(e)
+                print("LatexDataParticle get_verify line 243:",e)
+
             file_count += 1
         with open(self.sumFile, 'a', newline='\n') as file:
             writer = csv.writer(file)
@@ -273,10 +276,10 @@ class LatexDataParticle(LatexDataBaseClass):
                                 expectedc = int(col[' expectedc'])
                             else:
                                 expectedc = int(col['expectedc'])
-                            sidelen = int(col['sidelen'])
+                            #sidelen = int(col['sidelen'])
                             
             except BaseException as e:
-                print(e)
+                print("LatexDataParticle get_averages line 282:",e)
 
             fps = fps / count
             cpums = cpums / count

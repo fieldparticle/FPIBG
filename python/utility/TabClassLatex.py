@@ -17,5 +17,6 @@ class TabObjLatex(QTabWidget):
         self.tabFormLatex = TabFormLatex()
         self.addTab(self.tabFormGenData, 'Data Generation')
         self.addTab(self.tabFormLatex, 'Plotting and Analysis')
+        
         self.tabFormLatex.Create(self.bobj)
         self.tabFormGenData.Create(self.bobj)

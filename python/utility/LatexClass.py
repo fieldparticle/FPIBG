@@ -260,6 +260,7 @@ class LatexMultiTableWriter(LatexClass):
         
 
         start_row = 0
+        end_row = self.rows
         f.write("\\begin{table}[%s]\n" % self.cfg.placement_text)
         f.write("\\caption{\\textit{")
         f.write(self.cfg.caption_box)
@@ -269,9 +270,9 @@ class LatexMultiTableWriter(LatexClass):
         for i in range(num_tables):
             if num_tables > 1:
                 f.write("\\begin{minipage}{.5\\linewidth}\n")
-            if i > 0:
-                start_row = split_at
-                end_row = self.rows
+                if i > 0:
+                    start_row = split_at
+                    end_row = self.rows
             f.write("\\fontsize{%s}{%s}\\selectfont\n" % (self.cfg.font_size,self.cfg.font_size))
             f.write("\\renewcommand{\\arraystretch}{%s}\n" % (self.cfg.arystretch_text))
             
@@ -354,7 +355,7 @@ class LatexPlotWriter(LatexClass):
             loutname = cfg.tex_dir + "/" + cfg.name_text
         w = "\\includegraphics[width=%0.2fin]{%s}\r"%(8.5*float(cfg.scale_text),loutname)
         f.write(w)
-        w = "\\captionof{figure}[%s]{\\textit{%s}}\r"%(cfg.title_text,cfg.caption_box)
+        w = "\\caption[%s]{\\textit{%s}}\r"%(cfg.title_text,cfg.caption_box)
         f.write(w)
         w = "\\label{fig:%s}\r"%(cfg.name_text)
         f.write(w)
@@ -381,6 +382,10 @@ class LatexImageWriter(LatexClass):
     def Write(self):
         cfg = self.Parent.itemcfg.config
         loutname = cfg.tex_dir + "/" + cfg.name_text + ".tex"
+        previewTex = f"{cfg.tex_dir}/{cfg.images_name_text}"
+        gdir = "".join(previewTex.rsplit(cfg.tex_dir))
+        sgdir = ''.join( c for c in gdir if  c not in '/' )
+        print(sgdir)    
         f = open(loutname, "w")
         w = "\\begin{figure*}[" + cfg.placement_text + "]\r"
         f.write(w)
@@ -392,7 +397,7 @@ class LatexImageWriter(LatexClass):
             loutname = cfg.tex_dir + "/" + cfg.name_text
         w = "\\includegraphics[width=%0.2fin]{%s}\r"%(8.5*float(cfg.scale_text),loutname)
         f.write(w)
-        w = "\\captionof{figure}[%s]{\\textit{%s}}\r"%(cfg.title_text,cfg.caption_box)
+        w = "\\caption[%s]{\\textit{%s}}\r"%(cfg.title_text,cfg.caption_box)
         f.write(w)
         w = "\\label{fig:%s}\r"%(cfg.name_text)
         f.write(w)
@@ -428,31 +433,33 @@ class LatexMultiImageWriter(LatexClass):
             self.log.log(self,f"Couldn't write to file ({e})")
         w ="\\begingroup\n"
         f.write(w)
-        w = "\\centering\n"
-        f.write(w)
+        
         w = "\\begin{figure*}[" + cfg.placement_text + "]\n"
         f.write(w)
-        
+        if cfg.centering_bool == True:
+            w = "\\centering\n"
+            f.write(w)
         try:
             for ii in range(0,int(self.cfg.num_plots_text)):
-                w = "\t\\begin{subfigure}[b]{" + cfg.plot_width_text + "in}\n"
+                #w = "\t\\begin{subfigure}[b]{" + cfg.plot_width_array[ii] + "in}\n"
+                w = "\t\\begin{subfigure}[b]{" + cfg.plot_scale_array[ii] + "\\textwidth}\n"
                 f.write(w)
                 previewTex = f"{cfg.plots_dir}/{cfg.images_name_array[ii]}"
                 gdir = "".join(previewTex.rsplit(cfg.tex_dir))
                 sgdir = ''.join( c for c in gdir if  c not in '/' )
                 print(sgdir)    
-                w = "\t\t\\includegraphics[width=" +  cfg.plot_width_text +  "in]{" + sgdir + "}\n"
+                w = "\t\t\\includegraphics[width=\\textwidth]{" + sgdir + "}\n"
                 f.write(w)
                 w = "\t\t\\subcaption[" + "" +"]{" + cfg.caption_array[ii] + "}\n"
                 f.write(w)
-                refname = os.path.splitext(os.path.basename(gdir))[0]
+                refname = os.path.splitext(os.path.basename(sgdir))[0]
                 w = "\t\t\\label{fig:" + refname + "}\n"
                 f.write(w)
                 w = "\t\\end{subfigure}\n"
                 f.write(w)
                 w = "\\hspace{" + cfg.hspace_text + "in}\n"
                 f.write(w)
-            w = "\\captionof{figure}[TITLE:" + cfg.title_text + "]{\\textit{" + cfg.caption_box + "}}\n"
+            w = "\\caption[TITLE:" + cfg.title_text + "]{\\textit{" + cfg.caption_box + "}}\n"
             f.write(w)
             w = "\t\t\\label{fig:" + cfg.name_text + "}\n"
             f.write(w)
@@ -502,7 +509,7 @@ class LatexMultiPlotWriter(LatexClass):
                 previewTex = f"{cfg.plots_dir}/{cfg.name_text}{ii+1}.png"
                 gdir = "".join(previewTex.rsplit(cfg.tex_dir))
                 sgdir = ''.join( c for c in gdir if  c not in '/' )
-                print(sgdir)    
+#                print(sgdir)    
                 w = "\t\t\\includegraphics[width=" +  cfg.plot_width_text +  "in]{" + sgdir + "}\n"
                 f.write(w)
                 w = "\t\t\\subcaption[" + "" +"]{" + cfg.caption_array[ii] + "}\n"
@@ -514,7 +521,7 @@ class LatexMultiPlotWriter(LatexClass):
                 f.write(w)
                 w = "\\hspace{" + cfg.hspace_text + "in}\n"
                 f.write(w)
-            w = "\\captionof{figure}[TITLE:" + cfg.title_text + "]{\\textit{" + cfg.caption_box + "}}\n"
+            w = "\\caption[TITLE:" + cfg.title_text + "]{\\textit{" + cfg.caption_box + "}}\n"
             f.write(w)
             w = "\t\t\\label{fig:" + cfg.name_text + "}\n"
             f.write(w)

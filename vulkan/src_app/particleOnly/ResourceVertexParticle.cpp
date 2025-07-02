@@ -95,12 +95,13 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 		input_file.read((char*)&part_pos, sizeof(part_pos));
 		Particle part{};
 #if 1
-		if (part_pos.rx < 0.5 || part_pos.ry < 0.5 || part_pos.rz < 0.5 )
+		if (part_pos.rx < 0.5 || part_pos.ry < 0.5 || part_pos.rz < 0.5)
 		{
 			std::ostringstream  objtxt;
-			objtxt << m_Name << "ResourceVertexParticle::Particle location below bounds P:" <<
-				part_pos.pnum << "<" << part_pos.rx << "," << part_pos.ry  << "," << part_pos.rz
-				<< ">" << std::ends;
+			if (m_NumParticles != 0)
+				objtxt << m_Name << "ResourceVertexParticle::Particle location below bounds P:" <<
+					part_pos.pnum << "<" << part_pos.rx << "," << part_pos.ry  << "," << part_pos.rz
+						<< ">" << std::ends;
 
 			throw std::runtime_error(objtxt.str().c_str());
 		}
