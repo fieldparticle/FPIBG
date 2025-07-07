@@ -51,6 +51,7 @@ public:
 	uint32_t cc=800;
 	uint32_t rr=800;
 	uint32_t m_MaxLoc=0;
+
 	std::vector<rptvec> m_RptVec = {};
 	void WriteShaderHeader();
 	

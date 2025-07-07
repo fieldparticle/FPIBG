@@ -38,11 +38,21 @@ void PerfObj::Create()
 {
 	m_SeriesLength = CfgApp->GetUInt("application.seriesLength", true);
 	m_TestCFG = CfgApp->GetString("application.perfTest", true);
+	m_testPQBRDir= CfgApp->GetString("application.testdirPQBRandom", true);
+	m_testPQBSDir= CfgApp->GetString("application.testdirPQBScale", true);
 	m_testPQBDir= CfgApp->GetString("application.testdirPQB", true);
 	m_testCFBDir= CfgApp->GetString("application.testdirCFB", true);
 	m_testPCDDir= CfgApp->GetString("application.testdirPCD", true);
 	m_testDUPDir= CfgApp->GetString("application.testdirDUP", true);
 	m_SingleFileTest= CfgApp->GetBool("application.doAutoSingleFile", true);
+	if(!m_TestCFG.compare("testdirPQBRandom"))
+	{
+		m_TestDir = m_testPQBRDir;
+	}
+	if(!m_TestCFG.compare("testdirPQBScale"))
+	{
+		m_TestDir = m_testPQBSDir;
+	}
 	if(!m_TestCFG.compare("testdirPQB"))
 	{
 		m_TestDir = m_testPQBDir;
@@ -117,15 +127,15 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag)
 			m_TestName.clear();
 			m_TestName = filename[ii];
 			CfgTst->Create(filename[ii]);
-			m_colcount = CfgTst->GetInt("colcount", true);
-			m_density = CfgTst->GetFloat("density", true);
-			m_partcount = CfgTst->GetInt("pcount", true);
+			m_colcount = CfgTst->GetInt("num_particle_colliding", true);
+			m_density = CfgTst->GetFloat("collsion_density", true);
+			m_partcount = CfgTst->GetInt("num_particles", true);
 
 			std::string hold = filename[ii].substr(0, pt);
 			//config->m_AprFile = hold;
 			m_DataFile = hold + "bin";
-			m_AprFile =  CfgTst->GetString("aprFile", true);
-			m_DataFile = CfgTst->GetString("dataFile", true);
+			m_AprFile =  CfgTst->GetString("report_file", true);
+			m_DataFile = CfgTst->GetString("particle_data_bin_file", true);
 			mout << "Auto DataFile : " << m_DataFile << ende;
 
 			uint32_t ret = ParticleOnly(this,tcps,tcpcapp,false);

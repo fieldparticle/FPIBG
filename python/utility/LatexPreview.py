@@ -28,6 +28,12 @@ class LatexPreview():
         fl.write('\\usepackage{graphicx}\n')
         fl.write('\\usepackage{subcaption}\n')
         fl.write('\\usepackage{makecell}\n')
+        fl.write('\\newcommand{\\mmrr}{\\textit{\\textbf{$mmrr$}}}\n')
+        fl.write('\\newcommand{\\arr}{\\textit{\\textbf{$arr$}}}\n')
+        fl.write('\\newcommand{\\arrg}{\\textit{\\textbf{$arr_G$}}}\n')
+        fl.write('\\newcommand{\\arrc}{\\textit{\\textbf{$arr_C$}}}\n')
+        fl.write('\\newcommand{\\arrt}{\\textit{\\textbf{$arr_T$}}}\n')
+
         fl.write('\\begin{document}\n')
         fl.write("\\input{"  +  self.valsFile  + "}\n")
         texname = "\\input {" + self.texName + "}\n" 

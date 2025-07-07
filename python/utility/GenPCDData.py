@@ -19,7 +19,7 @@ class GenPCDData(BaseGenData):
     
     def add_item(self,p_in_cell,side_len,radius,num_part):
         self.sel_file.write(f"1,8,1,{num_part+1},1,1,{num_part},s,{p_in_cell},{side_len},0.5,{radius:0.4f},0.0,0.0,0.0,0.0,0.0,0.0\n")
-
+    
     def open_selections_file(self):
         self.sel_file = open(self.itemcfg.selections_file_text,'w')
         self.sel_file.write("wx,wy,wz,dx,dy,dz,tot,sel,cols,sidelen,cdens,radius,vx,vy,vz,px,py,pz\n")
@@ -64,7 +64,7 @@ class GenPCDData(BaseGenData):
         
         try :
             self.collision_density           = float(sel_dict['cdens'])
-            self.number_particles       =  int(sel_dict['tot'])
+            self.number_particles       =  117649
             self.radius                 = float(sel_dict['radius'])
             self.sepdist                =  float(self.cfg.particle_separation_text)
         except BaseException as e:
@@ -81,20 +81,17 @@ class GenPCDData(BaseGenData):
         self.cell_array_size      = self.particles_in_space+10
         self.num_collisions_per_cell = math.ceil(self.particles_in_space * self.collision_density/2.0)
         # Calulate side length based on particles per cell
-        side_len = 0
-        side_len = self.calc_side_len(self.particles_in_cell,self.number_particles)
-       #while True:
-        #    side_len += 1
-        #    if (side_len * side_len * side_len * self.particles_in_space >= self.number_particles):
-        #        break
-        self.side_length = side_len
-        print(f"SideLength from create:{sel_dict['sidelen']}, and calulated:{side_len}")
-        self.cell_x_len = self.side_length+1
-        self.cell_y_len = self.side_length+1
-        self.cell_z_len = self.side_length+1
+        self.side_length =  int(float(sel_dict['sidelen']))
+        #side_len = self.calc_side_len(self.particles_in_cell,self.number_particles)
+        
+        print(f"SideLength from create:{sel_dict['sidelen']}, and calulated:{self.side_length}")
+        self.cell_x_len = self.side_length
+        self.cell_y_len = self.side_length
+        self.cell_z_len = self.side_length
         self.tot_num_cells = self.number_particles / self.particles_in_space
-        self.tot_num_collsions = math.ceil(int(self.tot_num_cells *self.num_collisions_per_cell*2.0 ))
-        self.set_file_name = "{:03d}CollisionDataSet{:d}X{:d}X{:d}".format(index,self.number_particles,self.tot_num_collsions,side_len)
+        #self.tot_num_collsions = math.ceil(int(self.tot_num_cells *self.num_collisions_per_cell*2.0 ))
+        self.tot_num_collsions = int(self.number_particles/2)
+        self.set_file_name = "{:03d}CollisionDataSet{:d}X{:d}X{:d}".format(index,self.number_particles,self.tot_num_collsions,self.side_length)
         self.test_file_name = self.cfg.data_dir + '/' + self.set_file_name + '.tst'
         self.test_bin_name = self.cfg.data_dir + '/' + self.set_file_name + '.bin'
         self.report_file = self.cfg.data_dir + '/' + self.set_file_name 

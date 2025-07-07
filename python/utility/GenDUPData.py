@@ -98,6 +98,9 @@ class GenDUPData(BaseGenData):
         self.particle_count = 0
         flg_col_rpt = False
 
+        # If the collision_sel_text containes a file name then use it to generate 
+        # collision_rpt_text,cell_ary_rpt_text,test_indexing_rpt_text to output diagnostics data
+        # to compare with NSight
         if self.cfg.collision_sel_text in self.test_bin_name:
             flg_col_rpt = True
             fiel_name = f"{self.cfg.data_dir}/{self.cfg.collision_rpt_text}"

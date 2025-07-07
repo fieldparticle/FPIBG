@@ -49,30 +49,25 @@ layout(location = 2) out vec3 matpos;
 ////
 void main(){
 	
-	
-	
-	
 	int index 		= gl_VertexIndex;
-	if(uint(ShaderFlags.frameNum) == 10 && index == 0)
+	
+#if 1
+	if(uint(ShaderFlags.frameNum) == 0 && index == 0)
 	{
 		P[index].parms.w = 0;
 		uint ret = TestArrayToIndex(0,10);
 		if (ret != 0)
 			P[0].ColFlg = 1;
 	}
+#endif
+
 	if(index == 0)
 	{
 		collIn.numParticles = 0;
 		return;
 	}	
-	if (P[0].ColFlg != 0)
-	{
-		fragColor = vec3(1.0,1.0,1.0);	
-		return;
-	}
-	#ifdef DEBUG
-		atomicAdd(collIn.numParticles,1);	
-	#endif
+
+
 	
 	// Set point size 
 	gl_PointSize = 1.0;
@@ -104,22 +99,31 @@ void main(){
 	P[index].zlink[7].ploc = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy-R)),uint(round(cz-R))));
 	#endif
 	
+	//####################### fill_particle_corner_array #################
+	
+	// Clear this paricles corner array
 	for (uint kk = 0;kk<8;kk++)
 		P[index].zlink[kk].ploc = 0;
 	
+	// First corner always written since there is no possibility of duplicate
+	// Get the index location in the cell array the first particle corner
 	cnr_index = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz-R))));
 	duplist[0] = cnr_index;
 	P[index].zlink[0].ploc = cnr_index;
 	
 	
+	// Get the index location in the cell array the first particle corner.
 	cnr_index = ArrayToIndex(uvec3(uint(round(cx+R)),uint(round(cy+R)),uint(round(cz+R))));
+	// Compare this to the previous locations and if it is not there -
 	if (cnr_index != P[index].zlink[0].ploc)
 	{
+		// Increment the dup counter
 		dupcntr++;
+		// Add the corner to the particle's corner array
 		P[index].zlink[dupcntr].ploc = cnr_index;
 	}
 	
-		
+	// ditto
 	cnr_index = ArrayToIndex(uvec3(uint(round(cx-R)),uint(round(cy+R)),uint(round(cz+R))));
 	if (cnr_index != P[index].zlink[0].ploc && 
 		cnr_index != P[index].zlink[1].ploc)
@@ -190,13 +194,6 @@ void main(){
 	}
 	
 	
-	uint kk = 0;
-
-	
-
-	//*******************************************************
-	// Remove location duplicates.
-	//*******************************************************
 	#if 0
 		if(index == 3 && uint(ShaderFlags.frameNum) == 100)
 		{
@@ -212,9 +209,16 @@ void main(){
 		}
 			
 	#endif
-	//*******************************************************
-	// Populate particle-cell array
-	//*******************************************************
+//#################################################################
+//################### Populate the cell array with this particles corners
+//#################################################################
+	//Need this to get the number particles count correct (?!)
+#ifdef DEBUG
+	atomicAdd(collIn.numParticles,1);	
+#endif
+
+	// Traverse the particles corner array if there is not a global error 
+	// which is stored in the 0th partcle parms emlent
 	for( uint ii = 0; ii < 8 && uint(P[index].parms[0])==0; ii++)
 	{
 		// Location index for this slot.
@@ -223,7 +227,7 @@ void main(){
 		uint slot 	= 0;
 		
 		
-		// Get the first non-duplicate corner occupancy.
+		// Get the first non-duplicate corner.
 		sltidx = P[index].zlink[ii].ploc;
 		
 		if(uint(ShaderFlags.frameNum) == 8 && index == 16)
@@ -235,74 +239,71 @@ void main(){
 		}
 		// If it's not zero then do nothing - 0 index or location <0,0,0> 
 		// is not allowed
-		if(sltidx != 0)
+		if (sltidx == 0)
+			break;
+		
+		
+		if(sltidx > MAX_CELL_ARRAY_LOCATIONS)
 		{
-		
-			if(sltidx > MaxLocation)
-			{
-				#if defined(DEBUG)
-					debugPrintfEXT("ParticleVerfPerf sltidx > MaxLocation:P=%d,sltidx=%d,MaxLocation=%d",index,sltidx,MaxLocation);
-				#endif	
-				collIn.ExcessSlots = sltidx;
-				collIn.ErrorReturn = 2;
-				P[index].parms.w = 1.0;
-				P[0].ColFlg = 1;
-				return;
-			}
-			
-			// Reserve a slot for this location in the parcirel-cell hash
-			slot = atomicAdd(L[sltidx],1);
-
-			// If the array at this index of the particle-cell hash 
-			// does not have enough slots to handle the particle density
-			// then report it.
-			if(slot >= MAX_ARY)
-			{
-				uvec3 badloc;
-				#if defined(DEBUG)
-					IndexToArray(sltidx,badloc);
-					debugPrintfEXT("ParticleVerfPerf slot>F:%u,P:%d,R:%0.2f,MAX_ARY:%d,at loc: %d(%d,%d,%d), exceeds max array:%d",
-					uint(ShaderFlags.frameNum),index,R,MAX_ARY,sltidx,badloc.x,badloc.y,badloc.z,slot);
-				#endif
-				collIn.ExcessSlots = slot;
-				collIn.ErrorReturn = 1;
-				P[0].ColFlg = 1;
-				P[index].parms.w = 2.0;
-				return;
-			}
-			
-			
-
-			// Insert the location of this particle in the particle-cell 
-			// hash table.
-			
-			#if 1 && defined(DEBUG)
-				if(index == 58 && uint(ShaderFlags.frameNum) == 100)
-				{
-					debugPrintfEXT("ParticleVerfPerf particle %d added to cell %d slot %d.",index,sltidx,slot);
-				}
+			#if 1
+				debugPrintfEXT("ParticleVerfPerf sltidx > MaxLocation:P=%d,sltidx=%d,MaxLocation=%d",index,sltidx,MAX_CELL_ARRAY_LOCATIONS);
 			#endif	
-			clink[sltidx].idx[slot] = index;
-		
+			collIn.ExcessSlots = sltidx;
+			collIn.ErrorReturn = 3;
+			P[index].parms.w = 1.0;
+			P[0].ColFlg = 1;
+			break;
 		}
+		
+		// Reserve a slot for this location in the cell array occupancy list
+		// atomic add increments the value in the lock array and returns the 
+		// *previous value*.
+		slot = atomicAdd(L[sltidx],1);
+
+		// If the array at this index of the particle-cell hash 
+		// does not have enough slots to handle the particle density
+		// then report it.
+		if(slot > MAX_CELL_OCCUPANY)
+		{
+			uvec3 badloc;
+#if 1
+			#if defined(DEBUG)
+				//IndexToArray(sltidx,badloc);
+				debugPrintfEXT("ParticleVerfPerf slot>F:%u,P:%d,MAX_CELL_OCCUPANY:%d,at loc: %d",
+				uint(ShaderFlags.frameNum),index,MAX_CELL_OCCUPANY,slot);
+			#endif
+#endif
+			collIn.ExcessSlots = slot;
+			collIn.ErrorReturn = 2;
+			P[0].ColFlg = 1;
+			P[index].parms.w = 2.0;
+			break;
+		}
+		
+
+		// Insert the location of this particle in the particle-cell 
+		// hash table.
+		
+		#if 0 && defined(DEBUG)
+			if(index == 58 && uint(ShaderFlags.frameNum) == 100)
+			{
+				debugPrintfEXT("ParticleVerfPerf particle %d added to cell %d slot %d.",index,sltidx,slot);
+			}
+		#endif	
+		
+		// If everythin is valid add this particles corner to the 
+		// cell array at the indoctaed location and slot in the cell occupancy array
+		// NOTE: particle 0 is a dummy particle so that the particle 0-based index matches
+		// the particle number
+		clink[sltidx].idx[slot] = index;
+	
+		
 	}
 	
-		if (uint(P[index].parms.w)==0)
-		{
-			if(uint(P[index].ColFlg) == 1)
-				fragColor = vec3(1.0,0.0,0.0);	
-			else if(uint(P[index].ColFlg) == 0)
-				fragColor = vec3(0.0,1.0,0.0);	
-		}
-		else
-		{
-			if(uint(P[index].parms.w) == 1)
-				fragColor = vec3(1.0,0.0,0.0);	
-			else if(uint(P[index].parms.w) == 2)
-				fragColor = vec3(0.0,1.0,0.0);	
-			else
-				fragColor = vec3(1.0,0.64,0.0);	
-		}
-		
+	if(uint(P[index].ColFlg) == 1)
+		fragColor = vec3(1.0,0.0,0.0);	
+	else if(uint(P[index].ColFlg) == 0)
+		fragColor = vec3(0.0,1.0,0.0);	
+	
 	
 }

@@ -11,6 +11,8 @@ class LatexDataParticle(LatexDataBaseClass):
     mmrr_fps = 0.0
     mmrr_cpums = 0.0
     mmrr_gms = 0.0
+    MODE_VERF = 1
+    MODE_PERF = 0
     
     lines_return = pd.DataFrame()
     def __init__(self, FPIBGBase, itemcfg, ObjName):
@@ -40,16 +42,24 @@ class LatexDataParticle(LatexDataBaseClass):
         return string
 
     def Create(self, plot_num):
+        # Setup the dictionary to collect data
         if len(self.lines_return) != 0:
             self.lines_return = pd.DataFrame()
+        # If the mode is verifcation, else its performance
         if('verification' in self.itemcfg.config.mode.lower()):
-            self.mode = 1
+            self.mode = self.MODE_VERF
         else:
-            self.mode = 0
+            self.mode = self.MODE_PERF
+        # Read the mmrr file
         self.do_mmrr()
+        # get the data fields from the config file
         getFieldStr = f"DataFields{plot_num}"
         data_fields = self.itemcfg.config[getFieldStr]
+
+        # for all lines in the data fields
         for jj in range(len(data_fields)):
+
+            # If any have operators 
             if any(map(lambda char: char in data_fields[jj], "+-/*")):
                 alt_lst = self.split(data_fields[jj])
                 alt_sary = alt_lst.split(',')   
@@ -93,7 +103,7 @@ class LatexDataParticle(LatexDataBaseClass):
                         
 
     def build_field(self,field_name,key_name):
-
+        ## mmrr fields quomatically added
         if 'MMR' in key_name:
             return
        
@@ -101,22 +111,31 @@ class LatexDataParticle(LatexDataBaseClass):
         field_name[1] = field_name[1].strip()
         key_name = key_name.strip()
         try :
-            
+            # MODE set in Create()
             self.topdir = self.itemcfg.config.data_dir + "/perfdata" + field_name[0]
-            if self.mode == 1:
+            # If verification mode then name the file /perfdata[testtype]VERF.csv
+            if self.mode == self.MODE_PERF:
                 self.sumFile = self.topdir + "/perfdata" + field_name[0] + "VERF.csv"
             else:
+            # If performance mode then name the file /perfdata[testtype].csv
                 self.sumFile = self.topdir + "/perfdata" + field_name[0] + ".csv"
         except BaseException as e:
             self.log.log(self,e)
+        
+
         try :
-            if self.mode == 0:
+            # If the mode is performance create the summary file
+            if self.mode == self.MODE_PERF:
                 self.create_summary()
+            # Regardless of type check the tst file
             self.check_data_files()
-            if self.mode == 0:
-                self.get_averages()
+            if self.mode == self.MODE_PERF:
+                #If perf mode get all the averages
+                self.get_maxes()
             else:
+                #If verf mode verify data
                 self.get_verify()
+
         except BaseException as e:
             self.log.log(self,e)
             print("LatexDataParticle build_field",e)
@@ -166,11 +185,14 @@ class LatexDataParticle(LatexDataBaseClass):
 
     # Returns true if number of .tst files equal to number of R or D files
     def check_data_files(self) -> bool:
+        # Check to see if the data directory exists
         if(os.path.exists(self.sumFile) == False):
             print ("LatexDataParticle.check_data_files() Data directories not available" )
             self.hasData = False
             return False
+        # Get a list of the *.tst files in the data directory
         tst_files = [i for i in os.listdir(self.topdir) if i.endswith(".tst")]
+        # If its verifcation
         if self.mode == 0:
             self.data_files = [i[:-5] for i in os.listdir(self.topdir) if i.endswith("R.csv")]
         else:
@@ -195,17 +217,18 @@ class LatexDataParticle(LatexDataBaseClass):
 
    
     def get_verify(self):
+        # Layout the fields of the verf performance summary file
         data = ['file','line', 'expectedp', 'loadedp', 'shaderp_comp',
                             'shaderp_grph', 'expectedc', 'shaderc', 'loaded_err', 'compp_err','grphp_err','coll_err']
         try :
+            # Open it 
             with open(self.sumFile, mode= 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(data)
         except BaseException as e:
             print("LatexDataParticle get_verify line 193:",e)
-
-        if(self.hasData == False):
-            return
+            return 
+        
         file_count = 0
         average_list = []
         for i in self.data_files:
@@ -221,6 +244,7 @@ class LatexDataParticle(LatexDataBaseClass):
                         loadedp = int(col['loadedp'])
                         shaderp_comp = int(col['shaderp_comp'])
                         shaderp_grph= int(col['shaderp_grph'])
+
                         if loadedp != expectedp:
                             loaded_err = 1
                         if shaderp_comp != expectedp:
@@ -228,7 +252,7 @@ class LatexDataParticle(LatexDataBaseClass):
                         if shaderp_grph != expectedp:
                             grphp_err = 1
                         
-                        expectedc = int(col[' expectedc'])
+                        expectedc = int(col['expectedc'])
                         shaderc = int(col['shaderc'])
                         
                         if expectedc != shaderc:
@@ -272,11 +296,8 @@ class LatexDataParticle(LatexDataBaseClass):
                         gms += float(col['gms'])
                         if count == 1:
                             loadedp = float(col['loadedp'])
-                            if ' expectedc' in col:
-                                expectedc = int(col[' expectedc'])
-                            else:
-                                expectedc = int(col['expectedc'])
-                            #sidelen = int(col['sidelen'])
+                            expectedc = int(col['expectedc'])
+                            sidelen = int(col['sidelen'])
                             
             except BaseException as e:
                 print("LatexDataParticle get_averages line 282:",e)
@@ -294,4 +315,56 @@ class LatexDataParticle(LatexDataBaseClass):
                 writer = csv.writer(file)
                 writer.writerow(avg_list)
             self.average_list.append(avg_list)
+        file.close()
+
+    def get_maxes(self):
+
+        
+
+        if(self.hasData == False):
+            return
+        
+
+        for i in self.data_files:
+            fps_old = 0
+            cpums_old = 0.0
+            cms_old = 0.0
+            gms_old = 0.0
+            if self.mode == 0:
+                file_path_release = self.topdir + "/" + i + "R.csv"
+            else:
+                file_path_debug = self.topdir + "/" + i + "D.csv"
+            fps = cpums = cms = gms = expectedp = loadedp = shaderp_comp = shaderp_grph = expectedc = shaderc = sidelen = count = 0
+        
+            try:
+                with open(file_path_release, 'r') as filename:
+                    file = csv.DictReader(filename)
+                    for col in file:
+                        
+                        count += 1
+                        fps = float(col['fps'])
+                        if fps > fps_old:
+                            fps_old = fps
+                        cpums = float(col['cpums'])
+                        if cpums > cpums_old:
+                            cpums = cpums
+                        cms = float(col['cms'])
+                        if cms > cms_old:
+                            cms_old = cms
+                        gms = float(col['gms'])
+                        if gms > gms_old:
+                            gms_old = gms
+                        if count == 1:
+                            loadedp = float(col['loadedp'])
+                            expectedc = int(col['expectedc'])
+                            sidelen = int(col['sidelen'])
+            except BaseException as e:
+                print("LatexDataParticle get_averages line 282:",e)
+
+            max_list = [i, fps_old, cpums_old, cms_old, gms_old, expectedp, loadedp, shaderp_comp,
+                        shaderp_grph, expectedc, shaderc, sidelen]
+            with open(self.sumFile, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(max_list)
+            self.average_list.append(max_list)
         file.close()

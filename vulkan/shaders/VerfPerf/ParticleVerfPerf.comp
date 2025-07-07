@@ -85,7 +85,8 @@ void main()
 	
 	uint Findex = index;
 	uint Tindex = 0;
-	uint duplst[MAX_ARY+1];
+	const uint DUP_LIST_SIZE = 32;
+	uint duplst[DUP_LIST_SIZE];
 	uint dupcnt = 0;
 	bool dupflg = false;
 	P[Findex].ColFlg = 0;
@@ -93,71 +94,59 @@ void main()
 	for(uint kk =0; kk < 8; kk++)
 		duplst[kk] = 0;
 	
-	
+	// For all of the corner locations in the particle corner array
 	for(uint ii = 0; ii < 8; ii++)
 	{
-		// Set location to local variable.
+		
+		// Set location of this corner to local variable.
 		uint loc = P[Findex].zlink[ii].ploc;
-		// If the lcation is not zero..
+		
+		// If the lcation is not zero...
 		if (loc != 0)
 		{
 			// Use the linked particle location to index into the particle-cell hash table 
 			// And compare this particle with all of the paricles at this location.
-			uint lock_len = L[loc];
-			for(uint jj = 0; jj <= lock_len;jj++)
+			//uint lock_len = L[loc];
+			
+			// Run thru the cell array occupancy list slots
+			for(uint jj = 0; jj < MAX_CELL_OCCUPANY;jj++)
 			{
 				
+				// Get the particle number at the jj slot
 				Tindex = clink[loc].idx[jj];
+				// If the particle number is 0, then end of list
 				if(Tindex == 0)
 					break;
 				
-				#if 0
-				
-				//----------------------- DUP Process start		
-				for(uint cc =0; cc < dupcnt+1; cc++)
+				if(isParticleContact(ii,Findex, Tindex) > 0)
 				{
-					if(duplst[cc] == Tindex)
+					// Run thru the duplicates list to the current count
+					for(uint dd = 0; dd < DUP_LIST_SIZE;dd++)
 					{
-						dupflg = true;
-						#if 0				
-						if(uint(ShaderFlags.frameNum) == 3)
-							debugPrintfEXT("DUPTRUE:cc:%d,dupcnt:%d,[%d,%d,%d,%d,%d,%d,%d]",cc,dupcnt,
-							duplst[0],
-							duplst[1],
-							duplst[2],
-							duplst[3],
-							duplst[4],
-							duplst[5],
-							duplst[6]						
-							);
-						#endif	
-						break;
-					}
-					if(duplst[cc] == 0)
-					{
-						dupflg = false;
-						duplst[cc] = Tindex;
-						dupcnt = cc;
-						break;
-					}
-				}
-				#endif
-				if(dupflg == false)						
-				{
-					if(isParticleContact(ii,Findex, Tindex) > 0)
-					{
-						P[Findex].ColFlg = 1;
-						#ifdef DEBUG
-							atomicAdd(collOut.CollisionCount,1);
-						#endif
-						//if(uint(ShaderFlags.frameNum) == 3 && index == 1)
-						#if 1
-							if(uint(ShaderFlags.frameNum) == 3)
+						if (duplst[dd] == Tindex)
+							break;
+							
+						// If the end of the duplist no duplicate found so count the collison
+						if (duplst[dd] == 0)
+						{
+							// Set the collison flag
+							P[Findex].ColFlg = 1;
+							// Add the TO particle number ot the dups list.
+							duplst[dd] = Tindex;
+							// Report is verification
+							#ifdef DEBUG
+								atomicAdd(collOut.CollisionCount,1);
+							#endif
+							#if 1
+							if(uint(ShaderFlags.frameNum) == 3 && Findex == 58)
 								debugPrintfEXT("%d,%d",Tindex,Findex);
-						#endif
+							#endif
+							break;
+						}
+						
 					}
-					dupflg = true;
 				}
+				dupflg = true;
 			}
 		}
 	}

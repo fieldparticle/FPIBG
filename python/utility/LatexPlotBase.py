@@ -105,7 +105,7 @@ class LatexPlotBase(LatexConfigurationClass):
             if os.path.exists(previewTex):
                 os.remove(previewTex)
         self.fignum += 1
-        self.valHandler.doValues(f"{self.itemcfg.config.tex_dir}/_vals_{self.itemcfg.config.name_text}.tex")          
+        self.valHandler.Create(f"{self.itemcfg.config.tex_dir}/_vals_{self.itemcfg.config.name_text}.tex")          
         # for each plot line
         for plotNum in range(1,int(self.cfg.num_plots_text)+1):
             self.fig = plt.figure(plotNum)

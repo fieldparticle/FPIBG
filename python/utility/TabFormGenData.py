@@ -19,7 +19,7 @@ from PyQt6.QtCore import (
     pyqtSignal,
     pyqtSlot,
 )
-from LatexDataConfigurationClass import *
+from PanelGenDataConfig import *
 import glob
 
 
@@ -32,7 +32,7 @@ class TabGenData(QTabWidget,QRunnable):
     itemcfg = ConfigClass("Latex Class")
     startDir = "J:/MOD/FPIBGUtility/Latex"
     startDir = "J:/FPIBGJournalStaticV2/rpt"
-    startDir = "J:/FPIBGDATAPY/cfg"
+    startDir = "J:/FPIBGDATAT/cfg"
     selected_item = -1
     ObjName = ""
     ltxObj = None
@@ -73,41 +73,61 @@ class TabGenData(QTabWidget,QRunnable):
     def browseFolder(self):
         """ Opens a dialog window for the user to select a folder in the file system. """
         #folder = QFileDialog.getExistingDirectory(self, "Select Folder")
+        
         folder = QFileDialog.getOpenFileName(self, ("Open File"),
                                        self.startDir,
                                        ("Configuration File (*.cfg)"))
         try:
-            self.tab_layout.removeWidget(self.intro_image)
-            #layout.removeWidget(self.widget_name)
-            self.intro_image.deleteLater()
-            self.intro_image = None
+            # Remove the intro image
+            if self.intro_image != None:
+                self.tab_layout.removeWidget(self.intro_image)
+                #layout.removeWidget(self.widget_name)
+                self.intro_image.deleteLater()
+                self.intro_image = None
         except BaseException as e:
-            print(e)
+            txt = "At TabFormData" + e
+            print(txt)
 
+        # if a valid folder
         if folder[0]:
+            # Set the config file member
             self.CfgFile = folder[0]
             self.texFolder = os.path.dirname(self.CfgFile)
             self.texFileName = os.path.splitext(os.path.basename(self.CfgFile))[0]
             self.dirEdit.setText(self.CfgFile)
+
             try :
+                # Create a configuration class from this config file
                 self.itemcfg = ConfigClass(self.CfgFile)
                 self.itemcfg.Create(self.bobj.log,self.CfgFile)
                 
             except BaseException as e:
-                self.log.log(self,f"Unable to open item configurations file:{e}")
+                self.log.log(self,f"TabFormGenData Unable to open item configurations file:{e}")
                 self.hasConfig = False
                 return 
+            # If config reads ok
             if self.hasConfig == True:
+                # Clear the last config group
                 self.ltxObj.clearConfigGrp()
+
+            # Get bin files already in the data directory - and list them
             files_names = self.itemcfg.config.data_dir + "/*.bin"
             files = glob.glob(files_names)
+            self.ListObj.clear()
             for ii in files:
                  self.ListObj.addItem(ii)
+
+            # can now use save,gendata,and fill cell array     
             self.SaveButton.setEnabled(True)
             self.GenDataButton.setEnabled(True)
             self.CAButton.setEnabled(True)
+            self.TstButton.setEnabled(True)
+
+            # Here specify as a string the gendata class
             gen_class_txt = f"{self.itemcfg.config.import_text}.{self.itemcfg.config.import_text}"
-            self.ltxObj = LatexDataConfigurationClass()
+
+            # Create the 
+            self.ltxObj = GenDataConfigPanel()
             self.ltxObj.Create(self.bobj,self,gen_class_txt)
             self.ltxObj.setConfigGroup(self.tab_layout)
             self.ltxObj.OpenLatxCFG()
@@ -168,11 +188,18 @@ class TabGenData(QTabWidget,QRunnable):
     def thread_complete(self):
         print("Thread Complete")
         self.bobj.log.log(self,f"Wrote {self.gen_obj.count} particles to {self.gen_obj.test_bin_name}")
+        self.gen_obj.verify_particle_count(self.gen_obj.test_bin_name)
         self.index += 1
         if (self.index >= len(self.select_list)) or (self.gen_obj.flg_stop == True):
             self.GenDataButton.setStyleSheet("background-color:  #dddddd")
             self.GenDataButton.clicked.connect(self.gen_data)
             self.GenDataButton.setText("GenData")
+            files_names = self.itemcfg.config.data_dir + "/*.bin"
+            files = glob.glob(files_names)
+            self.ListObj.clear()
+            for ii in files:
+                 self.ListObj.addItem(ii)
+
             return
         
         else:
@@ -207,15 +234,7 @@ class TabGenData(QTabWidget,QRunnable):
         self.index = 0
         self.launch_thread()
            
-        #self.select_list.clear()
-        """
-        self.ltxObj.gen_data()
-        self.ListObj.clear()
-        files_names = self.itemcfg.config.data_dir + "/*.bin"
-        files = glob.glob(files_names)
-        for ii in files:
-                self.ListObj.addItem(ii)
-        """
+     
     def list_particles(self):
         selected_item = self.ListObj.selectedItems()
         self.selected_item = selected_item
@@ -226,13 +245,21 @@ class TabGenData(QTabWidget,QRunnable):
         else:
             print("no item selected")
         
+    def test_index_array(self):
+        selected_item = self.ListObj.selectedItems()
+        self.selected_item = selected_item
+        if self.selected_item:
+           self.gen_obj = self.ltxObj.getGenObj()
+           self.gen_obj.test_array_to_index()
+        else:
+            print("no item selected")
 
     def out_put_cell_ary(self):
         selected_item = self.ListObj.selectedItems()
         self.selected_item = selected_item
            
         if self.selected_item:
-            self.ltxObj.out_put_cell_ary(self.selected_item[0].text())
+            self.ltxObj.out_put_cell_ary()
         else:
             print("no item selected")
 
@@ -315,13 +342,19 @@ class TabGenData(QTabWidget,QRunnable):
             self.CAButton.setEnabled(False)
             dirgrid.addWidget(self.CAButton,3,0)
             
+            self.TstButton = QPushButton("Test Array Indexing")
+            self.setSize(self.TstButton,30,100)
+            self.TstButton.setStyleSheet("background-color:  #dddddd")
+            self.TstButton.clicked.connect(self.test_index_array)
+            self.TstButton.setEnabled(False)
+            dirgrid.addWidget(self.TstButton,3,1)
             
             self.ListObj =  QListWidget()
             #self.ListObj.setFont(self.font)
             self.ListObj.setStyleSheet("background-color:  #FFFFFF")
             self.setSize(self.ListObj,350,450)
             self.vcnt = 0            
-            #self.ListObj.itemSelectionChanged.connect(lambda: self.valueChangeArray(self.ListObj))
+            self.ListObj.itemSelectionChanged.connect(lambda: self.valueChange(self.ListObj))
             dirgrid.addWidget(self.ListObj,4,0,1,2)
             self.log.log(self,"TabFormLatex finished Create.")
 
@@ -346,5 +379,6 @@ class TabGenData(QTabWidget,QRunnable):
         selected_items = listObj.selectedItems()
         if selected_items:
             #print("List object Value Changed",selected_items[0].text())
-            self.ltxObj.setTypeText(selected_items[0].text())         
+            self.gen_obj = self.ltxObj.getGenObj()
+            self.gen_obj.update_selection(selected_items[0].text())         
     

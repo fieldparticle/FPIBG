@@ -2,19 +2,36 @@ import numpy as np
 import os
 import csv
 import math
+import sys
 class ParticleUtilities():
 
     col_count = 0
     def __init__(self,sidelen,col_ary_size):
         self.side_len = sidelen
         self.max_location = (sidelen)*(sidelen)*(sidelen)
+        # When allocating number of cells in one dimension
+        # side_len = 1 to n
+        # but the cell array goes from 0 to n which makes n=side_len+1
         self.width = self.side_len
         self.height = self.side_len
         self.col_ary_size = col_ary_size
         self.cell_array = np.array([[0]*col_ary_size]*(self.width**3))
         self.lock_array = np.array([0]*(self.width**3))
         print(f"Cell arry rows:{self.width**3} by cols:{col_ary_size}")
+        self.sizeof_int = 32
         
+    def get_cell_array_len(self):
+        return len(self.cell_array)
+    
+    def get_lock_array_len(self):
+        return len(self.cell_array)
+    
+    def get_cell_array_len_bytes(self):
+        return len(self.cell_array)*self.sizeof_int
+    
+    def get_lock_array_len_bytes(self):
+        return len(self.lock_array)*self.sizeof_int
+    
     def IndexToArray(self,index):
 
         c1 = c2 = c3 = 0
@@ -31,12 +48,24 @@ class ParticleUtilities():
     
 
     def gen_cell_ary(self,plist,file_name):
-        
+        cell_len = self.get_cell_array_len()
+        cell_bytes = self.get_cell_array_len_bytes()
+        lock_len = self.get_lock_array_len()
+        lock_bytes  = self.get_lock_array_len_bytes()
+        print(f"Cell Array L:{cell_len},B{cell_bytes} type_bytes:{sys.getsizeof(int())}")
+        print(f"Lock Array L:{lock_len},B{lock_bytes} num_bytes:")
+
+
+        # for all particles
         for pp in plist:
-            self.return_zlink(pp)
+            if int(pp.pnum) == 0:
+                continue
+            self.fill_particle_corner_array(pp)
             z = pp.zlink
-            print(f"P:{pp.pnum} [{z[0]} {z[1]} {z[2]} {z[3]} {z[4]} {z[5]} {z[6]} {z[7]}]")
-            self.add_corners(z,pp)
+            if int(pp.pnum) < 128:
+                print(f"P:{pp.pnum} [{z[0]} {z[1]} {z[2]} {z[3]} {z[4]} {z[5]} {z[6]} {z[7]}]")
+            if(self.add_particle_to_cell_array(pp) == 1):
+                return
 
         file_prefix = os.path.splitext(file_name)[0]
         try :
@@ -51,29 +80,37 @@ class ParticleUtilities():
         Tindex = 0
         break_point = 0
         col_count = 0
-        
-        for Findex in range(len(plist)):
+        # Runt thru the particle list for the FROM particle numbers
+        for Findex in range(1,len(plist)):
             duplist = [0]*self.max_location
             try:
+                # Get the FROM particle object from particle number
                 F = plist[Findex]
-                if(int(F.pnum) == 5):
-                    break_point = 0
-                for ii in range(0,8):
+                # Iterate of the corner locations
+                for ii in range(0,8):       
+                    # For the corner location at loc
                     loc = int(F.zlink[ii])
+                    # if the corner locatin does not euqal null
                     if loc != 0:
-                        for jj in range(0,self.max_location):
-                            Tindex = int(self.cell_array[loc][jj])-1
-                            
-                            if Tindex == 6:
-                                break_point = 0
+                        # for all occupants at loc in cell array    
+                        for jj in range(0,self.col_ary_size):
+                            # Get the number of the TO particle
+                            Tindex = int(self.cell_array[loc][jj])
+                            # If its this particle don't cmapre
                             if(Findex != Tindex):
-                                if (Tindex+1) != 0:
-                                    #print(f"P:{Findex+1} with {Tindex} at cell_ary_loc={loc}")
+                                # if the slot is not equal to zero  (which mean no more particvles in this cell
+                                if (Tindex) != 0:
+                                    # Get the object for the TO particle
                                     T = plist[Tindex]
+                                    # Check the two objects for contact
                                     ret = self.particle_contact(F,T,duplist)    
 
+
+                    #print(f"P:{F.pnum},{loc}")
             except BaseException as e:
-                print(e)
+                print(f"At detect collsions:",e)
+                return 
+        print(f"Total collisons {self.col_count}")
 
     def norm(self,p1,p2):
         dsq = ( (p1[0]-p2[0])*(p1[0]-p2[0]) ) + ( (p1[1]-p2[1])*(p1[1]-p2[1]) ) + ( (p1[2]-p2[2])*(p1[2]-p2[2]) )
@@ -83,72 +120,105 @@ class ParticleUtilities():
     def particle_contact(self,F,T,duplist):
         break_point = 0
         #print(f"Comparing:{int(F.pnum)} -> {int(T.pnum)}")
-        if int(F.pnum) == 5 and int(T.pnum) == 6:
-            F.pnum = 5
-        p0 = np.array([F.rx,F.ry,F.rz])
-        p1 = np.array([T.rx,T.ry,T.rz])
-        dist = np.linalg.norm(p0 - p1)
-        dist2 = self.norm(p0,p1)
+        
+        # Get the center of the FROM particle
+        Fvec = np.array([F.rx,F.ry,F.rz])
+        # Get the center of the TO particle
+        Tvec = np.array([T.rx,T.ry,T.rz])
+        # Get the length norm which is distance betwen the points
+        dist = np.linalg.norm(Fvec - Tvec)
+        # A check
+        #dist2 = self.norm(Fvec,Tvec)
+        # Set the dup flag False
         flg_dup = False
         if int(F.pnum) == 63:
             break_point = 0
+        # Test the distance between particles aganst the sum of their radii.
+        # If dist is less the process the collsion
         if dist < (T.radius + F.radius):
-            if dist < (T.radius + F.radius):
-                for dd in duplist:
-                    if dd == 0:
-                        flg_dup = False
-                        duplist[dd] = int(T.pnum)
-                        break
-                    if int(T.pnum) == dd:
-                        flg_dup = True
-                        return
+            # for this slot in the duplist. 
+            for dd in duplist:
+                # If we start/get to a null slot before we find the TO particle
+                # there is no duplicate so set the dup flag False and break
+                if dd == 0:
+                    flg_dup = False
+                    duplist[dd] = int(T.pnum)
+                    break
+
+                # If we find the TO particle in the duplicates list
+                # the set the duplicates flag true and return - do not test/count the collsions
+                if int(T.pnum) == dd:
+                    flg_dup = True
+                    return
+            # Increase colsions 
             self.col_count+=1
-            print(f"P:{F.pnum} and {T.pnum} collison {self.col_count}")
+            #print(f"P:{F.pnum} and {T.pnum} collison {self.col_count}")
             return 1
-        return 0
+   
 
-    def add_corners(self,z,p):
-        sltidx = 0
+    def add_particle_to_cell_array(self,p):
+        cell_array_location = 0
         slot = 0
-        for ii in range(len(z)):
-            sltidx = int(z[ii])
-            if sltidx != 0:
-                if(sltidx > self.col_ary_size):
-                    print(f"particle corner at {sltidx} exceeds cell columns at {self.col_ary_size}")
-                    print(f"P:{int(p.pnum)} at ({sltidx})<{round(p.rx)},{round(p.ry)},{round(p.rz)}>")
-                    print(f"[",end=' ')
-                    for jj in range(len(z)):
-                        print(f"{z[jj]}",end=' ')
-                    print("]")
-                    return
+        # For all of the corner locations in the particle's corner array
+        for ii in range(len(p.zlink)):
+            # Get the location in the cell array to put this corner
+            cell_array_location = int(p.zlink[ii])
 
-                slot = self.lock_array[sltidx]    
-                self.lock_array[sltidx] = (self.lock_array[sltidx] + 1)
-                
+            # If the particle corner location is 0 there are no more corners
+            # so return
+            if cell_array_location == 0:
+                return 0
+            
+            # If the cell_array_location is not 0 then test for bounds
+            # The cell locatin cannot be greater than the size of the cell array
+            
+            if(cell_array_location > self.max_location):
+                print(f"particle corner at {cell_array_location} exceeds cell columns at {self.col_ary_size}")
+                print(f"P:{int(p.pnum)} at ({cell_array_location})<{round(p.rx)},{round(p.ry)},{round(p.rz)}>")
+                print(f"[",end=' ')
+                for jj in range(len(p.zlink)):
+                    print(f"{p.zlink[jj]}",end=' ')
+                print("]")
+                return 1
 
-                if slot > self.max_location:
-                    print(f"slot at {slot} exceeds maxlocation at {self.max_location}")
-                    return
-                self.cell_array[sltidx][slot] = int(p.pnum)
-        return
+            # Get a slot in the cell array occupancy list from the lock array
+            slot = self.lock_array[cell_array_location]  
+            # Increment the value at the location in the lock array
+            self.lock_array[cell_array_location] = (self.lock_array[cell_array_location] + 1)
+
+            # If the slot exceeds the width of the particle corner array throw an error    
+            if slot >= self.col_ary_size:
+                print(f"slot at {slot} exceeds maxlocation at {self.col_ary_size}")
+                return 0
+            try :
+                # If it is a valed slot number then place this corner into the cell arrray
+                # at the locationa of the corner and at the assigned slot 
+                self.cell_array[cell_array_location][slot] = int(p.pnum)
+            except BaseException as e:
+                print(f"Slot:{slot} is out of range for {self.col_ary_size}")
+                return 0
 
 
 
     def ArrayToIndex(self,loc,p=None):
+        # This is the count of cells which is 1 greater than side length
         w = self.width
         h = self.height
-        indxLoc =  loc[0][0] + w * (loc[0][1] + h * loc[0][2])
+        indxLoc = 0
+        try :
+            indxLoc =  loc[0] + w * (loc[1] + h * loc[2])
+        except BaseException as e:
+            print("At Array to index:{e}")
         
         #if p != None:
          #   print(f"P:{indxLoc} at <{loc[0][0]},{loc[0][1]},{loc[0][2]}for pnum {p.pnum}")
-        if(indxLoc > self.max_location-1):
-            return -1
-        else:
-            return indxLoc
+       # if(indxLoc > self.max_location-1):
+        #    return -1
+        #else:
+        return indxLoc
     
 
-    def return_zlink(self,p):
-        self.p = p
+    def fill_particle_corner_array(self,p):
         cx 		= p.rx
         cy 		= p.ry
         cz 		= p.rz
@@ -156,28 +226,28 @@ class ParticleUtilities():
         npos = -1
         dupcntr = 0
         
-        if(p.pnum == 7):
-            p.pnum = 7
+        # Clean particle corner array
         for ii in range(8):
             p.zlink[ii] = 0
-        ary = [(int(round(cx+R)),int(round(cy+R)),int(round(cz-R)))]
+
+        ary = [int(round(cx+R)),int(round(cy+R)),int(round(cz-R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         p.zlink[dupcntr] = cnr_idx
 
-        ary = [(int(round(cx+R)),int(round(cy+R)),int(round(cz+R)))]
+        ary = [int(round(cx+R)),int(round(cy+R)),int(round(cz+R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         if (cnr_idx != p.zlink[0]):
             dupcntr+=1
             p.zlink[dupcntr] = cnr_idx
             
-        ary = [(int(round(cx-R)),int(round(cy+R)),int(round(cz+R)))]
+        ary = [int(round(cx-R)),int(round(cy+R)),int(round(cz+R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         if (p.zlink[0] != cnr_idx and 
             p.zlink[1] != cnr_idx):
             dupcntr+=1
             p.zlink[dupcntr] = cnr_idx
         
-        ary = [(int(round(cx-R)),int(round(cy+R)),int(round(cz-R)))]
+        ary = [int(round(cx-R)),int(round(cy+R)),int(round(cz-R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         if (p.zlink[0] != cnr_idx and 
             p.zlink[1] != cnr_idx and
@@ -185,7 +255,7 @@ class ParticleUtilities():
             dupcntr+=1
             p.zlink[dupcntr] = cnr_idx
             
-        ary = [(int(round(cx+R)),int(round(cy-R)),int(round(cz+R)))]
+        ary = [int(round(cx+R)),int(round(cy-R)),int(round(cz+R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         if (p.zlink[0] != cnr_idx and
             p.zlink[1] != cnr_idx and
@@ -195,7 +265,7 @@ class ParticleUtilities():
             p.zlink[dupcntr] = cnr_idx
         
         
-        ary = [(int(round(cx+R)),int(round(cy-R)),int(round(cz-R)))]
+        ary = [int(round(cx+R)),int(round(cy-R)),int(round(cz-R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         if (p.zlink[0] != cnr_idx and 
             p.zlink[1] != cnr_idx and
@@ -207,7 +277,7 @@ class ParticleUtilities():
         
         
         
-        ary = [(int(round(cx-R)),int(round(cy-R)),int(round(cz+R)))]
+        ary = [int(round(cx-R)),int(round(cy-R)),int(round(cz+R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         if (p.zlink[0] != cnr_idx and
             p.zlink[1] != cnr_idx and
@@ -218,7 +288,7 @@ class ParticleUtilities():
             dupcntr+=1
             p.zlink[dupcntr] = cnr_idx
         
-        ary = [(int(round(cx-R)),int(round(cy-R)),int(round(cz-R)))]
+        ary = [int(round(cx-R)),int(round(cy-R)),int(round(cz-R))]
         cnr_idx = self.ArrayToIndex(ary,p)
         if (p.zlink[0] != cnr_idx and
             p.zlink[1] != cnr_idx and

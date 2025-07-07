@@ -6,7 +6,7 @@ from CfgLabel import *
 from LatexClass import *
 from ConfigClass import *
 import csv
-class LatexDataConfigurationClass():
+class GenDataConfigPanel():
     objArry = []
     dictTab = []
     tabCount = 0
@@ -62,10 +62,7 @@ class LatexDataConfigurationClass():
 
     def plot(self,file_name):
         self.cur_file_name = file_name
-        if int(self.cfg.plot_as_points_text) == 1:
-            self.gen_obj.plot_base(file_name,as_points=True)
-        else:
-            self.gen_obj.plot_base(file_name,as_points=False)
+        self.gen_obj.plot_base(file_name,as_points=True)
         self.do_plot_group()
 
     def plot_view_changed(self,obj):
@@ -74,8 +71,8 @@ class LatexDataConfigurationClass():
         self.gen_obj.update_plot()
         return
     
-    def out_put_cell_ary(self,file):
-        self.gen_obj.out_put_cell_ary(file)
+    def out_put_cell_ary(self):
+        self.gen_obj.out_put_cell_ary()
 
     def getGenObj(self):
         return self.gen_obj

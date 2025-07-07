@@ -33,6 +33,7 @@
 
 #include "VulkanObj/VulkanApp.hpp"
 #include "windows.h"
+
 MsgStream			mout;
 ConfigObj*			CfgTst;
 ConfigObj*			MpsApp;
@@ -51,7 +52,7 @@ int main() try
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
 	std::string app = CfgApp->GetString("application.app",true);
-
+	
 	CfgTst = new ConfigObj;
 	
 	PerfObj* pf = new PerfObj();
