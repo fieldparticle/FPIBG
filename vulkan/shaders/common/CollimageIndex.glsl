@@ -32,7 +32,7 @@
 // Layout for the collision image.  See DescriptorCollMatrix.cpp/hpp
 struct colmat 
 {
-	uint idx[MAX_CELL_ARRAY_LOCATIONS];
+	uint idx[MAX_CELL_OCCUPANY];
 };
 layout(scalar, binding = 3) coherent buffer CollMatrixIndex 
 {

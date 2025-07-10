@@ -21,16 +21,16 @@ class ParticleUtilities():
         self.sizeof_int = 32
         
     def get_cell_array_len(self):
-        return len(self.cell_array)
+        return self.cell_array.size
     
     def get_lock_array_len(self):
-        return len(self.cell_array)
+        return len(self.lock_array)
     
     def get_cell_array_len_bytes(self):
-        return len(self.cell_array)*self.sizeof_int
+        return self.cell_array.size*4
     
     def get_lock_array_len_bytes(self):
-        return len(self.lock_array)*self.sizeof_int
+        return len(self.lock_array)*4
     
     def IndexToArray(self,index):
 
@@ -48,14 +48,16 @@ class ParticleUtilities():
     
 
     def gen_cell_ary(self,plist,file_name):
+
         cell_len = self.get_cell_array_len()
         cell_bytes = self.get_cell_array_len_bytes()
         lock_len = self.get_lock_array_len()
         lock_bytes  = self.get_lock_array_len_bytes()
-        print(f"Cell Array L:{cell_len},B{cell_bytes} type_bytes:{sys.getsizeof(int())}")
-        print(f"Lock Array L:{lock_len},B{lock_bytes} num_bytes:")
+        print(f"Cell Array L:{cell_len},Bytes:{cell_bytes} type_bytes:{self.sizeof_int}")
+        print(f"Lock Array L:{lock_len},Bytes:{lock_bytes} num_bytes:")
 
-
+        if(len(plist)>1E4):
+            return
         # for all particles
         for pp in plist:
             if int(pp.pnum) == 0:
@@ -74,9 +76,33 @@ class ParticleUtilities():
                 outfl.writerows(self.cell_array)
         except BaseException as e:
             print(e)
-        self.detect_collions(plist)
+        
 
-    def detect_collions(self,plist):
+    def detect_collsions(self,plist,outfile):
+        self.col_count = 0
+        ary = [int(round(plist[1].rx)),int(round(plist[1].ry)),int(round(plist[1].rz))]
+        old_cnr_idx = self.ArrayToIndex(ary)
+        cell_parts = []
+        cell_parts.append(plist[1])
+        for Findex in range(2,len(plist)):
+            ary = [int(round(plist[Findex].rx)),int(round(plist[Findex].ry)),int(round(plist[Findex].rz))]
+            cnr_idx = self.ArrayToIndex(ary)
+            if old_cnr_idx == cnr_idx:
+                cell_parts.append(plist[Findex])
+                print(f"{Findex}")
+            else:
+                break
+        duplist = [0]*self.max_location
+        for ii in cell_parts:
+            for jj in cell_parts:
+                if ii.pnum == jj.pnum:
+                    continue
+                ret = self.particle_contact(ii,jj,duplist)    
+
+        print(f"Number collsions:{self.col_count}")
+        return
+
+    def detect_collions_all(self,plist):
         Tindex = 0
         break_point = 0
         col_count = 0
@@ -149,7 +175,7 @@ class ParticleUtilities():
                 # the set the duplicates flag true and return - do not test/count the collsions
                 if int(T.pnum) == dd:
                     flg_dup = True
-                    return
+                    return 0
             # Increase colsions 
             self.col_count+=1
             #print(f"P:{F.pnum} and {T.pnum} collison {self.col_count}")

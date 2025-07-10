@@ -13,7 +13,7 @@ class LatexDataParticle(LatexDataBaseClass):
     mmrr_gms = 0.0
     MODE_VERF = 1
     MODE_PERF = 0
-    
+    data_files = None    
     lines_return = pd.DataFrame()
     def __init__(self, FPIBGBase, itemcfg, ObjName):
         super().__init__(FPIBGBase, itemcfg, ObjName)
@@ -118,23 +118,17 @@ class LatexDataParticle(LatexDataBaseClass):
                 self.sumFile = self.topdir + "/perfdata" + field_name[0] + "VERF.csv"
             else:
             # If performance mode then name the file /perfdata[testtype].csv
-                self.sumFile = self.topdir + "/perfdata" + field_name[0] + ".csv"
+                self.sumFile = self.topdir + "/perfdata" + field_name[0] + "S.csv"
         except BaseException as e:
             self.log.log(self,e)
         
 
         try :
             # If the mode is performance create the summary file
-            if self.mode == self.MODE_PERF:
-                self.create_summary()
+            self.create_summary()
             # Regardless of type check the tst file
             self.check_data_files()
-            if self.mode == self.MODE_PERF:
-                #If perf mode get all the averages
-                self.get_maxes()
-            else:
-                #If verf mode verify data
-                self.get_verify()
+            self.get_maxes()
 
         except BaseException as e:
             self.log.log(self,e)
@@ -217,12 +211,17 @@ class LatexDataParticle(LatexDataBaseClass):
 
    
     def get_verify(self):
+        if self.mode == self.MODE_PERF:
+            return
+
+        err_path = os.path.dirname(self.sumFile)
+        err_file = err_path + "/perfdata" + self.itemcfg.config.name_text + "VERF.csv"
         # Layout the fields of the verf performance summary file
         data = ['file','line', 'expectedp', 'loadedp', 'shaderp_comp',
                             'shaderp_grph', 'expectedc', 'shaderc', 'loaded_err', 'compp_err','grphp_err','coll_err']
         try :
             # Open it 
-            with open(self.sumFile, mode= 'w', newline='') as file:
+            with open(err_file, mode= 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(data)
         except BaseException as e:
@@ -267,7 +266,7 @@ class LatexDataParticle(LatexDataBaseClass):
                 print("LatexDataParticle get_verify line 243:",e)
 
             file_count += 1
-        with open(self.sumFile, 'a', newline='\n') as file:
+        with open(err_file, 'a', newline='\n') as file:
             writer = csv.writer(file)
             for ii in range(len(average_list)):
                 writer.writerow(average_list[ii])
@@ -318,12 +317,8 @@ class LatexDataParticle(LatexDataBaseClass):
         file.close()
 
     def get_maxes(self):
-
-        
-
         if(self.hasData == False):
             return
-        
 
         for i in self.data_files:
             fps_old = 0
@@ -333,7 +328,7 @@ class LatexDataParticle(LatexDataBaseClass):
             if self.mode == 0:
                 file_path_release = self.topdir + "/" + i + "R.csv"
             else:
-                file_path_debug = self.topdir + "/" + i + "D.csv"
+                file_path_release = self.topdir + "/" + i + "D.csv"
             fps = cpums = cms = gms = expectedp = loadedp = shaderp_comp = shaderp_grph = expectedc = shaderc = sidelen = count = 0
         
             try:

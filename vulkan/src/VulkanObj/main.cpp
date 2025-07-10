@@ -52,7 +52,8 @@ int main() try
 	CfgApp = new ConfigObj;
 	CfgApp->Create(MpsApp->GetString("studyFile", true));
 	std::string app = CfgApp->GetString("application.app",true);
-	
+	//std::cout << "Byte Size:" << sizeof(uint32_t) << std::endl;
+	//return 0;
 	CfgTst = new ConfigObj;
 	
 	PerfObj* pf = new PerfObj();

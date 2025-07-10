@@ -1,7 +1,6 @@
-
 from BaseGenData import *
 
-class GenPQBData(BaseGenData):
+class GenCFBData(BaseGenData):
 
     last_max_scale = 0
     last_min_scale = 0
@@ -24,4 +23,3 @@ class GenPQBData(BaseGenData):
     
    
         
-   

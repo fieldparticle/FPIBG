@@ -18,9 +18,10 @@ class ConfigClass:
             with io.open(self.configPath) as f:
                 self.log.log(self,"FPIBG into Open config file.")
                 self.config = libconf.load(f)
-        except IOError as e:
+        except BaseException as e:
+            print(e)
             self.log.log(self,f"Config File Open error {e}")
-            exit()
+            
 
         self.log.log(self,"Successfully Loaded Config File.")       
             

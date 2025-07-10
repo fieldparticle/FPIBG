@@ -96,10 +96,10 @@ uint ArrayToIndex(uvec3 loc)
 	uint h = HEIGHT;
 	
 	uint indxLoc =  loc.x + w * (loc.y + h * loc.z);
-	//if(indxLoc > MAX_CELL_ARRAY_LOCATIONS)
-		//return npos;
-	//else
-	return indxLoc;
+	if(indxLoc > MAX_CELL_ARRAY_LOCATIONS)
+		return npos;
+	else
+		return indxLoc;
 
 }
 uint TestArrayToIndex(uint start,uint stop)

@@ -11,7 +11,7 @@ class GenDUPData(BaseGenData):
         
     def plot_particle_cell(self,file_name):
         self.plot_particle_cell_base(file_name)
-    
+    """
     def write_test_file(self,index,sel_dict):
         
         with open(self.test_file_name,'w') as f:
@@ -54,7 +54,7 @@ class GenDUPData(BaseGenData):
             fstr = f"ColArySize = {64};\n"
             f.write(fstr)
         f.close()
-
+    """
 
     def place_particlePair(self,xx1,yy1,zz1,xx2,yy2,zz2,colliding,w_list):
         
@@ -70,6 +70,13 @@ class GenDUPData(BaseGenData):
         w_list.append(particle_struct1)
         self.particle_count+=1
         self.particles_in_cell_count +=1
+
+        if self.old_rx < particle_struct1.rx:
+            self.old_rx = particle_struct1.rx
+        if self.old_ry < particle_struct1.rx:
+            self.old_ry = particle_struct1.rx
+        if self.old_rz < particle_struct1.rx:
+            self.old_rz = particle_struct1.rx
 
         particle_struct2 = pdata()
         particle_struct2.ptype = 1
@@ -87,6 +94,13 @@ class GenDUPData(BaseGenData):
         if dist >= (particle_struct2.radius + particle_struct1.radius):
             print(f"P:{particle_struct1.pnum} and P:{particle_struct2.pnum} are not colliding.")
 
+        if self.old_rx < particle_struct2.rx:
+            self.old_rx = particle_struct2.rx
+        if self.old_ry < particle_struct2.rx:
+            self.old_ry = particle_struct2.rx
+        if self.old_rz < particle_struct2.rx:
+            self.old_rz = particle_struct2.rx
+        self.max_cell_location = [round(self.old_rx),round(self.old_ry),round(self.old_rz)]
         return [int(particle_struct1.pnum),int(particle_struct2.pnum)]
 
     def do_cells(self,progress_callback):

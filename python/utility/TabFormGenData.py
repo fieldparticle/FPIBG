@@ -122,6 +122,7 @@ class TabGenData(QTabWidget,QRunnable):
             self.GenDataButton.setEnabled(True)
             self.CAButton.setEnabled(True)
             self.TstButton.setEnabled(True)
+            self.ColButton.setEnabled(True)
 
             # Here specify as a string the gendata class
             gen_class_txt = f"{self.itemcfg.config.import_text}.{self.itemcfg.config.import_text}"
@@ -254,12 +255,20 @@ class TabGenData(QTabWidget,QRunnable):
         else:
             print("no item selected")
 
+    def count_collsions(self):
+        selected_item = self.ListObj.selectedItems()
+        self.selected_item = selected_item
+           
+        if self.selected_item:
+           self.gen_obj = self.ltxObj.getGenObj()
+           self.gen_obj.count_collions()
+
     def out_put_cell_ary(self):
         selected_item = self.ListObj.selectedItems()
         self.selected_item = selected_item
            
         if self.selected_item:
-            self.ltxObj.out_put_cell_ary()
+            self.ltxObj.gen_obj.out_put_cell_ary()
         else:
             print("no item selected")
 
@@ -349,6 +358,13 @@ class TabGenData(QTabWidget,QRunnable):
             self.TstButton.setEnabled(False)
             dirgrid.addWidget(self.TstButton,3,1)
             
+            self.ColButton = QPushButton("Count Collisions")
+            self.setSize(self.ColButton,30,100)
+            self.ColButton.setStyleSheet("background-color:  #dddddd")
+            self.ColButton.clicked.connect(self.count_collsions)
+            self.ColButton.setEnabled(False)
+            dirgrid.addWidget(self.ColButton,3,2)
+
             self.ListObj =  QListWidget()
             #self.ListObj.setFont(self.font)
             self.ListObj.setStyleSheet("background-color:  #FFFFFF")

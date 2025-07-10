@@ -28,7 +28,6 @@ from shared.utilities import *
 	#double molar_mass;
 	#double temp_vel;
 class pdata(ctypes.Structure):
-    
     def __init__(self):
         self. zlink = [0]*8
         
@@ -78,6 +77,14 @@ class BaseGenData:
     side_length = 0
     side_length_count = 0
     cell_occupancy_list_size = 0
+    last_max_scale = 0
+    last_min_scale = 0
+    old_rx = 0.0
+    old_ry = 0.0
+    old_rz = 0.0
+    do_max_scale = True
+    switch_col = True    
+    collsion_count_check = 0
     views = [('XY',   (90, -90, 0)),
         ('XZ',    (0, -90, 0)),
         ('YZ',    (0,   0, 0)),
@@ -112,13 +119,7 @@ class BaseGenData:
     def plot_particle_cell(self):
         pass
 
-    @abstractmethod
-    def place_particles(self,row,column):
-        pass
-    
-    @abstractmethod
-    def do_cells(self,progress_callback):
-        pass
+ 
     
     def add_null_particle(self,w_list):
         particle_struct = pdata()
@@ -153,10 +154,6 @@ class BaseGenData:
         if not os.path.exists(os.path.isdir(self.cfg.data_dir)):
             os.makedirs(os.path.isdir(self.cfg.data_dir))
 
-    def gen_random_numbers_in_range(self,low, high, n):
-        return random.sample(range(low, high), n)
-    
-  
     
     def open_selections_file(self):
         try:
@@ -174,13 +171,28 @@ class BaseGenData:
     def stop_thread(self):
         self.flg_stop = True
 
-    def gen_data_base(self,index,sel_dict,progress_callback):
-        self.calulate_cell_properties(index,sel_dict)
-        self.write_test_file(index,sel_dict)
+    def gen_random_numbers_in_range(self,low, high, n):
+        return random.sample(range(low, high), n)
+    
+    def sort_write_random(self):
+        plist = self.read_all_particle_data(self.test_bin_name)
+        plist.sort(key=lambda x: x.pnum)
         self.open_bin_file()
+        self.write_bin_file(plist)
+        self.close_bin_file()
+
+
+    def gen_data_base(self,index,sel_dict,progress_callback):
+        if(self.calulate_cell_properties(index,sel_dict) != 0):
+            return
+        self.open_bin_file()
+        self.collsion_count_check = 0
         ret = self.do_cells(progress_callback)
         self.close_bin_file()
+        self.write_test_file(index,sel_dict)
         col_ary_size = self.cell_occupancy_list_size
+        if self.cfg.particle_enumeration_text == 'random':
+            self.sort_write_random()
         pu = ParticleUtilities(self.side_length,col_ary_size)
         print("=========================================================\n")
         print(f"max_cell_location = <{self.max_cell_location[0]},{self.max_cell_location[0]},{self.max_cell_location[0]}>")
@@ -212,22 +224,47 @@ class BaseGenData:
             self.sepdist                =  float(self.cfg.particle_separation_text)
         except BaseException as e:
             self.log.log(self,f"Key error in record:",e)
-        self.center_line_length     = 2*self.radius  + self.radius*self.sepdist
+        
+        # get diameter
+        D = (2.0*self.radius)
+        # how many particle fit in the 1.0 square cell
+        subcell = math.floor(1.0/D)
+        # how long is this numebr of particles
+        len_parts = subcell*D
+
+        # if the len is greater than 1.0 then remove particles unit there is some space left
+        while len_parts >= 0.99:
+            len_parts -= D
+
+        # What is the maximum number of particle that can fit
+        self.particles_in_row = round(len_parts/D)
+
+        subcell = 1.0/self.particles_in_row
+        dist =(subcell-2.0*self.radius) 
+        self.sepdist = dist/2.0
+
+        self.center_line_length     = 2.0*self.sepdist+2.0*self.radius
+
         self.particles_in_row       = int(math.floor(1.00 /self.center_line_length))
         self.particles_in_col       = int(math.floor(1.00 /self.center_line_length))
         self.particles_in_layers    = int(math.floor(1.00 /self.center_line_length))
         self.particles_in_cell      = int(self.particles_in_row*self.particles_in_col*self.particles_in_layers)
         self.cell_occupancy_list_size   = self.particles_in_cell+10
-        self.tot_num_collsions          = math.ceil(int(self.number_particles*self.collision_density))
         self.tot_num_cells              = int(self.number_particles / self.particles_in_cell)
-        self.num_collisions_per_cell    = int(self.tot_num_collsions/self.tot_num_cells)
+        self.num_collisions_per_cell    = int(self.particles_in_cell*self.collision_density)
+        
+        # Can't have odd number of particles in collsions 
+        # Calculations here are based on particles in collsion not particle pairs
+        if self.num_collisions_per_cell % 2 != 0:
+            self.num_collisions_per_cell+=1
+       
+        self.tot_num_collsions          = self.num_collisions_per_cell*self.tot_num_cells 
         self.side_length                = self.calc_side_length(self.number_particles,self.particles_in_cell)+1
         self.side_length_count          = self.side_length+1
         self.cell_x_len                 = self.side_length
         self.cell_y_len                 = self.side_length
         self.cell_z_len                 = self.side_length
-        
-        
+      
         self.set_file_name = "{:03d}CollisionDataSet{:d}X{:d}X{:d}".format(index,self.number_particles,self.tot_num_collsions,self.side_length)
         self.test_file_name = self.cfg.data_dir + '/' + self.set_file_name + '.tst'
         self.test_bin_name = self.cfg.data_dir + '/' + self.set_file_name + '.bin'
@@ -236,7 +273,149 @@ class BaseGenData:
         self.log.log(self,f"Collsion Density: { self.collision_density},Number particles:{self.number_particles},Radius: {self.radius}, Separation Dist: {self.sepdist }, Center line length: {self.center_line_length:.2f}")
         self.log.log(self,f"Particles in row: {self.particles_in_row}, Particles in Column: {self.particles_in_col}, Particles per cell: {self.particles_in_cell}")
         self.log.log(self,f"Cell array size: {self.cell_occupancy_list_size }")
+        return 0
 
+ 
+    def do_cells(self,progress_callback):
+        self.old_rx = 0.0
+        self.old_ry = 0.0
+        self.old_rz = 0.0
+        if self.cfg.particle_enumeration_text == 'random':
+            self.rand_data = self.gen_random_numbers_in_range(1, self.number_particles+1, self.number_particles)    
+        if self.cfg.particle_enumeration_text == 'scale':
+            self.last_max_scale = self.number_particles+1
+
+        ret = 0
+        self.w_list = []
+        self.particle_count = 0
+        self.add_null_particle(self.w_list)
+        ########################################################
+        # This only happens here. The side_length is n
+        # but since cells start at zero they go from 0 to n-1
+        z_range = self.cell_z_len-1
+        y_range = self.cell_y_len-1
+        z_range = self.cell_x_len-1
+        
+        ########################################################
+        for zz in range(z_range):
+            progress_callback.emit(zz)
+            for yy in range(y_range):
+                for xx in range(z_range):
+                    self.collsions_in_cell_count = 0
+                    self.particles_in_cell_count = 0
+                    # Inside a single cell. Process single cell
+                    for layer in range(self.particles_in_layers):
+                        for row in range(self.particles_in_row): 
+                            for col in range(self.particles_in_col):        
+                                if self.flg_stop == True:
+                                    return 1
+                                ret = self.place_particles(xx,yy,zz,row,col,layer,self.w_list)
+                                if ret == 3:
+                                    if len(self.w_list) > 0:
+                                        self.write_bin_file(self.w_list)
+                                        print(f"{self.collsion_count_check}")
+                                    return 0
+                                if len(self.w_list) >= int(self.cfg.write_block_len_text):
+                                    self.write_bin_file(self.w_list)
+                                    self.w_list.clear()
+        self.write_bin_file(self.w_list)
+        return 0
+    
+    def place_particles(self,xx,yy,zz,row,col,layer,w_list):
+
+        
+        # If particle cont is greater than the required numbe of particles return 3 to end the
+        if (self.particle_count >= self.number_particles):
+            return 3
+
+        # IF number collsions met return 2
+        if(self.particles_in_cell_count > self.particles_in_cell ):
+            return 2
+        
+        # Switch for the range function
+        if(self.do_max_scale == True):
+            self.do_max_scale = False
+        else:
+            self.do_max_scale = True
+
+
+        particle_struct = pdata()
+        #print(f"particle: {self.particle_count}, xx={xx}, yy= {yy}, zz={zz}, layer= {layer}, row= {row} col= {col}")
+        #                         |offset so no particle is in a cell with a zero in it|
+       
+        subcell = 1.0/self.particles_in_row
+        dist =(subcell-2.0*self.radius) 
+        sep = dist/2.0
+
+        self.center_line_length     = 2.0*sep+2.0*self.radius
+        self.switch_col = False
+        odd_colum = 0
+        if col == 0:
+            odd_colum = 0
+            self.switch_col = False
+        else:
+            odd_column = col%2
+            self.switch_col  = True
+
+        # If more colsions are needed
+        if(self.collsions_in_cell_count < self.num_collisions_per_cell):
+            if col%2:
+                rx = 0.5 + sep + 0.25*self.radius + self.center_line_length*col+xx
+                self.collsions_in_cell_count+=1
+                self.collision_count+=1
+                particle_struct.ptype = 1
+                self.switch_col = False
+            else:
+                rx = 0.5 + sep + self.radius + self.center_line_length*col+xx
+                self.collsions_in_cell_count+=1
+                self.collision_count+=1
+                particle_struct.ptype = 1
+                self.switch_col = True
+        else:
+            particle_struct.ptype = 0
+            rx = 0.5 + sep + self.radius + self.center_line_length*col+xx
+
+
+        ry = 0.5 + sep + self.radius + self.center_line_length*row+yy        
+        rz = 0.5 + sep + self.radius + self.center_line_length*layer+zz
+    
+        if round(rx) == 1 and round(ry) == 1 and round(rz) == 1:
+            self.collsion_count_check = self.collsions_in_cell_count
+        
+
+
+        #print(f"row{row}:col{col} <{rx},{ry},{rz}> Cell:<{round(rx)},{round(ry)},{round(rz)}>")
+        if self.cfg.particle_enumeration_text == 'random':
+            particle_struct.pnum = self.rand_data[self.particle_count]
+
+        elif self.cfg.particle_enumeration_text == 'scale':
+            if self.do_max_scale == True:
+                self.last_max_scale-=1
+                particle_struct.pnum = self.last_max_scale
+            else:
+                self.last_min_scale+=1
+                particle_struct.pnum = self.last_min_scale
+            
+        elif self.cfg.particle_enumeration_text == 'sequential':    
+            particle_struct.pnum = self.particle_count + 1    
+
+        particle_struct.rx = rx
+        particle_struct.ry = ry
+        particle_struct.rz = rz
+        particle_struct.radius = self.radius
+        w_list.append(particle_struct)
+        self.particle_count+=1
+        self.particles_in_cell_count +=1
+
+        if self.old_rx < rx:
+            self.old_rx = rx
+        if self.old_ry < ry:
+            self.old_ry = ry
+        if self.old_rz < rz:
+            self.old_rz = rz
+        self.max_cell_location = [round(self.old_rx),round(self.old_ry),round(self.old_rz)]
+        return 0
+    
     def write_test_file(self,index,sel_dict):
         
         with open(self.test_file_name,'w') as f:
@@ -257,6 +436,10 @@ class BaseGenData:
             fstr = f"num_particles = {self.number_particles};\n"
             f.write(fstr)
             fstr = f"num_particle_colliding = {self.tot_num_collsions};\n"
+            f.write(fstr)
+            fstr = f"exp_collisions_per_cell = {self.num_collisions_per_cell};\n"
+            f.write(fstr)
+            fstr = f"act_collisions_per_cell = {self.collsion_count_check};\n"
             f.write(fstr)
             fstr = f"particle_data_bin_file = \"{self.test_bin_name.replace('/','\\')}\";\n"
             f.write(fstr)
@@ -337,10 +520,10 @@ class BaseGenData:
         plt.pause(0.01)
         
     def plot_base(self,file_name,view_num=None,cells_on=True,as_points=True):
-        if int(self.cfg.plot_as_points_text) == "1":
-            self.as_points == True
+        if '1' in self.cfg.plot_as_points_text:
+            self.as_points = True
         else:
-            self.as_points == True
+            self.as_points = False
         self.cur_file = file_name        
         self.set_up_plot()
         file_prefix = os.path.splitext(file_name)[0]
@@ -369,14 +552,14 @@ class BaseGenData:
             zz = []
             for ii in plist:
                 if (p_count >= p_start):
-                    xx.append(ii.rx)
-                    yy.append(ii.ry)
-                    zz.append(ii.rz)
+                    if ii.ptype == 1:
+                        col_clr ='blue'
+                    else:
+                        col_clr = pcolor
+                    self.ax.scatter(ii.rx,ii.ry,ii.rz,color=col_clr)
                 p_count +=1
                 if(p_count > p_end):
                     break
-            
-            self.ax.scatter(xx,yy,zz)
         else:
             for ii in plist:
                 if (p_count >= p_start):
@@ -405,7 +588,7 @@ class BaseGenData:
         self.fig.canvas.draw()
 
     def end_plot(self,sidelen = None):
-        lims = [int(self.cfg.limits_array[0]),int(self.cfg.limits_array[1])]
+        lims = [float(self.cfg.limits_array[0]),float(self.cfg.limits_array[1])]
         view_num=self.cur_view_num
         self.ax.view_init(elev=self.views[view_num][1][0], azim=self.views[view_num][1][1], roll=self.views[view_num][1][2])
         self.ax.set_title('3D Line Plot')
@@ -482,6 +665,15 @@ class BaseGenData:
         file_prefix = os.path.splitext(self.cur_file)[0]
         out_file_name = f"{file_prefix}.CellArray.csv"
         pu.gen_cell_ary(plist,out_file_name)
+
+    def count_collions(self):
+        self.side_length = self.tst_file_cfg.config.CellAryW
+        col_ary_size = self.tst_file_cfg.config.cell_occupancy_list_size
+        plist = self.read_all_particle_data(self.cur_file)
+        pu = ParticleUtilities(self.side_length,col_ary_size)
+        file_prefix = os.path.splitext(self.cur_file)[0]
+        out_file_name = f"{file_prefix}.CellArray.csv"
+        pu.detect_collsions(plist,out_file_name)
         
     def list_particles(self,p_list,list_obj):
         p_count = 0
@@ -492,6 +684,8 @@ class BaseGenData:
         for ii in p_list:
             index = pu.ArrayToIndex([round(ii.rx),round(ii.ry),round(ii.rz)])
             list_obj.append(f"P:{ii.pnum} R:{ii.radius} I:{index}<{ii.rx:.2f},{ii.ry:.2f},{ii.rz:.2f}>[{round(ii.rx)},{round(ii.ry)},{round(ii.rz)}]")
+        
+
 
     def test_array_to_index(self):
         file_name = f"{self.itemcfg.data_dir}/{self.itemcfg.test_indexing_rpt_text}"
@@ -558,13 +752,16 @@ class BaseGenData:
         struct_unpack = struct.Struct(struct_fmt).unpack_from
         results = []
         counter = 0
-        with open(file_name, "rb") as f:
-            while True:
-                record = pdata()
-                ret = f.readinto(record)
-                if ret == 0:
-                    break
-                results.append(record)    
+        try:
+            with open(file_name, "rb") as f:
+                while True:
+                    record = pdata()
+                    ret = f.readinto(record)
+                    if ret == 0:
+                        break
+                    results.append(record)    
+        except BaseException as e:
+            print(e)
         p_lst = []
         return results
     

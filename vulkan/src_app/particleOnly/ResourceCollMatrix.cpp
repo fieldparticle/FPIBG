@@ -43,11 +43,13 @@ void ResourceCollMatrix::Create(uint32_t BindPoint, ResourceVertexParticle* part
 
     uint32_t Size = static_cast<uint32_t>(m_particle->m_SideLength);
     m_BindPoint = BindPoint;
+    // Sizes are in bytes
     m_MaxLoc = static_cast<uint32_t>((CfgTst->GetUInt("CellAryW", true)) 
                                         * (CfgTst->GetUInt("CellAryH", true)) 
                                         * (CfgTst->GetUInt("CellAryL", true)));
 
-    m_BufSize = m_MaxLoc*sizeof(uint32_t)*CfgTst->GetInt("cell_occupancy_list_size", true);
+
+    m_BufSize = (m_MaxLoc*sizeof(uint32_t))*(CfgTst->GetInt("cell_occupancy_list_size", true));
     mout << "MEMALLOC:ResourceCollMatrix V2:" << m_BufSize << ende;    
     
     uint32_t elements = m_BufSize / sizeof(uint32_t);

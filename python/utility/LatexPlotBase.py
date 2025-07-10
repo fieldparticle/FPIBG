@@ -174,6 +174,8 @@ class LatexPlotBase(LatexConfigurationClass):
                 print(f"Trend num:{plotNum} error:{e}")
                 return
             
+            dataObj.data_base.get_verify()
+
             if self.has_legend == True:
                 leg_items = self.ax.legend()
             # Save temp image 
