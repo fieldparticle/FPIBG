@@ -87,8 +87,6 @@ class LatexPlotBase(LatexConfigurationClass):
                     parmString  = parmString + multicmd[jj][i]
             parmsList.append(parmString.strip())   
             cmdsList.append(cmdsOnlyString.strip())
-            
-            
         return cmdsList,parmsList
         
         
@@ -236,7 +234,7 @@ class LatexPlotBase(LatexConfigurationClass):
         oob = self.itemcfg.config[plotGrouptxt]
         for func_str in oob:
              
-            print(func_str)
+           # print(func_str)
             try:
                 eval(func_str)     
             except BaseException as e:

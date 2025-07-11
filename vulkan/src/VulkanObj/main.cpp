@@ -69,7 +69,7 @@ int main() try
 	if(testtype.compare("VerfPerf") == 0)
 	{
 
-		
+		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 		if (CfgApp->GetBool("application.doAuto", true) == true)
 		{
 			mout << "Do study :" << ende;

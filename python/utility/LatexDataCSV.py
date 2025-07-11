@@ -8,12 +8,14 @@ class LatexDataCSV(LatexDataBaseClass):
         super().__init__(FPIBGBase, itemcfg, ObjName)
         self.lines_return = pd.DataFrame()
         
-    
+    def get_verify(self):
+        pass
     def getData(self):
         return self.lines_return
 
     def Create(self,plot_num):
-        self.data = pd.read_csv(self.itemcfg.config.data_files[plot_num],header=0)  
+        data_file = self.itemcfg.config.data_dir + "/" + self.itemcfg.config.data_files[plot_num]
+        self.data = pd.read_csv(data_file,header=0)  
         getFieldStr = f"DataFields{plot_num+1}"
         data_fields = self.itemcfg.config[getFieldStr]
         for jj in range(len(data_fields)):

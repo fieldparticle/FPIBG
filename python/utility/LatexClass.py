@@ -395,7 +395,7 @@ class LatexImageWriter(LatexClass):
             loutname = cfg.name_text 
         else:
             loutname = cfg.tex_dir + "/" + cfg.name_text
-        w = "\\includegraphics[width=%0.2fin]{%s}\r"%(8.5*float(cfg.scale_text),loutname)
+        w = "\\includegraphics[width=%0.2fin]{%s}\r"%(8.5*float(cfg.scale_text),sgdir)
         f.write(w)
         w = "\\caption[%s]{\\textit{%s}}\r"%(cfg.title_text,cfg.caption_box)
         f.write(w)

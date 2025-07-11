@@ -3,6 +3,7 @@ from LatexDataBaseClass import *
 import os
 import csv
 import re
+import statistics
 class LatexDataParticle(LatexDataBaseClass):
 
     sumFile = ""
@@ -128,7 +129,10 @@ class LatexDataParticle(LatexDataBaseClass):
             self.create_summary()
             # Regardless of type check the tst file
             self.check_data_files()
-            self.get_maxes()
+            if self.itemcfg.config.compute_type == "average":
+                self.get_averages()
+            else:
+                self.get_maxes()
 
         except BaseException as e:
             self.log.log(self,e)
@@ -200,7 +204,7 @@ class LatexDataParticle(LatexDataBaseClass):
     
     def create_summary(self):
         data = ['Name', 'fps', 'cpums', 'cms', 'gms', 'expectedp', 'loadedp',
-                'shaderp_comp', 'shaderp_grph', 'expectedc', 'shaderc', 'sidelen']
+                'shaderp_comp', 'shaderp_grph', 'expectedc', 'shaderc', 'sidelen','mean','stddev']
         try :
             with open(self.sumFile, mode= 'w', newline='') as file:
                 writer = csv.writer(file)
@@ -209,8 +213,8 @@ class LatexDataParticle(LatexDataBaseClass):
             print("LatexDataParticle create_summary line 193:",e)
             
 
-   
     def get_verify(self):
+        pass
         if self.mode == self.MODE_PERF:
             return
 
@@ -276,6 +280,8 @@ class LatexDataParticle(LatexDataBaseClass):
     def get_averages(self):
         if(self.hasData == False):
             return
+        print("Performing Averages")
+        self.average_list = []
         for i in self.data_files:
             if self.mode == 0:
                 file_path_release = self.topdir + "/" + i + "R.csv"
@@ -319,7 +325,7 @@ class LatexDataParticle(LatexDataBaseClass):
     def get_maxes(self):
         if(self.hasData == False):
             return
-
+        print("Performing Maximums")
         for i in self.data_files:
             fps_old = 0
             cpums_old = 0.0
@@ -329,8 +335,9 @@ class LatexDataParticle(LatexDataBaseClass):
                 file_path_release = self.topdir + "/" + i + "R.csv"
             else:
                 file_path_release = self.topdir + "/" + i + "D.csv"
-            fps = cpums = cms = gms = expectedp = loadedp = shaderp_comp = shaderp_grph = expectedc = shaderc = sidelen = count = 0
-        
+            mean = stddev = fps = cpums = cms = gms = expectedp = loadedp = shaderp_comp = shaderp_grph = expectedc = shaderc = sidelen = count = 0
+            fps_list = []
+          
             try:
                 with open(file_path_release, 'r') as filename:
                     file = csv.DictReader(filename)
@@ -338,11 +345,12 @@ class LatexDataParticle(LatexDataBaseClass):
                         
                         count += 1
                         fps = float(col['fps'])
+                        fps_list.append(fps)
                         if fps > fps_old:
                             fps_old = fps
                         cpums = float(col['cpums'])
                         if cpums > cpums_old:
-                            cpums = cpums
+                            cpums_old = cpums
                         cms = float(col['cms'])
                         if cms > cms_old:
                             cms_old = cms
@@ -356,8 +364,11 @@ class LatexDataParticle(LatexDataBaseClass):
             except BaseException as e:
                 print("LatexDataParticle get_averages line 282:",e)
 
+            mean = statistics.mean(fps_list)
+            stddev = statistics.stdev(fps_list)
+           
             max_list = [i, fps_old, cpums_old, cms_old, gms_old, expectedp, loadedp, shaderp_comp,
-                        shaderp_grph, expectedc, shaderc, sidelen]
+                        shaderp_grph, expectedc, shaderc, sidelen,mean,stddev]
             with open(self.sumFile, 'a', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(max_list)

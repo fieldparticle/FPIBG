@@ -16,7 +16,7 @@ class LatexDataContainer():
     def Create(self,plot_num,data_type):
 
         matches = ["pqb","pcd","cfb","dup","pqbrandom"]
-        print(type(data_type))
+        #print(type(data_type))
         if isinstance(data_type,list):
             test = data_type[0].lower()
         elif isinstance(data_type,str):

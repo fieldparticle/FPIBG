@@ -23,7 +23,7 @@ class TabFormLatex(QTabWidget):
     itemcfg = ConfigClass("Latex Class")
     startDir = "J:/MOD/FPIBGUtility/Latex"
     startDir = "J:/FPIBGJournalStaticV2/rpt"
-    startDir = "J:/FPIBGJournalStaticV2/cfg"
+    startDir = "J:/FPIBGDATAT/cfg_paper"
 
     ObjName = ""
     ltxObj = None
