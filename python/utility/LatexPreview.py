@@ -3,9 +3,9 @@ import subprocess, os
 
 class LatexPreview():
     fileName = ''
-    def __init__(self,fileName,texName,wkdir,valsFile):
+    def __init__(self,fileName,texlist,wkdir,valsFile):
         self.fileName = fileName
-        self.texName = texName
+        self.texList = texlist
         self.wkdir = wkdir
         self.valsFile = valsFile
         pass
@@ -36,8 +36,9 @@ class LatexPreview():
 
         fl.write('\\begin{document}\n')
         fl.write("\\input{"  +  self.valsFile  + "}\n")
-        texname = "\\input {" + self.texName + "}\n" 
-        fl.write(texname)
+        for ii in self.texList:
+            texname = "\\input {" + ii + "}\n" 
+            fl.write(texname)
         fl.write('\\end{document}\n')
         fl.flush()
         fl.close()

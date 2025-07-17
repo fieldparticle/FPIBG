@@ -20,7 +20,7 @@ class LatexWin(QWidget):
         self.log = self.bs.log
         self.log.log(self,"Logging system initialized")
         self.ObjName = ObjName
-        self.setWindowTitle('FPIBG Utility Main Window')
+        self.setWindowTitle('Particles Forge Utility Suite')
         self.setGeometry(100, 100, 1200, 1000)
         self.setWindowIcon(QIcon("Logo.png"))
         main_layout = QGridLayout(self)

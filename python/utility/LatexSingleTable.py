@@ -114,8 +114,10 @@ class LatexSplitTable(LatexSingleTable):
     def __init__(self,Parent,itemCFG=None):
         super().__init__(Parent)
         self.LatexTable = LatexSplitTableWriter(self.Parent)
+        self.LatexFileImage = LatexSplitTableWriter(self.Parent)
 
 class LatexMultiTable(LatexSingleTable):
     def __init__(self,Parent,itemCFG=None):
         super().__init__(Parent)
         self.LatexTable = LatexMultiTableWriter(self.Parent)
+        self.LatexFileImage = LatexMultiTableWriter(self.Parent)

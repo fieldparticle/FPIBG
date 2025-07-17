@@ -43,6 +43,9 @@ class LatexConfigurationClass():
         self.itemcfg.updateCfg()
         self.LatexFileImage.Write() 
 
+    def getTexList(self):
+        return self.LatexFileImage.get_tex_list()
+
     def setSize(self,control,H,W):
         control.setMinimumHeight(H)
         control.setMinimumWidth(W)

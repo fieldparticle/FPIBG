@@ -31,6 +31,7 @@ class pdata(ctypes.Structure):
     def __init__(self):
         self. zlink = [0]*8
         
+        
     _fields_ = [("pnum", ctypes.c_double),
                 ("rx",  ctypes.c_double),
                 ("ry",  ctypes.c_double),
@@ -40,7 +41,7 @@ class pdata(ctypes.Structure):
                 ("vy",  ctypes.c_double),
                 ("vz",  ctypes.c_double),
                 ("ptype",  ctypes.c_double),
-                ("seq",  ctypes.c_double),
+                ("rodnum",  ctypes.c_double),
                 ("acc_r",  ctypes.c_double),
                 ("Acc_a",  ctypes.c_double),
                 ("molar_mass",  ctypes.c_double),
@@ -85,6 +86,9 @@ class BaseGenData:
     do_max_scale = True
     switch_col = True    
     collsion_count_check = 0
+    particles_in_cell = 0
+    num_collisions_per_cell = 0
+
     views = [('XY',   (90, -90, 0)),
         ('XZ',    (0, -90, 0)),
         ('YZ',    (0,   0, 0)),
@@ -567,7 +571,12 @@ class BaseGenData:
                     x = ii.rx + ii.radius * np.sin(phi) * np.cos(theta)
                     y = ii.ry + ii.radius * np.sin(phi) * np.sin(theta)
                     z = ii.rz + ii.radius * np.cos(phi)
-                    if ii.ptype == 1:
+                    #self.ax.plot_surface(x, y, z, alpha=0.8)
+                    #print(f"Particle {p_count} Loc: <{ii.rx:2f},{ii.ry:2f},{ii.rz:2f})>")
+                    
+                    if 'none' in pcolor:
+                        self.ax.plot_surface(x, y, z, alpha=0.8)
+                    elif ii.ptype == 1:
                         self.ax.plot_surface(x, y, z, color='blue',alpha=0.8)
                     else:
                         self.ax.plot_surface(x, y, z, color=pcolor,alpha=0.8)
@@ -646,7 +655,7 @@ class BaseGenData:
             poly3d = [[tupleList[vertices[ix][iy]] for iy in range(len(vertices[0]))] for ix in range(len(vertices))]
             face_color = 'y'
             if self.flg_plot_cell_faces == True:
-                alpha_val = 0.5
+                alpha_val = 0.1
             else:
                 alpha_val = 0.0
             self.ax.add_collection3d(Poly3DCollection(poly3d, edgecolors= 'k',facecolors=face_color, linewidths=1, alpha=alpha_val))

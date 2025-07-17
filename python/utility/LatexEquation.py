@@ -19,7 +19,7 @@ from LatexDialogs import *
 from TrendLine import *
 from ValHandler import *
 from LatexDataContainer import *
-class LatexPlot(LatexPlotBase):
+class LatexEquation(LatexConfigurationClass):
     fignum = 0
     
     
@@ -34,12 +34,12 @@ class LatexPlot(LatexPlotBase):
     sumFile = ""
     data_files = []
     average_list = []
-
+    select_list = []
 
     def __init__(self,Parent):
         super().__init__(Parent)
         self.Parent = Parent
-        self.LatexFileImage = LatexPlotWriter(self.Parent)
+        self.LatexFileImage = LatexEquationWriter(self.Parent)
         self.valHandler = ValHandler()
     
     def isNumber(self,value):
@@ -59,20 +59,26 @@ class LatexPlot(LatexPlotBase):
             return True
         else:
             return False
-        
-    # Override LatexPlot()
-    def doDataSource(self,plotNum):
-        plotGrouptxt = f"DataSource"
-        oob = self.itemcfg.config[plotGrouptxt][plotNum-1]
-        return oob
-      
-    def doDataFile(self,plotNum):
-        plotGrouptxt = f"DataFiles"
-        oob = self.itemcfg.config[plotGrouptxt][plotNum-1]
-        return oob
-          
     
-    def preview(self):
-      pass
+    def ReadData(self):
+       
+        eq_file = self.itemcfg.config.data_dir + "/" + self.itemcfg.config.data_file
+        try:
+            with open(eq_file,"r",newline='') as csvfl:
+                reader = csv.reader(csvfl, delimiter=',',dialect='excel')
+                for row in reader:
+                    self.select_list.append(row)
+        except BaseException as e:
+            self.log.log(self,f"Error opening:{eq_file}, err:", e)
         
+        return self.select_list             
+    
+    def OpenLatxCFG(self):
+        self.doItems(self.itemcfg.config)
+        self.ReadData()
+        self.LatexFileImage.Create(self.select_list)
+        
+
+    def preview(self):
+        pass
     

@@ -19,7 +19,7 @@ from LatexDialogs import *
 from TrendLine import *
 from ValHandler import *
 from LatexDataContainer import *
-class LatexPlot(LatexPlotBase):
+class LatexMultiPlot(LatexPlotBase):
     fignum = 0
     
     
@@ -39,7 +39,7 @@ class LatexPlot(LatexPlotBase):
     def __init__(self,Parent):
         super().__init__(Parent)
         self.Parent = Parent
-        self.LatexFileImage = LatexPlotWriter(self.Parent)
+        self.LatexFileImage = LatexMultiPlotWriter(self.Parent)
         self.valHandler = ValHandler()
     
     def isNumber(self,value):

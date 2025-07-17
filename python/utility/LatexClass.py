@@ -43,6 +43,52 @@ class LatexClass:
         p.write(w)
         p.close()    
 
+    def get_tex_list(self):
+        return [f"{self.itemcfg.config.tex_dir}/{self.itemcfg.config.name_text}.tex"]
+
+class LatexEquationWriter(LatexClass):
+
+    eq_lst = []
+    tex_lst = []
+    def __init__(self,Parent):
+        super().__init__(Parent)
+
+    def Create(self,eq_lst):
+        self.eq_lst = eq_lst
+
+    def Write(self):
+        for ii in self.eq_lst:
+            texname = self.cfg.tex_dir + "/" + ii[0] + ".tex"
+            self.tex_lst.append(texname)
+            try:
+                f = open(texname, "w")
+            except IOError as e:
+                self.log.log(self,f"Couldn't write to file ({e})")
+                return    
+            w = "\\begin{equation}\n"
+            f.write(w)
+            w = "\\begin{aligned}\n"
+            f.write(w)
+            
+            f.write(ii[1])
+            w ="\\label{eqn:" + ii[0] + "}\n"
+            f.write(w)   
+            w = "\\end{aligned}\n"
+            f.write(w)   
+            w = "\\end{equation}\n"
+            f.write(w)   
+            f.close()
+
+    def get_tex_list(self):
+        return self.tex_lst
+        """
+        loutname = self.cfg.tex_dir + "/" + self.cfg.name_text + ".tex"
+        try:
+            f = open(loutname, "w")
+        except IOError as e:
+            self.log.log(self,f"Couldn't write to file ({e})")
+            return
+        """
    
 #############################################################################################
 # 						class LatexTableWriter
@@ -340,29 +386,48 @@ class LatexPlotWriter(LatexClass):
         super().__init__(Parent)
  
     def Write(self):
-        cfg = self.Parent.itemcfg.config    
-        outname = cfg.tex_dir + "/" + cfg.name_text + ".png"
-        plt.savefig(outname)
-        loutname = cfg.tex_dir + "/" + cfg.name_text + ".tex"
-        f = open(loutname, "w")
-        w = "\\begin{figure*}[" + cfg.placement_text + "]\r"
-        f.write(w)
-        w = "\\centering\r"
-        f.write(w)
-        if len(cfg.tex_dir) == 0:
-            loutname = cfg.name_text 
-        else:
-            loutname = cfg.tex_dir + "/" + cfg.name_text
-        w = "\\includegraphics[width=%0.2fin]{%s}\r"%(8.5*float(cfg.scale_text),loutname)
-        f.write(w)
-        w = "\\caption[%s]{\\textit{%s}}\r"%(cfg.title_text,cfg.caption_box)
-        f.write(w)
-        w = "\\label{fig:%s}\r"%(cfg.name_text)
-        f.write(w)
-        w = "\\end{figure*}\r"
-        f.write(w)
+        cfg = self.Parent.itemcfg.config
+        outfile = cfg.tex_dir + "/" + cfg.name_text + ".tex"
+        try:
+            f = open(outfile, "w")
+        except IOError as e:
+            print(e)
+            self.log.log(self,f"Couldn't write to file ({e})")
+            return 
+        
+        try:
+            
+            w ="\\begingroup\n"
+            f.write(w)
+            w = "\\centering\n"
+            f.write(w)
+            w = "\\begin{figure*}[" + cfg.placement_text + "]\n"
+            f.write(w)
+            previewTex = f"{cfg.plots_dir}/{cfg.name_text}1.png"
+            gdir = "".join(previewTex.rsplit(cfg.tex_dir))
+            sgdir = ''.join( c for c in gdir if  c not in '/' )
+    #                print(sgdir)    
+            w = "\t\t\\includegraphics[width=" +  cfg.plot_width_text +  "in]{" + sgdir + "}\n"
+            f.write(w)
+            refname = os.path.splitext(os.path.basename(gdir))[0]
+            w = "\t\t\\label{fig:" + refname + "}\n"
+            f.write(w)
+            w = "\\hspace{" + cfg.hspace_text + "in}\n"
+            f.write(w)
+            w = "\\caption[TITLE:" + cfg.title_text + "]{\\textit{" + cfg.caption_box + "}}\n"
+            f.write(w)
+            w = "\t\t\\label{fig:" + cfg.name_text + "}\n"
+            f.write(w)
+            w = "\\end{figure*}\n"
+            f.write(w)
+            w = "\\endgroup"
+            f.write(w)
+        except IOError as err:
+            self.log.log(self,f"Couldn't write to file ({err})")
+            f.close()
+            return
         f.close()
-        self.WritePre("pre_plots")
+
         
      
 

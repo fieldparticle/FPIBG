@@ -12,7 +12,8 @@ from LatexPlotBase import *
 from LatexPlotParticle import *
 from LatexPlot import *
 from LatexSingleTable import *
-
+from LatexEquation import *
+from LatexMultiPlot import *
 class TabFormLatex(QTabWidget):
     
     texFolder = ""
@@ -97,8 +98,18 @@ class TabFormLatex(QTabWidget):
                 self.ltxObj.setConfigGroup(self.tab_layout)
                 self.ltxObj.OpenLatxCFG()
                 self.hasConfig = True
-            elif "plot" in self.type:
+            elif "multiplot" in self.type:
+                self.ltxObj = LatexMultiPlot(self)
+                self.ltxObj.setConfigGroup(self.tab_layout)
+                self.ltxObj.OpenLatxCFG()
+                self.hasConfig = True
+            elif "singleplot" in self.type:
                 self.ltxObj = LatexPlot(self)
+                self.ltxObj.setConfigGroup(self.tab_layout)
+                self.ltxObj.OpenLatxCFG()
+                self.hasConfig = True
+            elif "equation" in self.type:
+                self.ltxObj = LatexEquation(self)
                 self.ltxObj.setConfigGroup(self.tab_layout)
                 self.ltxObj.OpenLatxCFG()
                 self.hasConfig = True
@@ -164,10 +175,11 @@ class TabFormLatex(QTabWidget):
         self.SaveConfigurationFile()
         previewFile = f"{self.itemcfg.config.tex_dir}/preview.tex"
         previewPdf =  f"{self.itemcfg.config.tex_dir}/preview.pdf"
-        previewTex = f"{self.itemcfg.config.tex_dir}/{self.itemcfg.config.name_text}.tex"
+        texlist = self.ltxObj.getTexList()
+        
         prviewWorkingDir = self.itemcfg.config.tex_dir
         valFile = f"{self.itemcfg.config.tex_dir}/_vals_{self.itemcfg.config.name_text}.tex"
-        prvCls = LatexPreview(previewFile,previewTex,prviewWorkingDir,valFile)
+        prvCls = LatexPreview(previewFile,texlist,prviewWorkingDir,valFile)
         prvCls.ProcessLatxCode()
         prvCls.Run()
         with open('termPreview.log', "r") as infile:  

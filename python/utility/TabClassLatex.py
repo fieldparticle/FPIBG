@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QApplication, QWidget,  QFormLayout, QGridLayout, QT
 from PyQt6.QtCore import Qt
 from TabFormLatex import *
 from TabFormGenData import *
+from TabFormWelcome import *
 ## Add all tabs
 class TabObjLatex(QTabWidget):
     def __init__(self, *args, **kwargs):
@@ -15,8 +16,10 @@ class TabObjLatex(QTabWidget):
         ## Create the tabs
         self.tabFormGenData = TabGenData()        
         self.tabFormLatex = TabFormLatex()
-        
-        self.addTab(self.tabFormLatex, 'Plotting and Analysis')
+        self.tabFormWelcome = TabFormWelcome()
+        self.addTab(self.tabFormWelcome, 'Welcome')
         self.addTab(self.tabFormGenData, 'Data Generation')
+        self.addTab(self.tabFormLatex, 'Reporting')
         self.tabFormLatex.Create(self.bobj)
         self.tabFormGenData.Create(self.bobj)
+        self.tabFormWelcome.Create()
