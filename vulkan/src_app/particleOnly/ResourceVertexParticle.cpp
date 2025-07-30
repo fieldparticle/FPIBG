@@ -58,7 +58,7 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 	CreateLayout();
 
 	m_Radius				= CfgTst->GetFloat("radius", true);
-	std::string dataFile	= CfgTst->GetString("dataFile", true);
+	std::string dataFile	= CfgTst->GetString("particle_data_bin_file", true);
 	uint32_t dataStart		= 0;
 	BoundaryParticleLimit	= 0;
 	
@@ -76,12 +76,15 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 
 	pdata part_pos;
 
+	//--- DUMMY PARTICLE ADDED IN GEN SOFTWARE
 	// Add dummy partic le at index 0
 	// Need this becasue zero means the end of the linked list.
+#if 0
 	Particle part0{};
 	m_Particles.push_back(part0);
 	m_NumParticles = 1;
-
+#endif
+	m_NumParticles = 0;
 	if (m_App->m_dt == 0.0)
 	{
 		// Get dt from radious and temp speed.
@@ -95,14 +98,16 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 		input_file.read((char*)&part_pos, sizeof(part_pos));
 		Particle part{};
 #if 1
-		if (part_pos.rx < 0.5 || part_pos.ry < 0.5 || part_pos.rz < 0.5 )
+		if (part_pos.rx < 0.5 || part_pos.ry < 0.5 || part_pos.rz < 0.5)
 		{
 			std::ostringstream  objtxt;
-			objtxt << m_Name << "ResourceVertexParticle::Particle location below bounds P:" <<
-				part_pos.pnum << "<" << part_pos.rx << "," << part_pos.ry  << "," << part_pos.rz
-				<< ">" << std::ends;
-
-			throw std::runtime_error(objtxt.str().c_str());
+			if (m_NumParticles != 0)
+			{
+				objtxt << m_Name << "ResourceVertexParticle::Particle location below bounds P:" <<
+					part_pos.pnum << "<" << part_pos.rx << "," << part_pos.ry  << "," << part_pos.rz
+						<< ">" << std::ends;
+				throw std::runtime_error(objtxt.str().c_str());
+			}
 		}
 #endif		
 		part.PosLoc			= glm::vec4(part_pos.rx, part_pos.ry,part_pos.rz, part_pos.radius);
@@ -128,7 +133,7 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 	}
 	
 	uint32_t sidelen = CfgTst->GetUInt("CellAryL", true);
-	m_SideLength = static_cast<float>(sidelen)+1.0f;
+	m_SideLength = static_cast<float>(sidelen);
 	/*
 	* ##JMB How can they match you just add one ot it
 	if(cfg->m_CfgSidelen != m_SideLength)
@@ -150,6 +155,18 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 	mout << "MEMALLOC:ResourceVertexParticle:" << m_BufSize << ende;
 	m_App->m_Numparticles = m_NumParticles;
 
+	// Check number of particles match - add 1 for null particle
+	if (m_NumParticles != CfgTst->GetUInt("num_particles", true)+1)
+	{
+		std::ostringstream  objtxt;
+		objtxt << m_Name << "ResourceVertexParticle::Particle count does not match: Number read from tst file:" 
+			<<  CfgTst->GetUInt("num_particles", true) 
+			<< " Number read from bin file:" << m_NumParticles << std::ends;
+
+		throw std::runtime_error(objtxt.str().c_str());
+	}
+
+
 #if 0
 	int rem = sizeof(Particle) % 16;
 	if (rem != 0)
@@ -162,7 +179,7 @@ void ResourceVertexParticle::Create(uint32_t BindPoint)
 	}
 #endif	
 
-	mout << "SideLength is:" << m_SideLength << ende;
+	mout << "Max SideLength is:" << m_SideLength << ende;
 	if (m_NumParticles == 0 || m_SideLength == 0)
 	{
 		std::ostringstream  objtxt;

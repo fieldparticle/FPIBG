@@ -38,10 +38,21 @@ void PerfObj::Create()
 {
 	m_SeriesLength = CfgApp->GetUInt("application.seriesLength", true);
 	m_TestCFG = CfgApp->GetString("application.perfTest", true);
+	m_testPQBRDir= CfgApp->GetString("application.testdirPQBRandom", true);
+	m_testPQBSDir= CfgApp->GetString("application.testdirPQBScale", true);
 	m_testPQBDir= CfgApp->GetString("application.testdirPQB", true);
 	m_testCFBDir= CfgApp->GetString("application.testdirCFB", true);
 	m_testPCDDir= CfgApp->GetString("application.testdirPCD", true);
 	m_testDUPDir= CfgApp->GetString("application.testdirDUP", true);
+	m_SingleFileTest= CfgApp->GetBool("application.doAutoSingleFile", true);
+	if(!m_TestCFG.compare("testdirPQBRandom"))
+	{
+		m_TestDir = m_testPQBRDir;
+	}
+	if(!m_TestCFG.compare("testdirPQBScale"))
+	{
+		m_TestDir = m_testPQBSDir;
+	}
 	if(!m_TestCFG.compare("testdirPQB"))
 	{
 		m_TestDir = m_testPQBDir;
@@ -49,7 +60,7 @@ void PerfObj::Create()
 	if(!m_TestCFG.compare("testdirCFB"))
 	{
 		m_TestDir = m_testCFBDir;
-		m_SeriesLength = 3;
+		
 	}
 	if(!m_TestCFG.compare("testdirPCD"))
 	{
@@ -61,26 +72,39 @@ void PerfObj::Create()
 	}
 
 }
-uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp)
+uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp, bool rmtFlag)
 {
 	
 	namespace fs = std::filesystem;
-	
 	std::set<fs::path> sorted_by_name;
 	std::vector<std::string> filename;
-	std::string path = m_TestDir;
-	for (auto& entry : fs::directory_iterator(path))
+
+	if(m_SingleFileTest == false)
 	{
-		sorted_by_name.insert(entry.path());
-		filename.push_back(entry.path().string());
+		
+		std::string path = m_TestDir;
+		for (auto& entry : fs::directory_iterator(path))
+		{
+			sorted_by_name.insert(entry.path());
+			//filename.push_back(entry.path().string());
+		}
+
+	#if 1
+		for (const auto& entry : sorted_by_name)
+		{
+			if ((entry.string().find("tst")) != std::string::npos)
+				filename.push_back(entry.string());
+		}
+	#endif
 	}
-#if 0
-	for (const auto& entry : sorted_by_name)
+	else
 	{
-		if ((entry.string().find("tst")) != std::string::npos)
-			filename.push_back(entry.string());
+
+		filename.push_back(CfgApp->GetString("application.VerfPerf.testfile", true));
+
+
 	}
-#endif
+
 	uint32_t count = 0;
 
 	//for (size_t ii = 0; ii < 4; ii++)
@@ -91,7 +115,9 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp)
 		size_t pt = 0;
 		std::string pathtest{};
 		pathtest = filename[ii];
-	
+
+		std::filesystem::path cwd = std::filesystem::current_path();
+		
 		if ((pt= pathtest.find("tst")) != std::string::npos)
 		{
 			std::cout	<< "=======================" 
@@ -101,25 +127,31 @@ uint32_t PerfObj::DoStudy(TCPObj* tcps,TCPObj* tcpcapp)
 			m_TestName.clear();
 			m_TestName = filename[ii];
 			CfgTst->Create(filename[ii]);
-			m_colcount = CfgTst->GetInt("colcount", true);
-			m_density = CfgTst->GetFloat("density", true);
-			m_partcount = CfgTst->GetInt("pcount", true);
+			m_colcount = CfgTst->GetInt("num_particle_colliding", true);
+			m_density = CfgTst->GetFloat("collsion_density", true);
+			m_partcount = CfgTst->GetInt("num_particles", true);
 
 			std::string hold = filename[ii].substr(0, pt);
 			//config->m_AprFile = hold;
 			m_DataFile = hold + "bin";
-			m_AprFile =  CfgTst->GetString("aprFile", true);
-			m_DataFile = CfgTst->GetString("dataFile", true);
+			m_AprFile =  CfgTst->GetString("report_file", true);
+			m_DataFile = CfgTst->GetString("particle_data_bin_file", true);
 			mout << "Auto DataFile : " << m_DataFile << ende;
 
-
-			if (ParticleOnly(this,tcps,tcpcapp))
+			uint32_t ret = ParticleOnly(this,tcps,tcpcapp,false);
+			//Fail
+			if (ret == 1)
 			{
 				mout << "Auto - ParticleOnly failed" << ende;
 				return 1;
 			}
+			//Stop command
+			if (ret == 2)
+			{
+				mout << "Auto - ParticleOnly failed" << ende;
+				return 2;
+			}
 			
-
 			if (QuitEvent == 1)
 				return 0;
 			
@@ -158,7 +190,7 @@ int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, si
 		}
 		
 		//
-		ostrm << "time,fps,cpums,cms,gms,expectedp,loadedp,shaderp_comp,shaderp_grph, expectedc,shaderc,threadcount, sidelen,density,PERR,CERR" << std::endl;
+		ostrm << "time,fps,cpums,cms,gms,expectedp,loadedp,shaderp_comp,shaderp_grph,expectedc,shaderc,threadcount,sidelen,density,PERR,CERR" << std::endl;
 		for (size_t ii = 0; ii < aprCount-1; ii++)
 		{
 			
@@ -176,7 +208,7 @@ int PerfObj::Doperf(DrawObj* DrawInstance, VulkanObj* VulkanWin, TCPObj* tcp, si
 					<< m_partcount << ","										// expectedp: frm tst - generated
 					<< VulkanWin->m_Numparticles-1 << ","							// loadedp: loaded into rccdApp
 					<< m_ReportBuffer[ii].NumParticlesComputeCount << ","// shaderp_comp: counted from compute
-					<< m_ReportBuffer[ii].NumParticlesGraphicsCount << ","							// shaderp_grp: counted from graphics
+					<< m_ReportBuffer[ii].NumParticlesGraphicsCount << ","			// shaderp_grp: counted from graphics
 					<< m_colcount << ","										// expectedc: expected collisions
 					<< m_ReportBuffer[ii].NumCollisionsComputeCount << ","							// shaderc: compute counted collisions
 					<< m_ReportBuffer[ii].ThreadCountComp << ","									// threadcount: number of threads compute

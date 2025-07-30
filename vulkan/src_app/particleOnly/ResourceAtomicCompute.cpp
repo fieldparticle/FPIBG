@@ -117,8 +117,7 @@ void ResourceAtomicCompute::PullMem(uint32_t currentBuffer)
 #ifndef NDEBUG
 	if (m_App->m_EnableValidationLayers == false)
 		return;
-	if (m_App->m_FrameNumber < m_ReportCompFramesLessThan )
-	{
+	
 	#if 1
 		void* mappedData = {};
 		vmaMapMemory(m_App->m_vmaAllocator, m_Allocation[currentBuffer], &mappedData);
@@ -126,7 +125,9 @@ void ResourceAtomicCompute::PullMem(uint32_t currentBuffer)
 		vmaUnmapMemory(m_App->m_vmaAllocator, m_Allocation[currentBuffer]);
 	#endif
 		//memcpy(&m_collisionStruct, m_BuffersMapped[0], sizeof(Collision));
-		
+
+	if (m_App->m_FrameNumber < m_ReportCompFramesLessThan )
+	{	
 		mout << "AtomicCompute: Frame="
 			<< m_App->m_FrameNumber
 			<< " Num Particles:"
@@ -152,7 +153,7 @@ void ResourceAtomicCompute::AskObject(uint32_t AnyNumber)
 	//m_App->m_Numparticles = m_collisionStruct.numParticles;
 	m_PerfObj->m_ReportBuffer[AnyNumber].NumCollisionsComputeCount = m_collisionStruct.CollisionCount;
 	m_PerfObj->m_ReportBuffer[AnyNumber].NumParticlesComputeCount = uint32_t(m_collisionStruct.numParticles);
-	m_PerfObj->m_ReportBuffer[AnyNumber].ThreadCountComp = m_collisionStruct.holdPidx;
+	m_PerfObj->m_ReportBuffer[AnyNumber].ThreadCountComp =  uint32_t(m_collisionStruct.holdPidx);
 
 
 }

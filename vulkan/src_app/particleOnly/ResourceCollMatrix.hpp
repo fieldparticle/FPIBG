@@ -43,6 +43,7 @@ public:
 	ColMatrix m_ColMat = {};
 	uint32_t m_MaxCollArray = 0;
 	uint32_t m_MaxLoc = 0;
+	uint32_t m_CellArrayMax=0;
 	ResourceVertexParticle* m_particle = {};
 	
 	

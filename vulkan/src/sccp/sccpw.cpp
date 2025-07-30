@@ -183,21 +183,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	
 
-    if(capture_image_local == false)
-    {
+
     
-        // This is a client to the FPIBGUtility application
-	    tcpc = new TCPCObj;
-	    tcpc->SetServerIP(MpsApp->GetString("image_server_ip",true));
-	    tcpc->SetServerPort(MpsApp->GetString("image_server_port",true));
-        tcpc->SetBufSize(MpsApp->GetInt("buffer_size",true));
-	    if(tcpc->Create() != 0)
-        {   
-            mout << "Could not get client" << ende;
-            return 1;
-        }
-        mout << "Got python client" << ende;
+    // This is a client to the FPIBGUtility application
+	tcpc = new TCPCObj;
+	tcpc->SetServerIP(MpsApp->GetString("image_server_ip",true));
+	tcpc->SetServerPort(MpsApp->GetString("image_server_port",true));
+    tcpc->SetBufSize(MpsApp->GetInt("buffer_size",true));
+	if(tcpc->Create() != 0)
+    {   
+        mout << "Could not get client" << ende;
+        return 1;
     }
+    mout << "Got python client" << ende;
+
     
     if(cap_independent == false)
     {
@@ -300,22 +299,21 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		//std::ofstream file(rawFileName.str(), std::ios::out | std::ios::binary);
 	
 		//Sleep(capFrameDelay);  // delay execution of function 60 Seconds
-        if(capture_image_local == false)
+        
+        if(imgNum > capFrames)
         {
-            if(imgNum > capFrames)
-            {
-                std::ostringstream  header;
-                header << "end" << "," 
-                                    << 0 
-                                    << ","
-                                    << 0
-                                    << ","
-                                    << "";
-                tcpc->WritePort(header.str());
+            std::ostringstream  header;
+            header << "end" << "," 
+                                << 0 
+                                << ","
+                                << 0
+                                << ","
+                                << "";
+            tcpc->WritePort(header.str());
 
-                return 2;
-            }
+            return 2;
         }
+        
 	}
     return 0;
 }
@@ -457,7 +455,7 @@ int CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
     hp = lpBits; 
 
     
-    std::ofstream outFile(FileName, std::ios::binary);
+    
 
 
     std::ostringstream  header = {};
@@ -469,41 +467,41 @@ int CreateBMPFile(HWND hwnd, std::string FileName , PBITMAPINFO pbi,
                                 << cb;
    
 
-    if(capture_image_local == false)
+    
+    //tcpc->m_Recvbuflen = 32;
+    if(tcpc->ReadPort() == 0)
     {
-        //tcpc->m_Recvbuflen = 32;
-        if(tcpc->ReadPort() == 0)
-        {
-            return 1;
-        }
-        if(tcpc->m_SRecvBuf.compare("start") == 0)
-            mout << "Start reevieved from Python Server" << ende;
-        if(tcpc->m_SRecvBuf.compare("stopcap") == 0)
-            return 2;
-
-        if(tcpc->WritePort(header.str()) != 0)
-        {
-            mout << "Write Header failed: " << header.str().c_str() << ende;
-            return 1;
-        }
-        mout << "Write Header success: " << header.str().c_str() << ende;
-
-        if(tcpc->ReadPort() == 0)
-            return 1;
-        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
-        tcpc->WritePort((char*)&hdr,sizeof(BITMAPFILEHEADER));
-        tcpc->ReadPort();
-        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
-        tcpc->WritePort((char*)pbih,sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
-        tcpc->ReadPort();
-        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
-        tcpc->WritePort((char*)hp,cb);
-        tcpc->ReadPort();
-        mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
+        return 1;
     }
+    if(tcpc->m_SRecvBuf.compare("start") == 0)
+        mout << "Start reevieved from Python Server" << ende;
+    if(tcpc->m_SRecvBuf.compare("stopcap") == 0)
+        return 2;
+
+    if(tcpc->WritePort(header.str()) != 0)
+    {
+        mout << "Write Header failed: " << header.str().c_str() << ende;
+        return 1;
+    }
+    mout << "Write Header success: " << header.str().c_str() << ende;
+
+    if(tcpc->ReadPort() == 0)
+        return 1;
+    mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
+    tcpc->WritePort((char*)&hdr,sizeof(BITMAPFILEHEADER));
+    tcpc->ReadPort();
+    mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
+    tcpc->WritePort((char*)pbih,sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
+    tcpc->ReadPort();
+    mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
+    tcpc->WritePort((char*)hp,cb);
+    tcpc->ReadPort();
+    mout << "Read: " << tcpc->m_SRecvBuf.c_str() << ende;
+    
 
     if(capture_image_local == true)
     {
+        std::ofstream outFile(FileName, std::ios::binary);
         outFile.write(reinterpret_cast<char*>(&hdr),sizeof(BITMAPFILEHEADER));
         outFile.write(reinterpret_cast<char*>(pbih),sizeof(BITMAPINFOHEADER)+ pbih->biClrUsed * sizeof (RGBQUAD));
         outFile.write(reinterpret_cast<char*>(hp),cb);

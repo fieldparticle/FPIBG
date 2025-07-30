@@ -39,31 +39,26 @@
 #extension GL_EXT_shader_atomic_float:enable
 #extension GL_KHR_shader_subgroup_basic:enable
 
+#include "../cdn/params.glsl"
 #include "../common/constants.glsl"
 #include "../common/util.glsl"
 #include "../common/push.glsl"
 #include "../common/atomic.glsl"
 #include "../common/CollimageIndex.glsl"
 #include "../common/particle.glsl"
-#include "../common/GetCflg.glsl"
-#include "../common/CalcMomentum.glsl"
-#include "../common/ProcessParticleContact.glsl"
+#include "../cdn/GetCflg.glsl"
+#include "../cdn/CalcMomentum.glsl"
+#include "../cdn/ProcessParticleContact.glsl"
 
-#ifdef VERPIPE
-	#include "../common/ProcessPipeBoundary.glsl"
-#endif
-#if  !defined(VERPIPE) && !defined(VERCDNOZ)
-	#include "../common/ProcessCubeBoundary.glsl"
-#endif
-#ifdef VERCDNOZ
-	#include "../cdn/GetCDRadius.glsl"
-	#include "../common/CalcBoundaryVel.glsl"
-	#include "../common/ProcessCDBoundary.glsl"
-#endif
+
+#include "../cdn/GetCDRadius.glsl"
+#include "../cdn/CalcBoundaryVel.glsl"
+#include "../cdn/ProcessCDBoundary.glsl"
+
 
 
 // Configure workgroups.
-#include "../workgroups.glsl"
+#include "../cdn/workgroups.glsl"
 
 void main()  
 {
@@ -139,15 +134,8 @@ void main()
 				
 				// Process boundary first.
 				vec3 OutVel = vec3(0.0,0.0,0.0);
-				#ifdef VERPIPE
-					ProcessPipeBoundary(Findex,Tindex,OutVel);
-				#endif
-				#ifdef VERCDNOZ
-					ProcessCDBoundary(Findex,Tindex,OutVel);
-				#endif
-				#if  !defined(VERPIPE) && !defined(VERCDNOZ)
-					ProcessCubeBoundary(Findex,Tindex,OutVel);
-				#endif
+				
+				ProcessCDBoundary(Findex,Tindex,OutVel);
 				
 				for(uint ii = 0; ii <= dupcnt && dupcnt < 256; ii++)
 				{

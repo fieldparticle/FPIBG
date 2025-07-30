@@ -1,4 +1,0 @@
-function GetBenchmarkData()
-
-
-end

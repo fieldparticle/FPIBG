@@ -31,7 +31,7 @@
 // If the distance is less than the sum of radii squared the are in comllsion.
 // If collsiong increment the collsion counter.
 
-uint isParticleContact(uint crnr, uint Findex, uint Tindex, in out vec3 OutVel)
+uint isParticleContact(uint crnr, uint Findex, uint Tindex)
 {
 
 	if(Findex == Tindex )

@@ -162,9 +162,10 @@ int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInsta
 					
 				if(tcp->m_SRecvBuf.compare("stopcap")==0)
 				{
-					tcpsapp->WritePort("quit");
+					tcpsapp->WritePort("stopcap");
 					tcpsapp->Close();
 					delete tcpsapp;
+					tcpsapp = nullptr;
 				}
 				if(tcp->m_SRecvBuf.compare("startcap")==0)
 				{

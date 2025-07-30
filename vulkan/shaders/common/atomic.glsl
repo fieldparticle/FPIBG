@@ -33,7 +33,7 @@
 // Structure used to count the number of particles transferred to the shaders
 // the number of collisions counted, and the number of partciles emitted to the
 // vertex shader.
-layout (binding = 5) buffer CollisionOut
+layout (binding = 5) coherent buffer CollisionOut
 {
 	uint CollisionCount; 	// Number of colisions.
 	uint numParticles;		// number of particle into compute.

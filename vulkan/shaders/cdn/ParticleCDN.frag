@@ -10,7 +10,7 @@
 //#extension GL_NV_fragment_shader_interlock : enable
 //#extension GL_ARB_fragment_shader_interlock : enable
 
-
+#include "../cdn/params.glsl"
 #include "../common/constants.glsl"
 #include "../common/atomicg.glsl"
 #include "../common/push.glsl"

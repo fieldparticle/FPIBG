@@ -118,25 +118,25 @@ void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 		{
 			
 			std::ostringstream  objtxt;
-			if (m_collisionStruct.ErrorReturn == 1)
+			if (m_collisionStruct.ErrorReturn == 2)
 			{
 				m_App->m_quit_event = 2;
-				objtxt << m_Name << " ResourceAtomicGraphics::Vertex Kernel Error Max Slots"
+				objtxt << m_Name << " ResourceAtomicGraphics::Vertex Kernel Error Max Slots: "
 					<< m_collisionStruct.ErrorReturn 
-					<< "Failing Slot:"
+					<< " Failing Slot:"
 					<< m_collisionStruct.ExcessSlots << std::ends;
 				mout << objtxt.str().c_str() << ende;
 			}
 			else
-			if (m_collisionStruct.ErrorReturn == 2)
+			if (m_collisionStruct.ErrorReturn == 3)
 			{
 				m_App->m_quit_event = 3;
 				objtxt << m_Name << " ResourceAtomicGraphics::Vertex Kernel Error Max Location:"
 					<< m_collisionStruct.ErrorReturn
-					<< "Excess slots:" << m_collisionStruct.ExcessSlots << std::ends;
+					<< " Excess slots:" << m_collisionStruct.ExcessSlots << std::ends;
 				mout << objtxt.str().c_str() << ende;
 			}
-			if (m_collisionStruct.ErrorReturn == 3)
+			if (m_collisionStruct.ErrorReturn == 4)
 			{
 				m_App->m_quit_event = 4;
 				objtxt << 
@@ -145,7 +145,7 @@ void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 					<<" P(" << m_collisionStruct.ExcessSlots << ")" << std::ends;
 				mout << objtxt.str().c_str() << ende;
 			}
-			if (m_collisionStruct.ErrorReturn == 4)
+			if (m_collisionStruct.ErrorReturn == 5)
 			{
 				m_App->m_quit_event = 5;
 				objtxt << m_Name << " ResourceAtomicGraphics::Boundary"
@@ -153,9 +153,9 @@ void ResourceAtomicGraphics::PullMem(uint32_t currentBuffer)
 					<< "(" << m_collisionStruct.ExcessSlots << ")" << std::ends;
 				mout << objtxt.str().c_str() << ende;
 			}
-			if (m_collisionStruct.ErrorReturn == 7)
+			if (m_collisionStruct.ErrorReturn == 6)
 			{
-				m_App->m_quit_event = 7;
+				m_App->m_quit_event = 5;
 				objtxt << m_Name << " ResourceAtomicGraphics::Isnan at Frame:"
 					<< m_collisionStruct.ErrorReturn 
 					<< m_App->m_FrameNumber 

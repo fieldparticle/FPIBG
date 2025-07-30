@@ -40,7 +40,7 @@ public:
 	ResourceVertexParticle* m_Particle;
 	
 	UniformBufferObject m_UBO={};
-	
+	bool m_done = false;
 	float m_RotX = 0.0;
 	float m_RotY = 0.0;
 	float m_rRotX = 0.0;

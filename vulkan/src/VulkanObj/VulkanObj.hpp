@@ -47,6 +47,7 @@ class VulkanObj
 		
 		
 		uint32_t m_TimeStampDivisor = 0;
+		bool				m_Remote = false;
 		uint32_t			m_quit_event = 0;
 		uint32_t			m_CurrentBuffer = 0;
 		uint32_t			m_FramesBuffered = 1;

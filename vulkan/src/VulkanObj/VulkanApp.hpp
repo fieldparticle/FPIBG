@@ -78,7 +78,7 @@ int Loop(PerfObj* pf, TCPObj* tcp, TCPObj* tcpapp,DrawObj* DrawInstance, VulkanO
 int NoPerfLoop(PerfObj* perfObj, TCPObj* tcp, TCPObj* tcpsapp,DrawObj* DrawInstance, VulkanObj* VulkanWin, ResourceGraphicsContainer* rgc, ResourceComputeContainer* rcc);
 int Capture(uint32_t ImgNum);
 int SetupCapture();
-int ParticleOnly(PerfObj* perObj, TCPObj* tcp, TCPObj* tcpapp);
+int ParticleOnly(PerfObj* perObj, TCPObj* tcp, TCPObj* tcpapp,bool rmtFlag);
 int ParticleBoundary(ConfigObj* configVCube);
 int ParticleBoundaryV2(ConfigObj* configVCube);
 int glsl(std::vector<std::string>& InputArgs, std::vector<char>& OutPutSPV);

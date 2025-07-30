@@ -4,7 +4,7 @@
 #extension GL_EXT_debug_printf : enable
 #extension GL_EXT_scalar_block_layout :enable
 
-//#include "../params.glsl"
+#include "../cdn/params.glsl"
 #include "../common/constants.glsl"
 #include "../common/atomicg.glsl"
 #include "../common/push.glsl"
@@ -14,18 +14,10 @@
 
 //#include "GetCflg.glsl"
 #include "../common/util.glsl"
-
-#ifdef VERPIPE
-	#include "../common/ChangePosPipe.glsl"
-#endif
-#if  !defined(VERPIPE) && !defined(VERCDNOZ)
-	#include "../common/ChangePos.glsl"
-#endif
-#ifdef VERCDNOZ
-	#include "../cdn/GetCDRadius.glsl"
-	#include "../cdn/ChangePosCDNoz.glsl"
+#include "../cdn/GetCDRadius.glsl"
+#include "../cdn/ChangePosCDNoz.glsl"
 	
-#endif
+
 out gl_PerVertex {
     vec4 gl_Position;
 	float gl_PointSize;
@@ -93,18 +85,13 @@ void main(){
 		P[index].zlink[jj].pindex =0;
 		//P[index].wary[jj].x = 0.0;
 	}
+	//######set gl_Positon aftet this
 	if(index > bbound)
 	{
-		#ifdef VERPIPE
-			ChangePosPipe(index);	
-		#endif
-		#if  !defined(VERPIPE) && !defined(VERCDNOZ)
-			ChangePos(index);	
-		#endif
-		#ifdef VERCDNOZ
-			if(ChangePosCDNoz(index) != 0)
-				return;
-		#endif
+	
+		if(ChangePosCDNoz(index) != 0)
+			return;
+
 	}
 		
 	

@@ -79,8 +79,8 @@ vec3 spc2pt3(vec3 VecF,vec3 VecT)
 void IndexToArray(uint index, inout uvec3 ary)
 {
 	uint c1,c2,c3;
-	uint w = WIDTH+1;
-	uint h = HEIGHT+1;
+	uint w = WIDTH;
+	uint h = HEIGHT;
 	c1 = index / (w * h);
 	c2 = (index - c1 * w * h) / w;
 	c3 = index - w * (c2 + w * c1);
@@ -92,16 +92,47 @@ void IndexToArray(uint index, inout uvec3 ary)
 uint ArrayToIndex(uvec3 loc)
 {
 		
-	uint w = WIDTH+1;
-	uint h = HEIGHT+1;
+	uint w = WIDTH;
+	uint h = HEIGHT;
 	
 	uint indxLoc =  loc.x + w * (loc.y + h * loc.z);
-	if(indxLoc > MaxLocation-1)
+	if(indxLoc > MAX_CELL_ARRAY_LOCATIONS)
 		return npos;
 	else
 		return indxLoc;
 
 }
+uint TestArrayToIndex(uint start,uint stop)
+{
+	uvec3 ary = uvec3(0,0,0);
+	uint idx = 0;
+	uint count = 0;
+	debugPrintfEXT("W:%d H:%d",WIDTH,HEIGHT);
+	for (uint ii=start;ii<WIDTH;ii++)
+	{
+		for (uint jj=0;jj<WIDTH;jj++)
+		{
+			for (uint kk=0;kk<WIDTH;kk++)
+			{
+				ary[0] = kk;
+				ary[1] = jj;
+				ary[2] = ii;
+				idx = ArrayToIndex(ary);
+				#if 0
+				if (stop != 0)
+					debugPrintfEXT("I:%d<%d,%d,%d>",idx,kk,jj,ii);
+				#endif
+				if (count != idx)
+					return 1;
+				if (count == stop)
+					return 0;
+				count++;
+			}
+		}
+	}
+	return 0;
+}				
+
 
 #if 0
 vec4 DrawLegend()
